@@ -1,0 +1,24 @@
+@import url('../../../assets/globals.css');
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #f8f9fa;
+  height: 60px;
+  background: var(--primary);
+
+  padding: 0 2rem;
+}
+
+.menu-button {
+  outline: none;
+  border: none;
+  background: none;
+  cursor: pointer;
+  border-radius: 8px;
+}
+
+.menu-button:hover {
+  background: var(--primary-700);
+}
