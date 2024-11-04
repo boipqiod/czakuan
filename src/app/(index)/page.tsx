@@ -1,5 +1,6 @@
 'use client';
 
+import {PostListWraper} from '@/client/components/post/PostListWraper';
 import {getData} from '@/server/actions/PostActions';
 
 const Home = () => {
@@ -8,7 +9,11 @@ const Home = () => {
     console.log(data);
   };
 
-  return <div onClick={test}>1234</div>;
+  return (
+    <>
+      <PostListWraper />
+    </>
+  );
 };
 
 export default Home;

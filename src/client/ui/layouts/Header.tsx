@@ -1,4 +1,6 @@
 'use client';
+import logo from '@/assets/image/logo.png';
+import styles from '@/assets/styles/layouts/header.module.css';
 import {useLayoutStore} from '@/client/store/LayoutStore';
 import {Avatar} from '@/client/ui/widgets/Avatar';
 import {
@@ -8,13 +10,11 @@ import {
 } from '@/client/ui/widgets/DropdownMenu';
 import Image from 'next/image';
 import {TiThMenu} from 'react-icons/ti';
-import logo from '../../../assets/image/logo.png';
-import styles from './header.module.css';
 
 export const Header = () => {
   const {toggleSidebar} = useLayoutStore();
   const reload = () => {
-    window.location.reload();
+    window.location.href = '/';
   };
 
   return (

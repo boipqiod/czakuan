@@ -1,6 +1,6 @@
 'use client';
+import styles from '@/assets/styles/widgets/dropdownMenu.module.css';
 import React, {ReactNode, useState} from 'react';
-import styles from './dropdownMenu.module.css';
 
 interface DropdownMenuProps {
   children: ReactNode;

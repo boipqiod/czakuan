@@ -1,6 +1,6 @@
+import styles from '@/assets/styles/layouts/footer.module.css';
 import Link from 'next/link';
 import {LuDot} from 'react-icons/lu';
-import styles from './footer.module.css';
 
 export const Footer = () => {
   return (

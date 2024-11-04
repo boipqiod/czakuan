@@ -1,7 +1,7 @@
+import styles from '@/assets/styles/widgets/avatar.module.css';
 import Image from 'next/image';
 import {CSSProperties} from 'react';
 import {FaUser} from 'react-icons/fa';
-import styles from './avatar.module.css';
 
 interface AvatarProps {
   src?: string;
