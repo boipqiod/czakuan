@@ -1,12 +1,22 @@
-import React, {useState} from 'react';
-import {FaChevronDown} from 'react-icons/fa';
+'use client';
+import React, {ReactNode, useState} from 'react';
 import styles from './dropdownMenu.module.css';
 
 interface DropdownMenuProps {
-  label: string;
-  items: string[];
+  children: ReactNode;
 }
-export const DropdownMenu = ({label, items}: DropdownMenuProps) => {
+
+interface DropdownMenuButtonProps {
+  onClick?: () => void;
+  children: ReactNode;
+}
+
+interface DropdownMenuItemProps {
+  children: ReactNode;
+  onClick?: () => void;
+}
+
+export const DropdownMenu = ({children}: DropdownMenuProps) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const toggleMenu = () => {
@@ -15,18 +25,45 @@ export const DropdownMenu = ({label, items}: DropdownMenuProps) => {
 
   return (
     <div className={styles.dropdown}>
-      <button onClick={toggleMenu} className={styles.dropdownButton}>
-        {label} <FaChevronDown />
-      </button>
+      {React.Children.map(children, child => {
+        if (
+          React.isValidElement<DropdownMenuButtonProps>(child) &&
+          child.type === DropdownMenuButton
+        ) {
+          return React.cloneElement(child, {onClick: toggleMenu});
+        }
+      })}
       {isOpen && (
         <ul className={styles.dropdownMenu}>
-          {items.map((item, index) => (
-            <li key={index} className={styles.dropdownMenuItem}>
-              {item}
-            </li>
-          ))}
+          {React.Children.map(children, child => {
+            if (
+              React.isValidElement<DropdownMenuItemProps>(child) &&
+              child.type === DropdownMenuItem
+            ) {
+              return <li className={styles.dropdownMenuItem}>{child}</li>;
+            }
+            return null;
+          })}
         </ul>
       )}
     </div>
   );
 };
+
+export const DropdownMenuButton = ({
+  onClick,
+  children,
+}: DropdownMenuButtonProps) => (
+  <button onClick={onClick} className={styles.dropdownButton}>
+    {children}
+  </button>
+);
+
+export const DropdownMenuItem = ({
+  onClick,
+  children,
+}: DropdownMenuItemProps) => (
+  <div onClick={onClick} className={styles.dropdownMenuItemContent}>
+    {children}
+  </div>
+);

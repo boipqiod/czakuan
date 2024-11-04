@@ -1,3 +1,5 @@
+import {Content} from '@/client/ui/layouts/Content';
+import {Footer} from '@/client/ui/layouts/Footer';
 import {Header} from '@/client/ui/layouts/Header';
 import type {Metadata} from 'next';
 import React from 'react';
@@ -20,7 +22,8 @@ export default function RootLayout({
       </head>
       <body>
         <Header />
-        {children}
+        <Content>{children}</Content>
+        <Footer />
       </body>
     </html>
   );
