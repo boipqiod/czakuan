@@ -1,0 +1,162 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+enum Role {
+  SUPER_ADMIN
+  BOARD_ADMIN // 게시판 관리자 - 공지사항 등록 가능
+  USER
+}
+
+model User {
+  id              Int                @id @default(autoincrement())
+  role            Role               @default(USER)
+  nickName        String             @unique
+  profileImageUrl String?
+  createdAt       DateTime           @default(now())
+  deletedAt       DateTime?
+  updatedAt       DateTime           @default(now()) @updatedAt
+  email           String?
+  name            String?
+  phoneNumber     String?
+  kakaoId         BigInt               @unique
+  Comment         Comment[]
+  dislikeComment  DislikeToComment[]
+  dislikePost     DislikeToPost[]
+  likeComment     LikeToComment[]
+  likePost        LikeToPost[]
+  Post            Post[]
+  reportComment   ReportToComment[]
+  reportPost      ReportToPost[]
+}
+
+model CategoryGroup {
+  id       Int    @id @default(autoincrement())
+  name     String
+  priority Int    @default(0)
+
+  categories Category[]
+}
+
+model Category {
+  id       Int     @id @default(autoincrement())
+  groupId  Int?
+  name     String
+  isUse    Boolean @default(false)
+  priority Int     @default(0)
+
+  posts         Post[]
+  group         CategoryGroup? @relation(fields: [groupId], references: [id])
+  subCategories SubCategory[]
+}
+
+model SubCategory {
+  id         Int     @id @default(autoincrement())
+  name       String
+  categoryId Int
+  isUse      Boolean @default(false)
+  priority   Int     @default(0)
+
+  posts  Post[]
+  parent Category @relation(fields: [categoryId], references: [id])
+}
+
+model Post {
+  id            Int             @id @default(autoincrement())
+  categoryId    Int
+  subCategoryId Int?
+  title         String
+  content       String
+  thumbnailUrl  String?
+  views         Int             @default(0)
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime?       @updatedAt
+  deletedAt     DateTime?
+  userId        Int
+  images        String[]
+  isNotice      Boolean         @default(false) // 공지사항 여부
+  comments      Comment[]
+  dislikes      DislikeToPost[]
+  likes         LikeToPost[]
+  category      Category        @relation(fields: [categoryId], references: [id])
+  subCategory   SubCategory?    @relation(fields: [subCategoryId], references: [id])
+  author        User            @relation(fields: [userId], references: [id])
+  reports       ReportToPost[]
+}
+
+model LikeToPost {
+  postId Int
+  userId Int
+  post   Post @relation(fields: [postId], references: [id])
+  user   User @relation(fields: [userId], references: [id])
+
+  @@id([userId, postId])
+}
+
+model DislikeToPost {
+  postId Int
+  userId Int
+  post   Post @relation(fields: [postId], references: [id])
+  user   User @relation(fields: [userId], references: [id])
+
+  @@id([userId, postId])
+}
+
+model ReportToPost {
+  postId Int
+  userId Int
+  post   Post @relation(fields: [postId], references: [id])
+  user   User @relation(fields: [userId], references: [id])
+
+  @@id([userId, postId])
+}
+
+model Comment {
+  id        Int                @id @default(autoincrement())
+  content   String
+  parentId  Int?
+  createdAt DateTime           @default(now())
+  updatedAt DateTime           @updatedAt
+  postId    Int
+  userId    Int
+  deletedAt DateTime?
+  rootId    Int
+  post      Post               @relation(fields: [postId], references: [id])
+  author    User               @relation(fields: [userId], references: [id])
+  dislikes  DislikeToComment[]
+  likes     LikeToComment[]
+  reports   ReportToComment[]
+}
+
+model LikeToComment {
+  commentId Int
+  userId    Int
+  comment   Comment @relation(fields: [commentId], references: [id])
+  user      User    @relation(fields: [userId], references: [id])
+
+  @@id([userId, commentId])
+}
+
+model DislikeToComment {
+  commentId Int
+  userId    Int
+  comment   Comment @relation(fields: [commentId], references: [id])
+  user      User    @relation(fields: [userId], references: [id])
+
+  @@id([userId, commentId])
+}
+
+model ReportToComment {
+  commentId Int
+  userId    Int
+  comment   Comment @relation(fields: [commentId], references: [id])
+  user      User    @relation(fields: [userId], references: [id])
+
+  @@id([userId, commentId])
+}

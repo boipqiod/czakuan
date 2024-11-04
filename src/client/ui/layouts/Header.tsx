@@ -1,5 +1,5 @@
 'use client';
-import {useLayoutStore} from '@/client/ui/store/LayoutStore';
+import {useLayoutStore} from '@/client/store/LayoutStore';
 import {Avatar} from '@/client/ui/widgets/Avatar';
 import {
   DropdownMenu,
