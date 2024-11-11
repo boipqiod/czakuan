@@ -1,10 +1,11 @@
 'use client';
+
 import styles from '@/assets/styles/components/post/post.module.css';
 
-export const PostListWraper = () => {
+export const PostListWrapper = () => {
   return (
-    <div className={styles.postListWraper}>
-      <section className={styles.postListTitle}>
+    <div className={styles.postListWrapper}>
+      <section className={styles.postTitleSection}>
         <h2>게시판 제목</h2>
       </section>
       <div></div>

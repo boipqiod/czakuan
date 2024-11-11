@@ -1,6 +1,6 @@
 'use client';
 
-import {PostListWraper} from '@/client/components/post/PostListWraper';
+import {PostListWrapper} from '@/client/components/post/PostListWrapper';
 import {getData} from '@/server/actions/PostActions';
 
 const Home = () => {
@@ -11,7 +11,7 @@ const Home = () => {
 
   return (
     <>
-      <PostListWraper />
+      <PostListWrapper />
     </>
   );
 };
