@@ -4,7 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="14cf96c1-8189-4cb9-98c4-d0e5590e67ee" name="변경" comment="feat. 진행 중" />
+    <list default="true" id="14cf96c1-8189-4cb9-98c4-d0e5590e67ee" name="변경" comment="feat. 진행 중">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/assets/styles/components/post/post.module.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/assets/styles/components/post/post.module.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/client/components/post/PostListWraper.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/client/components/post/PostListWraper.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/client/ui/layouts/Header.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/client/ui/layouts/Header.tsx" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -25,6 +30,18 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
+  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
+  "lastFilter": {
+    "state": "OPEN",
+    "assignee": "boipqiod"
+  }
+}]]></component>
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "https://github.com/boipqiod/czakuan.git",
+    "accountId": "46ad5bb4-91d8-47b1-aeae-da2023088e40"
+  }
+}]]></component>
   <component name="OptimizeOnSaveOptions">
     <option name="myRunOnSave" value="true" />
   </component>
@@ -56,6 +73,7 @@
     "node.js.selected.package.standard": "",
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "yarn",
+    "npm.dev.executor": "Run",
     "prettierjs.PrettierConfiguration.Package": "/Users/kong/dev/work/czakuan/node_modules/prettier",
     "settings.editor.selected.configurable": "org.jetbrains.plugins.github.ui.GithubSettingsConfigurable",
     "ts.external.directory.path": "/Users/kong/dev/work/czakuan/node_modules/typescript/lib",
@@ -69,6 +87,23 @@
     ]
   }
 }]]></component>
+  <component name="RunManager">
+    <configuration name="dev" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
+      <package-json value="$PROJECT_DIR$/package.json" />
+      <command value="run" />
+      <scripts>
+        <script value="dev" />
+      </scripts>
+      <node-interpreter value="project" />
+      <envs />
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="npm.dev" />
+      </list>
+    </recent_temporary>
+  </component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
@@ -86,7 +121,8 @@
       <updated>1730641016773</updated>
       <workItem from="1730641018934" duration="2051000" />
       <workItem from="1731335983495" duration="633000" />
-      <workItem from="1731336626715" duration="1452000" />
+      <workItem from="1731336626715" duration="1475000" />
+      <workItem from="1731415746627" duration="54000" />
     </task>
     <task id="LOCAL-00001" summary="feat. nextjs czakuan 시작">
       <option name="closed" value="true" />
@@ -104,7 +140,15 @@
       <option name="project" value="LOCAL" />
       <updated>1731338571751</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="feat. 진행 중">
+      <option name="closed" value="true" />
+      <created>1731338647553</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1731338647553</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

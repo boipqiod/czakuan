@@ -1,11 +1,9 @@
-.postListWraper {
+.postListWrapper {
   display: flex;
   flex-direction: column;
   gap: 20px;
   padding: 0 20px;
-}
-
-.postListTitle {
-  color: #333;
-  background: #000;
+  height: 100%;
+  width: 100%;
+  color: white;
 }

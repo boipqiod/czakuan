@@ -5,7 +5,7 @@ import {FaUser} from 'react-icons/fa';
 
 interface AvatarProps {
   src?: string;
-  alt: string;
+  alt?: string;
   size?: number;
   className?: string;
   style?: CSSProperties;
@@ -26,7 +26,7 @@ export const Avatar = ({
         width: size,
         height: size,
       }}>
-      {src ? <Image src={src} alt={alt} /> : <FaUser />}
+      {src ? <Image src={src} alt={alt ?? 'avatar'} /> : <FaUser />}
     </div>
   );
 };

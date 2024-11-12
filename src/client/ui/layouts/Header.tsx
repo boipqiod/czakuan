@@ -23,7 +23,7 @@ export const Header = () => {
         <TiThMenu fontSize={25} color={'white'} />
       </button>
       <button className={styles.logo} onClick={reload}>
-        <Image height={45} src={logo} alt={'logo'} />
+        <Image height={40} src={logo} alt={'logo'} />
       </button>
       <DropdownMenu>
         <DropdownMenuButton>
