@@ -16,45 +16,58 @@ export const PostListWrapper = () => {
         <h2>게시판 제목123</h2>
       </section>
       <div>
-        <Link
-          href={`/`}
-          style={{
-            color: 'white',
-            textDecoration: 'none',
-          }}>
-          <Flex justifyContent={'center'}>
-            <HFlex gap={'1rem'}>
-              <Avatar
-                style={{
-                  borderRadius: '8px',
-                }}
-                size={30}
-              />
-              <Flex gap={'.5rem'}>
-                <HFlex>
-                  <Text>{'제목'}</Text>
-                  <Text color={'#'}>{0}</Text>
-                </HFlex>
-                <HFlex>
-                  {'작성자 이름'}
-                  <LuDot />
-                  <span>{dayjs(new Date()).toString()}</span>
-                  <LuDot />
-                  <div>
-                    <FiEye />
-                    10
-                  </div>
-                  <LuDot />
-                  <div>
-                    <AiOutlineLike />
-                    {0}
-                  </div>
-                </HFlex>
-              </Flex>
-            </HFlex>
-          </Flex>
-        </Link>
+        <PostItem />
+        <PostItem />
+        <PostItem />
+        <PostItem />
+        <PostItem />
+        <PostItem />
+        <PostItem />
+        <PostItem />
+        <PostItem />
+        <PostItem />
       </div>
     </div>
   );
 };
+
+const PostItem = () => (
+  <Link
+    href={`/`}
+    style={{
+      color: 'white',
+      textDecoration: 'none',
+    }}>
+    <Flex justifyContent={'center'}>
+      <HFlex gap={'1rem'}>
+        <Avatar
+          style={{
+            borderRadius: '8px',
+          }}
+          size={30}
+        />
+        <Flex gap={'.5rem'}>
+          <HFlex>
+            <Text>{'제목'}</Text>
+            <Text color={'#'}>{0}</Text>
+          </HFlex>
+          <HFlex>
+            {'작성자 이름'}
+            <LuDot />
+            <span>{dayjs(new Date()).toString()}</span>
+            <LuDot />
+            <div>
+              <FiEye />
+              10
+            </div>
+            <LuDot />
+            <div>
+              <AiOutlineLike />
+              {0}
+            </div>
+          </HFlex>
+        </Flex>
+      </HFlex>
+    </Flex>
+  </Link>
+);

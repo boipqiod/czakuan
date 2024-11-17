@@ -1,10 +1,10 @@
-import {RandomUtil} from '@/lib/RandomUtil';
 import {
   CopyObjectCommand,
   DeleteObjectCommand,
   PutObjectCommand,
   S3Client,
 } from '@aws-sdk/client-s3';
+import {getUniqueString} from '@/lib/random';
 
 export class S3 {
   private readonly s3Client: S3Client;
@@ -25,8 +25,8 @@ export class S3 {
   }
 
   // 이미지 임시 업로드
-  async uploadTempImage(prifix: string, file: File): Promise<string> {
-    const key = `tmp/${prifix}/${RandomUtil.getUniqueString()}.jpg`;
+  async uploadTempImage(prefix: string, file: File): Promise<string> {
+    const key = `tmp/${prefix}/${getUniqueString()}.jpg`;
 
     //TODO: 파일 관련해서 제대로 되는지 다시 한번 확인 필요
     const uploadCommand = new PutObjectCommand({

@@ -1,4 +1,4 @@
-import {ReactNode} from 'react';
+import {CSSProperties, ReactNode} from 'react';
 
 type FlexProps = {
   direction?: 'row' | 'column';
@@ -8,7 +8,7 @@ type FlexProps = {
   alignItem?: 'center' | 'flex-start' | 'flex-end';
   justifyContent?: 'center' | 'flex-start' | 'flex-end';
   children?: ReactNode;
-} & React.HTMLAttributes<HTMLDivElement>;
+} & CSSProperties;
 
 export const Flex = (props: FlexProps) => {
   return (
@@ -21,13 +21,13 @@ export const Flex = (props: FlexProps) => {
         height: props.height,
         alignItems: props.alignItem,
         justifyContent: props.justifyContent,
-      }}
-      {...props}>
+        ...props,
+      }}>
       {props.children}
     </div>
   );
 };
 
 export const HFlex = (props: FlexProps) => {
-  return <Flex {...props} direction={'row'} />;
+  return <Flex {...props} flexDirection={'row'} />;
 };
