@@ -10,7 +10,7 @@ type FlexProps = {
   children?: ReactNode;
 } & CSSProperties;
 
-export const Flex = (props: FlexProps) => {
+export const Flex = ({children, ...props}: FlexProps) => {
   return (
     <div
       style={{
@@ -23,7 +23,7 @@ export const Flex = (props: FlexProps) => {
         justifyContent: props.justifyContent,
         ...props,
       }}>
-      {props.children}
+      {children}
     </div>
   );
 };

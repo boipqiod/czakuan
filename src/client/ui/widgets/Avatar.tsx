@@ -4,7 +4,7 @@ import {CSSProperties} from 'react';
 import {FaUser} from 'react-icons/fa';
 
 interface AvatarProps {
-  src?: string;
+  src?: string | null;
   alt?: string;
   size?: number;
   className?: string;
