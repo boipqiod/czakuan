@@ -1,5 +1,3 @@
-import styles from '@/assets/styles/widgets/avatar.module.css';
-import Image from 'next/image';
 import {CSSProperties} from 'react';
 import {FaUser} from 'react-icons/fa';
 
@@ -11,22 +9,33 @@ interface AvatarProps {
   style?: CSSProperties;
 }
 
-export const Avatar = ({
-  src,
-  alt,
-  size = 50,
-  className,
-  style,
-}: AvatarProps) => {
+export const Avatar = ({src, alt, size = 50, style}: AvatarProps) => {
   return (
     <div
-      className={styles.avatar + ' ' + className}
       style={{
+        width: `${size}px`,
+        height: `${size}px`,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        overflow: 'hidden',
+        borderRadius: '50%',
+        backgroundColor: 'lightgray',
         ...style,
-        width: size,
-        height: size,
       }}>
-      {src ? <Image src={src} alt={alt ?? 'avatar'} /> : <FaUser />}
+      {src ? (
+        <img
+          src={src}
+          alt={alt ?? 'avatar'}
+          style={{
+            width: '100%',
+            height: '100%',
+            objectFit: 'cover',
+          }}
+        />
+      ) : (
+        <FaUser />
+      )}
     </div>
   );
 };

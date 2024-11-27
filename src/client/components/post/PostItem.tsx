@@ -48,7 +48,7 @@ export const PostItem = ({
 
   return (
     <Link
-      href={`/`}
+      href={`/post/${id}`}
       style={{
         color: 'white',
         textDecoration: 'none',
@@ -63,9 +63,11 @@ export const PostItem = ({
             src={thumbnailUrl}
           />
           <Flex gap={'.5rem'}>
-            <HFlex>
+            <HFlex gap={8}>
               <Text>{title}</Text>
-              <Text color={'#'}>{comments}</Text>
+              <Text fontWeight={'bold'} color={'primary'}>
+                {comments}
+              </Text>
             </HFlex>
             <HFlex>
               {nickName}
