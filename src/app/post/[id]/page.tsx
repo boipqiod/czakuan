@@ -1,8 +1,11 @@
+import {CommentItem} from '@/client/components/comment/CommentItem';
 import {Profile} from '@/client/ui/components/Profile';
 import {Flex, HFlex} from '@/client/ui/widgets';
+import {Button} from '@/client/ui/widgets/Button';
 import {Divider} from '@/client/ui/widgets/Divider';
 import {formatRelativeTime} from '@/lib/dayjs';
 import {getCommentList, getPostDetail} from '@/server/actions/post.actions';
+import {AiOutlineDislike, AiOutlineLike} from 'react-icons/ai';
 import {FiEye} from 'react-icons/fi';
 import {LuDot} from 'react-icons/lu';
 
@@ -12,7 +15,6 @@ const PostDetailPage = async (data: {
   }>;
 }) => {
   const {id} = await data.params;
-  console.log('id', id);
 
   const [post, commentListItem] = await Promise.all([
     getPostDetail(Number(id)),
@@ -53,9 +55,14 @@ const PostDetailPage = async (data: {
         <Flex margin={20}>
           <div dangerouslySetInnerHTML={{__html: post.content}}></div>
         </Flex>
-        <HFlex justifyContent={'center'} alignItem={'center'}>
-          <button>Like {post.likes.length}</button>
-          <button>Dislike {post.dislikes.length}</button>
+        <HFlex justifyContent={'center'} alignItems={'center'} gap={10}>
+          <Button>
+            좋아요 <AiOutlineLike />
+            {post.likes.length}
+          </Button>
+          <Button>
+            싫어요 <AiOutlineDislike /> {post.dislikes.length}
+          </Button>
         </HFlex>
         <Divider marginY={10} />
       </section>
@@ -63,12 +70,12 @@ const PostDetailPage = async (data: {
         <h2>Comments</h2>
         <Divider marginY={10} />
         {comments.map(comment => (
-          <div key={comment.id}>
-            <div>{comment.content}</div>
-            <div>
-              <Profile author={comment.author} />
-            </div>
-          </div>
+          <CommentItem
+            key={comment.id}
+            comment={comment}
+            ownerId={author.id}
+            parentAuthor={comments.find(c => c.id === comment.parentId)?.author}
+          />
         ))}
       </section>
     </Flex>

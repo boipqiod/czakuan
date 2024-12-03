@@ -2,16 +2,16 @@ import {Author} from '@/types/user';
 import {DislikeToComment, LikeToComment, ReportToComment} from '@prisma/client';
 
 export type CommentReslut = {
-  id: string;
-  postId: string;
+  id: number;
+  postId: number;
   content: string;
   likes: LikeToComment[];
   dislikes: DislikeToComment[];
   reports: ReportToComment[];
-  parentId?: string | null;
-  rootId?: string | null;
+  parentId: number | null;
+  rootId: number;
   updatedAt: Date;
   createdAt: Date;
-  deletedAt?: Date | null;
+  deletedAt: Date | null;
   author: Author;
 };

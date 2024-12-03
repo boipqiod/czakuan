@@ -10,7 +10,7 @@ type ProfileProps = {
 
 export const Profile = ({author}: ProfileProps) => {
   return (
-    <HFlex alignItem={'center'} gap={5}>
+    <HFlex alignItems={'center'} gap={5}>
       <Avatar src={author.profileImageUrl} size={25} />
       <div>{author.nickName}</div>
       <MarkOfRole role={author.role} />
