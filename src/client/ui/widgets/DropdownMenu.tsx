@@ -1,5 +1,6 @@
 'use client';
 import styles from '@/assets/styles/widgets/dropdownMenu.module.css';
+import Link from 'next/link';
 import React, {ReactNode, useState} from 'react';
 
 interface DropdownMenuProps {
@@ -14,6 +15,11 @@ interface DropdownMenuButtonProps {
 interface DropdownMenuItemProps {
   children: ReactNode;
   onClick?: () => void;
+}
+
+interface DropdownMenuLinkProps {
+  children: ReactNode;
+  href: string;
 }
 
 export const DropdownMenu = ({children}: DropdownMenuProps) => {
@@ -42,6 +48,12 @@ export const DropdownMenu = ({children}: DropdownMenuProps) => {
             ) {
               return <li className={styles.dropdownMenuItem}>{child}</li>;
             }
+            if (
+              React.isValidElement<DropdownMenuLinkProps>(child) &&
+              child.type === DropdownMenuLink
+            ) {
+              return <li className={styles.dropdownMenuItem}>{child}</li>;
+            }
             return null;
           })}
         </ul>
@@ -66,4 +78,10 @@ export const DropdownMenuItem = ({
   <div onClick={onClick} className={styles.dropdownMenuItemContent}>
     {children}
   </div>
+);
+
+export const DropdownMenuLink = ({href, children}: DropdownMenuLinkProps) => (
+  <Link href={href} className={styles.dropdownLink}>
+    {children}
+  </Link>
 );

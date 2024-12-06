@@ -7,29 +7,28 @@ import {
   DropdownMenu,
   DropdownMenuButton,
   DropdownMenuItem,
+  DropdownMenuLink,
 } from '@/client/ui/widgets/DropdownMenu';
 import Image from 'next/image';
+import Link from 'next/link';
 import {TiThMenu} from 'react-icons/ti';
 
 export const Header = () => {
   const {toggleSidebar} = useLayoutStore();
-  const reload = () => {
-    window.location.href = '/';
-  };
 
   return (
     <header className={styles.header}>
       <button className={styles['menu-button']} onClick={toggleSidebar}>
         <TiThMenu fontSize={25} color={'white'} />
       </button>
-      <button className={styles.logo} onClick={reload}>
+      <Link href={'/'} className={styles.logo}>
         <Image height={40} src={logo} alt={'logo'} />
-      </button>
+      </Link>
       <DropdownMenu>
         <DropdownMenuButton>
           <Avatar alt={'avatar'} size={15} />
         </DropdownMenuButton>
-        <DropdownMenuItem>로그인</DropdownMenuItem>
+        <DropdownMenuLink href={'/account/login'}>로그인</DropdownMenuLink>
         <DropdownMenuItem>로그아웃</DropdownMenuItem>
       </DropdownMenu>
     </header>
