@@ -32,3 +32,4 @@ const LoginResult = async (data: PageQeuryProps<{code: string}>) => {
 };
 
 export default LoginResult;
+export const dynamic = 'force-dynamic'; // 페이지를 동적으로 렌더링

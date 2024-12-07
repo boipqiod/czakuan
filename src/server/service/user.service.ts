@@ -68,8 +68,7 @@ class UserService {
   }) {
     const {nickName, profileImageUrl} = userData;
     const {access_token} = await kakao.getToken(code);
-    const {id, kakao_account} = await kakao.getUserData(access_token);
-    const {name, email, phone_number} = kakao_account;
+    const {id} = await kakao.getUserData(access_token);
 
     const isNickNameExist =
       await this.userRepository.getUserByNickName(nickName);
@@ -94,14 +93,7 @@ class UserService {
     }
 
     try {
-      const createdUser = await this.userRepository.createUser(
-        id,
-        nickName,
-        name,
-        phone_number,
-        email,
-        profileImageUrl,
-      );
+      const createdUser = await this.userRepository.createUser(id, nickName);
 
       const {accessToken, refreshToken} =
         this.tokenService.createTokenByUser(createdUser);
