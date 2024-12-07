@@ -1,22 +1,9 @@
-import {ReactNode} from 'react';
+import {CSSProperties} from 'react';
 
-type TextProps = {
-  size?: string | number;
-  color?: string;
-  fontWeight?: string | number;
-  children?: ReactNode;
-} & React.HTMLAttributes<HTMLDivElement>;
+type TextProps = CSSProperties & {
+  children?: React.ReactNode;
+};
 
-export const Text = (props: TextProps) => {
-  return (
-    <div
-      style={{
-        fontSize: props.size,
-        color: props.color,
-        fontWeight: props.fontWeight,
-      }}
-      {...props}>
-      {props.children}
-    </div>
-  );
+export const Text = ({children, ...props}: TextProps) => {
+  return <div style={{...props}}>{children}</div>;
 };

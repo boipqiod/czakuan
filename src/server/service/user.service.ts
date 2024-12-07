@@ -2,6 +2,7 @@ import kakao from '@/server/modules/kakao';
 import s3 from '@/server/modules/s3';
 import {UserRepository} from '@/server/repositories/user.repository';
 import {TokenService} from '@/server/service/token.service';
+import {NextResponse} from 'next/server';
 
 class UserService {
   private tokenService: TokenService;
@@ -13,10 +14,39 @@ class UserService {
   }
 
   async getUser(id: number) {
+    console.log('### 사용자 조회 요청', {id});
+
     const user = await this.userRepository.getUserById(id);
+    console.log('### 사용자 조회 요청', {id, user});
 
     if (!user) {
-      throw new Error('사용자 정보가 존재하지 않습니다.');
+      throw NextResponse.json(
+        {message: '사용자 정보가 존재하지 않습니다.'},
+        {status: 404},
+      );
+    }
+
+    const {accessToken, refreshToken} =
+      this.tokenService.createTokenByUser(user);
+
+    return {
+      id: user.id,
+      role: user.role,
+      nickName: user.nickName,
+      profileImageUrl: user.profileImageUrl ?? undefined,
+      accessToken,
+      refreshToken,
+    };
+  }
+
+  async getUserByKakaoId(kakaoId: number) {
+    const user = await this.userRepository.getUserByKakaoId(kakaoId);
+
+    if (!user) {
+      throw NextResponse.json(
+        {message: '사용자 정보가 존재하지 않습니다.'},
+        {status: 404},
+      );
     }
 
     const {accessToken, refreshToken} =

@@ -4,6 +4,7 @@ import UserService from '@/server/service/user.service';
 import {PageQeuryProps} from '@/types/common';
 import {cookies} from 'next/headers';
 import {redirect} from 'next/navigation';
+import {NextResponse} from 'next/server';
 
 const LoginResult = async (data: PageQeuryProps<{code: string}>) => {
   try {
@@ -13,7 +14,7 @@ const LoginResult = async (data: PageQeuryProps<{code: string}>) => {
     const {code} = await data.searchParams;
     const token = await kakao.getToken(code);
     const {id} = await kakao.getUserData(token.access_token);
-    const user = await service.getUser(id);
+    const user = await service.getUserByKakaoId(id);
 
     cookieStore.set('user', JSON.stringify(user), {
       httpOnly: true,
@@ -21,11 +22,16 @@ const LoginResult = async (data: PageQeuryProps<{code: string}>) => {
 
     redirect('/');
   } catch (error) {
-    console.error(error);
+    if (error instanceof NextResponse) {
+      error.status === 404 && redirect('/account/register?to=login');
+      return null;
+    }
+
     return (
       <Flex>
         <h1>로그인 실패</h1>
         <p>로그인에 실패하였습니다. 다시 시도해주세요.</p>
+        <p>{String(error)}</p>
       </Flex>
     );
   }
