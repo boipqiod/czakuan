@@ -6,3 +6,8 @@ export type Author = {
   nickName: string;
   profileImageUrl: string | null;
 };
+
+export type User = {
+  nickName: string;
+  profileImageUrl: string | null;
+};

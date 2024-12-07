@@ -36,7 +36,7 @@ export class Kakao {
     return response.data;
   }
 
-  async getUserData(token: string) {
+  async getUserData(token: string): Promise<KakaoUserResponse> {
     const response = await axios.get('https://kapi.kakao.com/v2/user/me', {
       headers: {
         Authorization: `Bearer ${token}`,

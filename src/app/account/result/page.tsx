@@ -1,19 +1,34 @@
-import {Kakao} from '@/server/modules/kakao';
+import {Flex} from '@/client/ui/widgets';
+import kakao from '@/server/modules/kakao';
+import UserService from '@/server/service/user.service';
 import {PageQeuryProps} from '@/types/common';
+import {cookies} from 'next/headers';
+import {redirect} from 'next/navigation';
 
 const LoginResult = async (data: PageQeuryProps<{code: string}>) => {
-  const {code} = await data.searchParams;
-  const kakao = new Kakao();
-  const token = await kakao.getToken(code);
-  console.log(token);
-  const profile = await kakao.getUserData(token.access_token);
-  console.log(profile);
+  try {
+    const service = new UserService();
+    const cookieStore = await cookies();
 
-  return (
-    <div>
-      <h1>LoginResult</h1>
-    </div>
-  );
+    const {code} = await data.searchParams;
+    const token = await kakao.getToken(code);
+    const {id} = await kakao.getUserData(token.access_token);
+    const user = await service.getUser(id);
+
+    cookieStore.set('user', JSON.stringify(user), {
+      httpOnly: true,
+    });
+
+    redirect('/');
+  } catch (error) {
+    console.error(error);
+    return (
+      <Flex>
+        <h1>로그인 실패</h1>
+        <p>로그인에 실패하였습니다. 다시 시도해주세요.</p>
+      </Flex>
+    );
+  }
 };
 
 export default LoginResult;

@@ -29,6 +29,14 @@ const PostDetailPage = async (data: {
 
   const {list: comments} = commentListItem;
 
+  const onLike = () => {
+    console.log('like');
+  };
+
+  const onDislike = () => {
+    console.log('dislike');
+  };
+
   console.log('post', post, comments);
 
   return (
