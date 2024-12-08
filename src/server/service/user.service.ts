@@ -87,19 +87,13 @@ class UserService {
   }
 
   async createUser({
-    code,
-    userData,
+    id,
+    nickName,
   }: {
-    code: string;
-    userData: {
-      nickName: string;
-      profileImageUrl: string;
-    };
+    id: number;
+    nickName: string;
+    profileImageUrl?: string;
   }) {
-    const {nickName, profileImageUrl} = userData;
-    const {access_token} = await kakao.getToken(code);
-    const {id} = await kakao.getUserData(access_token);
-
     const isNickNameExist =
       await this.userRepository.getUserByNickName(nickName);
 
@@ -110,16 +104,7 @@ class UserService {
     const user = await this.userRepository.getUserByKakaoId(id);
 
     if (user) {
-      const {accessToken, refreshToken} =
-        this.tokenService.createTokenByUser(user);
-      return {
-        id: user.id,
-        role: user.role,
-        nickName: user.nickName,
-        profileImageUrl: user.profileImageUrl ?? undefined,
-        accessToken,
-        refreshToken,
-      };
+      throw new Error('이미 존재하는 유저입니다. 로그인 해주세요.');
     }
 
     try {

@@ -5,6 +5,7 @@ import {Button} from '@/client/ui/widgets/Button';
 import {Divider} from '@/client/ui/widgets/Divider';
 import {formatRelativeTime} from '@/lib/dayjs';
 import {getCommentList, getPostDetail} from '@/server/actions/post.actions';
+import {cookies} from 'next/headers';
 import {AiOutlineDislike, AiOutlineLike} from 'react-icons/ai';
 import {FiEye} from 'react-icons/fi';
 import {LuDot} from 'react-icons/lu';
@@ -14,6 +15,10 @@ const PostDetailPage = async (data: {
     id: string;
   }>;
 }) => {
+  const cookieStore = await cookies();
+  const test = cookieStore.get('user');
+  console.log('test', test);
+
   const {id} = await data.params;
 
   const [post, commentListItem] = await Promise.all([
@@ -36,8 +41,6 @@ const PostDetailPage = async (data: {
   const onDislike = () => {
     console.log('dislike');
   };
-
-  console.log('post', post, comments);
 
   return (
     <Flex width={'100%'}>

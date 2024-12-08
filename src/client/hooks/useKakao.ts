@@ -7,6 +7,12 @@ declare global {
   }
 }
 
+export type KakaoLoginMetaData = {
+  type: 'login' | 'register';
+  isAutoLogin?: boolean;
+  nickName?: string;
+};
+
 export const useKakao = () => {
   useEffect(() => {
     const script = document.createElement('script');
@@ -34,10 +40,11 @@ export const useKakao = () => {
     }
   };
 
-  const login = () => {
-    const redirect_uri = `${window.origin}/account/result?test=1`;
+  const login = (state: KakaoLoginMetaData) => {
+    const redirect_uri = `${window.origin}/account/result`;
     window.Kakao.Auth.authorize({
       redirectUri: redirect_uri,
+      state: encodeURIComponent(JSON.stringify(state)),
     });
   };
 

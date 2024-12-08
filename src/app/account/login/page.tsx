@@ -7,6 +7,9 @@ import Link from 'next/link';
 
 const LoginPage = () => {
   const {login} = useKakao();
+  const onLogin = () => {
+    login({type: 'login'});
+  };
 
   return (
     <Flex gap={20}>
@@ -14,7 +17,7 @@ const LoginPage = () => {
       <Flex alignItems={'center'}>
         <ImageButton
           width={'200px'}
-          onClick={login}
+          onClick={onLogin}
           src={kakaoLogin.src}
           alt={'카카오 로그인'}
         />
