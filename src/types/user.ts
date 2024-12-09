@@ -8,6 +8,8 @@ export type Author = {
 };
 
 export type User = {
+  id: number;
+  role: Role;
   nickName: string;
   profileImageUrl: string | null;
 };

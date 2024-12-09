@@ -19,8 +19,6 @@ export const getPostList = async ({
   ]);
   const lastPage = Math.ceil(count / limit);
 
-  console.log(posts);
-
   return {
     page,
     lastPage,

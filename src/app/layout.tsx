@@ -1,8 +1,8 @@
 import {Content} from '@/client/ui/layouts/Content';
 import {Footer} from '@/client/ui/layouts/Footer';
 import {Header} from '@/client/ui/layouts/Header';
+import {userInfo} from '@/server/actions/auth.actions';
 import type {Metadata} from 'next';
-import {cookies} from 'next/headers';
 import {ReactNode} from 'react';
 import '../assets/globals.css';
 
@@ -15,9 +15,7 @@ export default async function RootLayout({
 }: Readonly<{
   children: ReactNode;
 }>) {
-  const cookieStore = await cookies();
-  const userString = cookieStore.get('user');
-  userString && console.log(JSON.parse(userString.value));
+  const user = await userInfo();
 
   return (
     <html lang="en">
@@ -26,7 +24,7 @@ export default async function RootLayout({
         <title>에대숲 with 시작관</title>
       </head>
       <body>
-        <Header />
+        <Header user={user ?? undefined} />
         <Content>{children}</Content>
         <Footer />
       </body>

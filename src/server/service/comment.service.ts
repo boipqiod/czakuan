@@ -54,19 +54,22 @@ export class CommentService {
     const like = await this.commentRepository.getLike(commentId, userId);
 
     if (like) {
-      return this.commentRepository.deleteLike(commentId, userId);
+      this.commentRepository.deleteLike(commentId, userId);
     } else {
-      return this.commentRepository.createLike(commentId, userId);
+      this.commentRepository.createLike(commentId, userId);
     }
+
+    const _like = await this.commentRepository.getLike(commentId, userId);
+    console.log(_like);
   }
 
   async dislikeComment(commentId: number, userId: number) {
     const dislike = await this.commentRepository.getDislike(commentId, userId);
 
     if (dislike) {
-      return this.commentRepository.deleteDislike(commentId, userId);
+      this.commentRepository.deleteDislike(commentId, userId);
     } else {
-      return this.commentRepository.createDislike(commentId, userId);
+      this.commentRepository.createDislike(commentId, userId);
     }
   }
 }

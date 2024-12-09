@@ -1,3 +1,4 @@
+'use server';
 import {CommentService} from '@/server/service/comment.service';
 
 export const likeComment = async (commentId: number, userId: number) => {

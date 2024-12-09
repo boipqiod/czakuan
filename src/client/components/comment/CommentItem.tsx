@@ -59,9 +59,11 @@ export const CommentItem = ({
         <Button>답글</Button>
         <LuDot />
         <ClearButton onClick={onClickLike}>
-          <AiOutlineLike />
+          <AiOutlineLike color={isLike ? colors['primary.500'] : 'white'} />
         </ClearButton>
-        <ClearButton onClick={onClickDislike}>
+        <ClearButton
+          onClick={onClickDislike}
+          color={isDislike ? colors['red.400'] : 'white'}>
           <AiOutlineDislike />
         </ClearButton>
       </HFlex>

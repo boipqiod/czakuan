@@ -8,11 +8,12 @@ import {
   DropdownMenu,
   DropdownMenuButton,
   DropdownMenuItem,
-  DropdownMenuLink,
 } from '@/client/ui/widgets/DropdownMenu';
+import {logout as logoutAction} from '@/server/actions/auth.actions';
 import {User} from '@/types/user';
 import Image from 'next/image';
 import Link from 'next/link';
+import {useRouter} from 'next/navigation';
 import {useEffect} from 'react';
 import {TiThMenu} from 'react-icons/ti';
 
@@ -21,11 +22,18 @@ type HeaderProps = {
 };
 export const Header = ({user: loginUser}: Readonly<HeaderProps>) => {
   const {toggleSidebar} = useLayoutStore();
-  const {user, isLogin, login} = useAuthStore();
+  const {user, isLogin, login, logout} = useAuthStore();
+  const router = useRouter();
 
   useEffect(() => {
     if (loginUser) login(loginUser);
-  }, [loginUser]);
+  }, [loginUser, isLogin]);
+
+  const onLogout = async () => {
+    logoutAction();
+    logout();
+    window.location.reload();
+  };
 
   return (
     <header className={styles.header}>
@@ -37,13 +45,31 @@ export const Header = ({user: loginUser}: Readonly<HeaderProps>) => {
       </Link>
       <DropdownMenu>
         <DropdownMenuButton>
-          <Avatar alt={'avatar'} size={15} src={user?.profileImageUrl} />
+          <Avatar
+            alt={'avatar'}
+            size={15}
+            src={user?.profileImageUrl}
+            style={{padding: '5px'}}
+          />
         </DropdownMenuButton>
-        {isLogin && <DropdownMenuItem>내 정보</DropdownMenuItem>}
-        {isLogin && <DropdownMenuItem>로그아웃</DropdownMenuItem>}
-
-        <DropdownMenuLink href={'/account/register'}>회원가입</DropdownMenuLink>
-        <DropdownMenuLink href={'/account/login'}>로그인</DropdownMenuLink>
+        {isLogin && (
+          <DropdownMenuItem onClick={() => router.push('/account/my')}>
+            내 정보
+          </DropdownMenuItem>
+        )}
+        {isLogin && (
+          <DropdownMenuItem onClick={onLogout}>로그아웃</DropdownMenuItem>
+        )}
+        {!isLogin && (
+          <DropdownMenuItem onClick={() => router.push('/account/register')}>
+            회원가입
+          </DropdownMenuItem>
+        )}
+        {!isLogin && (
+          <DropdownMenuItem onClick={() => router.push('/account/login')}>
+            로그인
+          </DropdownMenuItem>
+        )}
       </DropdownMenu>
     </header>
   );
