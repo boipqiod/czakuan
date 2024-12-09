@@ -30,7 +30,7 @@ const LoginResult = () => {
     const metaData = JSON.parse(
       decodeURIComponent(state),
     ) as KakaoLoginMetaData;
-    const id = await kakaoLogin(code);
+    const loginRes = await kakaoLogin(code);
     let user;
     if (metaData.type === 'login') {
       user = await login(id);
@@ -49,7 +49,7 @@ const LoginResult = () => {
       return;
     }
 
-    await saveUserInfo(user, true);
+    await saveUserInfo<User>(user, true);
     router.replace('/');
   };
 
