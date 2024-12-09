@@ -34,6 +34,7 @@ export const logout = async () => {
   const cookieStore = await cookies();
   cookieStore.delete('token');
   cookieStore.delete('refreshToken');
+  return null;
 };
 
 export const userInfo = async () => {
@@ -79,4 +80,6 @@ export const saveUserInfo = async (user: any, isSave: boolean) => {
     httpOnly: true,
     expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7),
   });
+
+  return null;
 };
