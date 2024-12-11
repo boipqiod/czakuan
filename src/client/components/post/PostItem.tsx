@@ -1,7 +1,8 @@
 'use client';
+import {colors} from '@/assets/color';
 import {Flex, HFlex, Text} from '@/client/ui/widgets';
 import {Avatar} from '@/client/ui/widgets/Avatar';
-import dayjs from 'dayjs';
+import {formatRelativeTime} from '@/lib/dayjs';
 import Link from 'next/link';
 import {AiOutlineLike} from 'react-icons/ai';
 import {FiEye} from 'react-icons/fi';
@@ -53,40 +54,40 @@ export const PostItem = ({
         color: 'white',
         textDecoration: 'none',
       }}>
-      <Flex justifyContent={'center'}>
-        <HFlex gap={'1rem'}>
-          <Avatar
-            style={{
-              borderRadius: '8px',
-            }}
-            size={30}
-            src={thumbnailUrl}
-          />
-          <Flex gap={'.5rem'}>
-            <HFlex gap={8}>
-              <Text>{title}</Text>
-              <Text fontWeight={'bold'} color={'primary'}>
-                {comments}
-              </Text>
+      <HFlex
+        alignItems={'center'}
+        gap={'1rem'}
+        paddingBottom={'.8rem'}
+        borderBottom={`1px solid ${colors['dark.400']}`}>
+        <Avatar
+          style={{
+            borderRadius: '8px',
+          }}
+          size={40}
+          src={thumbnailUrl}
+        />
+        <Flex gap={'.2rem'}>
+          <HFlex gap={8}>
+            <Text>{title}</Text>
+            <Text color={colors.primary}>{comments}</Text>
+          </HFlex>
+          <HFlex>
+            {nickName}
+            <LuDot />
+            <span>{formatRelativeTime(createdAt)}</span>
+            <LuDot />
+            <HFlex gap={2}>
+              <FiEye />
+              {views}
             </HFlex>
-            <HFlex>
-              {nickName}
-              <LuDot />
-              <span>{dayjs(createdAt).toString()}</span>
-              <LuDot />
-              <div>
-                <FiEye />
-                {views}
-              </div>
-              <LuDot />
-              <div>
-                <AiOutlineLike />
-                {likes}
-              </div>
+            <LuDot />
+            <HFlex gap={2}>
+              <AiOutlineLike />
+              {likes}
             </HFlex>
-          </Flex>
-        </HFlex>
-      </Flex>
+          </HFlex>
+        </Flex>
+      </HFlex>
     </Link>
   );
 };

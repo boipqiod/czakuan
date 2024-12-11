@@ -1,8 +1,9 @@
+'use client';
 import {CSSProperties} from 'react';
 
 type InputProps = {
-  value: string;
-  onChange: (value: string) => void;
+  value?: string;
+  onChange?: (value: string) => void;
   placeholder?: string;
 } & CSSProperties;
 export const Input = ({value, onChange, placeholder, ...sytle}: InputProps) => {
@@ -11,7 +12,7 @@ export const Input = ({value, onChange, placeholder, ...sytle}: InputProps) => {
       placeholder={placeholder}
       type={'text'}
       value={value}
-      onChange={e => onChange(e.target.value)}
+      onChange={e => onChange && onChange(e.target.value)}
       style={{
         ...sytle,
         border: '1px solid #979797',

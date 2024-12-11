@@ -53,7 +53,7 @@ export const Header = ({user: loginUser}: Readonly<HeaderProps>) => {
           />
         </DropdownMenuButton>
         {isLogin && (
-          <DropdownMenuItem onClick={() => router.push('/account/my')}>
+          <DropdownMenuItem onClick={() => router.push('/user')}>
             내 정보
           </DropdownMenuItem>
         )}

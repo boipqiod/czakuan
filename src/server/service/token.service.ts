@@ -1,5 +1,6 @@
-import {User} from '@prisma/client';
+import {User} from '@/types/user';
 import jwt from 'jsonwebtoken';
+import {cookies} from 'next/headers';
 
 export class TokenService {
   constructor(
@@ -30,5 +31,15 @@ export class TokenService {
 
   verifyAccessToken(token: string) {
     return this.verifyToken(token) as User;
+  }
+
+  async verifyCookieToken() {
+    const cookieStore = await cookies();
+    const token = cookieStore.get('token');
+    const refreshToken = cookieStore.get('refreshToken');
+    if (!token || !refreshToken) {
+      return null;
+    }
+    return this.verifyAccessToken(token.value);
   }
 }
