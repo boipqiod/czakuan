@@ -1,48 +1,51 @@
 'use server';
-import {CustomError} from '@/lib/actions';
+import {CustomError, serverAction} from '@/lib/actions';
 import kakao from '@/server/modules/kakao';
 import {TokenService} from '@/server/service/token.service';
 import UserService from '@/server/service/user.service';
+import {User} from '@/types/user';
 import {cookies} from 'next/headers';
 
-export const test = async () => {
+export const test = serverAction(async () => {
   throw new CustomError(400, 'test');
-};
+});
 
-export const kakaoLogin = async (code: string) => {
+export const kakaoLogin = serverAction(async (code: string) => {
   const token = await kakao.getToken(code);
   const {id} = await kakao.getUserData(token.access_token);
 
-  return id;
-};
+  return {id};
+});
 
-export const register = async (kakaoId: number, nickName: string) => {
-  const service = new UserService();
+export const register = serverAction(
+  async (kakaoId: number, nickName: string) => {
+    const service = new UserService();
 
-  const user = await service.createUser({
-    id: kakaoId,
-    nickName: nickName as string,
-  });
+    const user = await service.createUser({
+      id: kakaoId,
+      nickName: nickName as string,
+    });
 
-  return user;
-};
+    return user;
+  },
+);
 
-export const login = async (kakaoId: number) => {
+export const login = serverAction(async (kakaoId: number): Promise<User> => {
   const service = new UserService();
 
   const user = await service.getUserByKakaoId(kakaoId);
 
   return user;
-};
+});
 
-export const logout = async () => {
+export const logout = serverAction(async () => {
   const cookieStore = await cookies();
   cookieStore.delete('token');
   cookieStore.delete('refreshToken');
   return null;
-};
+});
 
-export const userInfo = async () => {
+export const userInfo = serverAction(async () => {
   const cookieStore = await cookies();
   const token = cookieStore.get('token');
   const refreshToken = cookieStore.get('refreshToken');
@@ -68,9 +71,9 @@ export const userInfo = async () => {
       return null;
     }
   }
-};
+});
 
-export const saveUserInfo = async (user: any, isSave: boolean) => {
+export const saveUserInfo = serverAction(async (user: any, isSave: boolean) => {
   const cookieStore = await cookies();
   const tokenService = new TokenService();
   const {accessToken, refreshToken} = tokenService.createTokenByUser(user);
@@ -87,4 +90,4 @@ export const saveUserInfo = async (user: any, isSave: boolean) => {
   });
 
   return null;
-};
+});

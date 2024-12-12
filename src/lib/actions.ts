@@ -7,10 +7,13 @@ class ActionResponse<T extends Record<string, any> | null> {
 }
 
 // use this function when server action
-export const serverAction = <T extends Record<string, any> | null>(
-  action: (...args: any[]) => Promise<T>,
+export const serverAction = <
+  T extends Record<string, any> | null,
+  U extends any[],
+>(
+  action: (...args: U) => Promise<T>,
 ) => {
-  return async (...args: any[]): Promise<ActionResponse<T>> => {
+  return async (...args: U): Promise<ActionResponse<T>> => {
     try {
       const data = await action(...args);
       return new ActionResponse(200, 'OK', data ?? undefined);
@@ -24,11 +27,11 @@ export const serverAction = <T extends Record<string, any> | null>(
 };
 // use this function when response action in client
 export const actionWrapper = async <T extends Record<string, any> | null>(
-  action: () => Promise<ActionResponse<T>>,
+  promise: Promise<ActionResponse<T>>,
 ) => {
-  const response = await action();
+  const response = await promise;
   if (response.status === 200) {
-    return response.data;
+    return response.data!;
   }
   throw new Error(response.message);
 };

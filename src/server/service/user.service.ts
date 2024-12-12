@@ -56,7 +56,7 @@ class UserService {
       id: user.id,
       role: user.role,
       nickName: user.nickName,
-      profileImageUrl: user.profileImageUrl ?? undefined,
+      profileImageUrl: user.profileImageUrl,
       accessToken,
       refreshToken,
     };
@@ -116,7 +116,7 @@ class UserService {
       return {
         id: createdUser.id,
         role: createdUser.role,
-        profileImageUrl: createdUser.profileImageUrl ?? undefined,
+        profileImageUrl: createdUser.profileImageUrl,
         nickName: createdUser.nickName,
         accessToken,
         refreshToken,

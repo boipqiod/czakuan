@@ -1,12 +1,14 @@
 'use client';
 import {KakaoLoginMetaData} from '@/client/hooks/useKakao';
 import {Flex} from '@/client/ui/widgets';
+import {actionWrapper} from '@/lib/actions';
 import {
   kakaoLogin,
   login,
   register,
   saveUserInfo,
 } from '@/server/actions/auth.actions';
+import {User} from '@/types/user';
 import {useRouter} from 'next/navigation';
 import {useEffect} from 'react';
 
@@ -31,17 +33,17 @@ const LoginResult = () => {
       const metaData = JSON.parse(
         decodeURIComponent(state),
       ) as KakaoLoginMetaData;
-      const id = await kakaoLogin(code);
-      let user;
+      const {id} = await actionWrapper(kakaoLogin(code));
+      let user: User;
       if (metaData.type === 'login') {
-        user = await login(id);
+        user = await actionWrapper(login(id));
       } else {
         if (!metaData.nickName) {
           alert('정보가 올바르지 않습니다.');
           router.replace('/');
           return;
         }
-        user = await register(id, metaData.nickName);
+        user = await actionWrapper(register(id, metaData.nickName));
       }
 
       if (!user) {
@@ -50,7 +52,7 @@ const LoginResult = () => {
         return;
       }
 
-      await saveUserInfo(user, true);
+      await actionWrapper(saveUserInfo(user, true));
       router.replace('/');
     } catch (e) {}
   };
