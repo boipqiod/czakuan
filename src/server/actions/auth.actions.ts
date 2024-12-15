@@ -1,18 +1,17 @@
 'use server';
-import {CustomError, serverAction} from '@/lib/actions';
+import {serverAction} from '@/lib/actions';
 import kakao from '@/server/modules/kakao';
 import {TokenService} from '@/server/service/token.service';
 import UserService from '@/server/service/user.service';
 import {User} from '@/types/user';
 import {cookies} from 'next/headers';
 
-export const test = serverAction(async () => {
-  throw new CustomError(400, 'test');
-});
-
 export const kakaoLogin = serverAction(async (code: string) => {
+  console.log('### 카카오 로그인 요청', {code});
   const token = await kakao.getToken(code);
+  console.log('### 카카오 토큰 요청', {token});
   const {id} = await kakao.getUserData(token.access_token);
+  console.log('### 카카오 사용자 조회 요청', {id});
 
   return {id};
 });
@@ -31,6 +30,8 @@ export const register = serverAction(
 );
 
 export const login = serverAction(async (kakaoId: number): Promise<User> => {
+  console.log('### 카카오 로그인 요청', {kakaoId});
+
   const service = new UserService();
 
   const user = await service.getUserByKakaoId(kakaoId);

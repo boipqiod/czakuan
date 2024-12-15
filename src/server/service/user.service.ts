@@ -33,14 +33,13 @@ class UserService {
       id: user.id,
       role: user.role,
       nickName: user.nickName,
-      profileImageUrl: user.profileImageUrl ?? undefined,
-      accessToken,
-      refreshToken,
+      profileImageUrl: user.profileImageUrl,
     };
   }
 
   async getUserByKakaoId(kakaoId: number) {
     const user = await this.userRepository.getUserByKakaoId(kakaoId);
+    console.log('### 카카오 사용자 조회 요청', {kakaoId, user});
 
     if (!user) {
       throw NextResponse.json(

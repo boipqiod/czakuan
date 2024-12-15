@@ -33,9 +33,13 @@ const LoginResult = () => {
       const metaData = JSON.parse(
         decodeURIComponent(state),
       ) as KakaoLoginMetaData;
+
       const {id} = await actionWrapper(kakaoLogin(code));
+
       let user: User;
       if (metaData.type === 'login') {
+        console.log('login', id);
+
         user = await actionWrapper(login(id));
       } else {
         if (!metaData.nickName) {
@@ -54,7 +58,11 @@ const LoginResult = () => {
 
       await actionWrapper(saveUserInfo(user, true));
       router.replace('/');
-    } catch (e) {}
+    } catch (e) {
+      console.error(e);
+      alert('로그인에 실패했습니다.');
+      router.replace('/');
+    }
   };
 
   return (

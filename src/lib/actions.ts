@@ -1,9 +1,7 @@
-class ActionResponse<T extends Record<string, any> | null> {
-  constructor(
-    readonly status: number,
-    readonly message: string,
-    readonly data?: T,
-  ) {}
+interface ActionResponse<T extends Record<string, any> | null> {
+  readonly status: number;
+  readonly message: string;
+  readonly data?: T;
 }
 
 // use this function when server action
@@ -15,13 +13,25 @@ export const serverAction = <
 ) => {
   return async (...args: U): Promise<ActionResponse<T>> => {
     try {
+      console.log('### action', action, args);
+
       const data = await action(...args);
-      return new ActionResponse(200, 'OK', data ?? undefined);
+      console.log('### action', action, args, data);
+      return {status: 200, message: 'OK', data: data ?? undefined};
     } catch (error: any) {
-      if (error instanceof ActionResponse) {
-        return error;
+      if (error.status && error.message) {
+        return {
+          status: error.status,
+          message: error.message,
+          data: undefined as unknown as T,
+        };
       }
-      return new ActionResponse(500, error.message, undefined as unknown as T);
+
+      return {
+        status: 500,
+        message: error.message,
+        data: undefined as unknown as T,
+      };
     }
   };
 };
@@ -35,10 +45,3 @@ export const actionWrapper = async <T extends Record<string, any> | null>(
   }
   throw new Error(response.message);
 };
-
-export class CustomError {
-  constructor(
-    readonly status: number,
-    readonly message: string,
-  ) {}
-}

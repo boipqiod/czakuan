@@ -14,7 +14,6 @@ import {User} from '@/types/user';
 import Image from 'next/image';
 import Link from 'next/link';
 import {useRouter} from 'next/navigation';
-import {useEffect} from 'react';
 import {TiThMenu} from 'react-icons/ti';
 
 type HeaderProps = {
@@ -22,12 +21,8 @@ type HeaderProps = {
 };
 export const Header = ({user: loginUser}: Readonly<HeaderProps>) => {
   const {toggleSidebar} = useLayoutStore();
-  const {user, isLogin, login, logout} = useAuthStore();
+  const {user, isLogin, logout} = useAuthStore();
   const router = useRouter();
-
-  useEffect(() => {
-    if (loginUser) login(loginUser);
-  }, [loginUser, isLogin]);
 
   const onLogout = async () => {
     logoutAction();
