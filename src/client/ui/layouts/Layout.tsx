@@ -3,6 +3,7 @@ import {useAuthStore} from '@/client/store/AuthStore';
 import {Content} from '@/client/ui/layouts/Content';
 import {Footer} from '@/client/ui/layouts/Footer';
 import {Header} from '@/client/ui/layouts/Header';
+import {SidePanel} from '@/client/ui/layouts/SidePanel';
 import {actionWrapper} from '@/lib/actions';
 import {getUserInfo} from '@/server/actions/user.actions';
 import {ReactNode, useEffect, useState} from 'react';
@@ -41,8 +42,11 @@ export const Layout = ({children}: LayoutProps) => {
 
   return (
     <>
-      <Header user={user ?? undefined} />
-      <Content>{children}</Content>
+      <Header />
+      <Content>
+        <SidePanel />
+        {children}
+      </Content>
       <Footer />
     </>
   );

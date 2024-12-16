@@ -10,24 +10,23 @@ import {
   DropdownMenuItem,
 } from '@/client/ui/widgets/DropdownMenu';
 import {logout as logoutAction} from '@/server/actions/auth.actions';
-import {User} from '@/types/user';
 import Image from 'next/image';
 import Link from 'next/link';
 import {useRouter} from 'next/navigation';
 import {TiThMenu} from 'react-icons/ti';
 
-type HeaderProps = {
-  user?: User;
-};
-export const Header = ({user: loginUser}: Readonly<HeaderProps>) => {
+export const Header = () => {
   const {toggleSidebar} = useLayoutStore();
   const {user, isLogin, logout} = useAuthStore();
   const router = useRouter();
 
   const onLogout = async () => {
+    const confirm = window.confirm('로그아웃 하시겠습니까?');
+    if (!confirm) return;
+
     logoutAction();
     logout();
-    window.location.reload();
+    router.refresh();
   };
 
   return (

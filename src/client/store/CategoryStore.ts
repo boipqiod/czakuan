@@ -12,6 +12,7 @@ export type CategoryItem = {
 };
 
 interface CategoryStore {
+  isFetched: boolean;
   categories: CategoryItem[];
   categoryGroups: categoryGroup[];
 
@@ -22,6 +23,7 @@ interface CategoryStore {
 }
 
 export const useCategoryStore = create<CategoryStore>((set, get) => ({
+  isFetched: false,
   categories: [],
   categoryGroups: [],
 
@@ -42,5 +44,38 @@ export const useCategoryStore = create<CategoryStore>((set, get) => ({
     );
   },
 
-  fetchCategories: async () => {},
+  fetchCategories: async () => {
+    const categories = [
+      {
+        id: 1,
+        name: 'Category 1',
+        subCategories: [
+          {
+            id: 11,
+            name: 'Sub Category 1',
+          },
+          {
+            id: 12,
+            name: 'Sub Category 2',
+          },
+        ],
+      },
+      {
+        id: 2,
+        name: 'Category 2',
+        subCategories: [
+          {
+            id: 21,
+            name: 'Sub Category 1',
+          },
+          {
+            id: 22,
+            name: 'Sub Category 2',
+          },
+        ],
+      },
+    ];
+
+    set({isFetched: true, categories});
+  },
 }));
