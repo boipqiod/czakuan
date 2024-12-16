@@ -1,6 +1,9 @@
+import {actionWrapper} from '@/lib/actions';
+import {getCategorise} from '@/server/actions/board.actions';
 import {create} from 'zustand';
 
 export type categoryGroup = {
+  id: number;
   name: string;
   categories: CategoryItem[];
 };
@@ -8,13 +11,15 @@ export type categoryGroup = {
 export type CategoryItem = {
   id: number;
   name: string;
-  subCategories?: CategoryItem[];
+  subCategories: {
+    id: number;
+    name: string;
+  }[];
 };
 
 interface CategoryStore {
   isFetched: boolean;
-  categories: CategoryItem[];
-  categoryGroups: categoryGroup[];
+  categories: categoryGroup[];
 
   getCategory: (id?: number) => CategoryItem | undefined;
   getSubCategory: (id?: number) => CategoryItem | undefined;
@@ -28,54 +33,14 @@ export const useCategoryStore = create<CategoryStore>((set, get) => ({
   categoryGroups: [],
 
   getCategory: id => {
-    const {categories} = get();
-
-    return categories.find(category => category.id === Number(id));
+    return undefined;
   },
   getSubCategory: id => {
-    const {categories} = get();
-    const subCategory = categories.find(category =>
-      category.subCategories?.find(
-        subCategory => subCategory.id === Number(id),
-      ),
-    );
-    return subCategory?.subCategories?.find(
-      subCategory => subCategory.id === Number(id),
-    );
+    return undefined;
   },
 
   fetchCategories: async () => {
-    const categories = [
-      {
-        id: 1,
-        name: 'Category 1',
-        subCategories: [
-          {
-            id: 11,
-            name: 'Sub Category 1',
-          },
-          {
-            id: 12,
-            name: 'Sub Category 2',
-          },
-        ],
-      },
-      {
-        id: 2,
-        name: 'Category 2',
-        subCategories: [
-          {
-            id: 21,
-            name: 'Sub Category 1',
-          },
-          {
-            id: 22,
-            name: 'Sub Category 2',
-          },
-        ],
-      },
-    ];
-
-    set({isFetched: true, categories});
+    const {categoryGroups} = await actionWrapper(getCategorise());
+    set({isFetched: true, categories: categoryGroups});
   },
 }));

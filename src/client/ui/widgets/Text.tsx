@@ -5,5 +5,5 @@ type TextProps = CSSProperties & {
 };
 
 export const Text = ({children, ...props}: TextProps) => {
-  return <div style={{...props}}>{children}</div>;
+  return <div style={{...props, display: 'inline-block'}}>{children}</div>;
 };

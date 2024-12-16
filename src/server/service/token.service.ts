@@ -23,7 +23,7 @@ export class TokenService {
       profileImageUrl: user.profileImageUrl,
     };
 
-    const accessToken = this.createToken(payload, '1h');
+    const accessToken = this.createToken(payload, '1d');
     const refreshToken = this.createToken(payload, '7d');
 
     return {accessToken, refreshToken};
