@@ -16,11 +16,15 @@ export const Layout = ({children}: LayoutProps) => {
 
   useEffect(() => {
     const fetchUserInfo = async () => {
-      if (!isLogin) {
+      console.log('### fetchUserInfo', {isLogin, user});
+
+      if (isLogin) {
         return;
       }
 
       const userInfo = await actionWrapper(getUserInfo());
+      console.log('### userInfo', userInfo);
+
       if (!userInfo) {
         return;
       }

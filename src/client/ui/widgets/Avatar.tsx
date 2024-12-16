@@ -30,11 +30,11 @@ export const Avatar = ({src, alt, size = 50, style}: AvatarProps) => {
           style={{
             width: '100%',
             height: '100%',
-            objectFit: 'cover',
+            // objectFit: 'cover',
           }}
         />
       ) : (
-        <FaUser />
+        <FaUser color={'black'} />
       )}
     </div>
   );

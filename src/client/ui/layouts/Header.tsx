@@ -40,12 +40,7 @@ export const Header = ({user: loginUser}: Readonly<HeaderProps>) => {
       </Link>
       <DropdownMenu>
         <DropdownMenuButton>
-          <Avatar
-            alt={'avatar'}
-            size={15}
-            src={user?.profileImageUrl}
-            style={{padding: '5px'}}
-          />
+          <Avatar alt={'avatar'} size={25} src={user?.profileImageUrl} />
         </DropdownMenuButton>
         {isLogin && (
           <DropdownMenuItem onClick={() => router.push('/user')}>

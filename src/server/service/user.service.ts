@@ -2,6 +2,7 @@ import kakao from '@/server/modules/kakao';
 import s3 from '@/server/modules/s3';
 import {UserRepository} from '@/server/repositories/user.repository';
 import {TokenService} from '@/server/service/token.service';
+import {User} from '@/types/user';
 import {NextResponse} from 'next/server';
 
 class UserService {
@@ -126,21 +127,43 @@ class UserService {
     }
   }
 
-  async updateUser(id: number, nickName?: string, profileImageUrl?: string) {
+  async updateUser(
+    id: number,
+    nickName?: string,
+    profileImageUrl?: string,
+  ): Promise<User> {
+    console.log('### 사용자 정보 수정 요청', {id, nickName, profileImageUrl});
+
     const movedProfileImageUrl = profileImageUrl
       ? await s3.moveObject(profileImageUrl, `profile/${id}`, 'profile')
       : undefined;
 
-    await this.userRepository.updateUser(id, nickName, movedProfileImageUrl);
-
-    return {
+    console.log('### 사용자 정보 수정 요청', {
       id,
       nickName,
-      profileImageUrl,
+      movedProfileImageUrl,
+    });
+
+    const {
+      id: updatedId,
+      nickName: updatedNickName,
+      role: updatedRole,
+      profileImageUrl: updatedProfileImageUrl,
+    } = await this.userRepository.updateUser(
+      id,
+      nickName,
+      movedProfileImageUrl,
+    );
+
+    return {
+      id: updatedId,
+      role: updatedRole,
+      nickName: updatedNickName,
+      profileImageUrl: updatedProfileImageUrl,
     };
   }
 
-  async uploadTempImage(prifix: string, file: File) {
+  async uploadTempImage(file: File) {
     const fileUrl = await s3.uploadTempImage('profile', file);
     console.log('### 프로필 이미지 임시 업로드', {fileUrl});
 
