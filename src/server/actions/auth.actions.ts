@@ -9,9 +9,9 @@ import {cookies} from 'next/headers';
 export const kakaoLogin = serverAction(async (code: string) => {
   console.log('### 카카오 로그인 요청', {code});
   const token = await kakao.getToken(code);
-  console.log('### 카카오 토큰 요청', {token});
+  console.log('### 카카오 토큰', {token});
   const {id} = await kakao.getUserData(token.access_token);
-  console.log('### 카카오 사용자 조회 요청', {id});
+  console.log('### 카카오 사용자 조회', {kakaoId: id});
 
   return {id};
 });

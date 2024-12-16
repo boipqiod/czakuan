@@ -13,10 +13,7 @@ export const serverAction = <
 ) => {
   return async (...args: U): Promise<ActionResponse<T>> => {
     try {
-      console.log('### action', action, args);
-
       const data = await action(...args);
-      console.log('### action', action, args, data);
       return {status: 200, message: 'OK', data: data ?? undefined};
     } catch (error: any) {
       if (error.status && error.message) {

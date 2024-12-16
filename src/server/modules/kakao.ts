@@ -16,9 +16,10 @@ export interface KakaoUserResponse {
 
 export class Kakao {
   readonly clientId: string = process.env.KAKAO_CLIENT_ID ?? '';
-  readonly clientSecret: string = process.env.KAKAO_CLIENT_SECRET ?? '';
 
   async getToken(code: string) {
+    console.log('### Kakao.getToken', {code});
+
     const response = await axios.post<KakaoTokenResponse>(
       'https://kauth.kakao.com/oauth/token',
       {

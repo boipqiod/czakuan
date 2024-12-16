@@ -1,5 +1,6 @@
 'use client';
 import {KakaoLoginMetaData} from '@/client/hooks/useKakao';
+import {useAuthStore} from '@/client/store/AuthStore';
 import {Flex} from '@/client/ui/widgets';
 import {actionWrapper} from '@/lib/actions';
 import {
@@ -14,6 +15,7 @@ import {useEffect} from 'react';
 
 const LoginResult = () => {
   const router = useRouter();
+  const {login: loginStore} = useAuthStore();
   useEffect(() => {
     init();
   }, []);
@@ -56,6 +58,7 @@ const LoginResult = () => {
         return;
       }
 
+      loginStore(user);
       await actionWrapper(saveUserInfo(user, true));
       router.replace('/');
     } catch (e) {
