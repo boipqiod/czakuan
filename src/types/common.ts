@@ -4,7 +4,9 @@ export type PageProps<T = any, U = any> = {
 };
 
 export type PageQeuryProps<T = any> = {
-  searchParams: Promise<T>;
+  searchParams: Promise<
+    T extends Record<string, string> ? T : Record<string, string>
+  >;
 };
 
 export type PagePathProps<T = any> = {

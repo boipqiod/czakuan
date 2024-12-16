@@ -6,15 +6,19 @@ import {PostRepository} from '@/server/repositories/post.repository';
 type getPostListParams = {
   page?: number;
   limit?: number;
+  categoryId?: number;
+  subCategoryId?: number;
 };
 
 export const getPostList = async ({
   page = 1,
   limit = 10,
+  categoryId,
+  subCategoryId,
 }: getPostListParams | undefined = {}) => {
   const repo = new PostRepository();
   const [posts, count] = await Promise.all([
-    repo.getList(page ?? 1, 10),
+    repo.getList(page, limit, categoryId, subCategoryId),
     repo.getCount(),
   ]);
   const lastPage = Math.ceil(count / limit);

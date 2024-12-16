@@ -12,33 +12,23 @@ type LayoutProps = {
   children: ReactNode;
 };
 export const Layout = ({children}: LayoutProps) => {
-  const {user, isLogin, login} = useAuthStore();
+  const {user, isLogin, setUserInfo} = useAuthStore();
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchUserInfo = async () => {
-      console.log('### fetchUserInfo', {isLogin, user});
-
-      if (isLogin) {
-        return;
-      }
+      if (isLogin) return;
 
       const userInfo = await actionWrapper(getUserInfo());
-      console.log('### userInfo', userInfo);
+      if (!userInfo) return;
 
-      if (!userInfo) {
-        return;
-      }
-
-      login(userInfo);
+      setUserInfo(userInfo);
     };
 
     fetchUserInfo().finally(() => setIsLoading(false));
   }, []);
 
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
+  if (isLoading) return null;
 
   return (
     <>
