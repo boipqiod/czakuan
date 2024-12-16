@@ -2,6 +2,7 @@
 
 import {CommentRepository} from '@/server/repositories/comment.repository';
 import {PostRepository} from '@/server/repositories/post.repository';
+import {PostService} from '@/server/service/post.service';
 
 type getPostListParams = {
   page?: number;
@@ -16,19 +17,13 @@ export const getPostList = async ({
   categoryId,
   subCategoryId,
 }: getPostListParams | undefined = {}) => {
-  const repo = new PostRepository();
-  const [posts, count] = await Promise.all([
-    repo.getList(page, limit, categoryId, subCategoryId),
-    repo.getCount(),
-  ]);
-  const lastPage = Math.ceil(count / limit);
+  const service = new PostService();
 
-  return {
-    page,
-    lastPage,
-    total: count,
-    list: posts,
-  };
+  if (categoryId || subCategoryId) {
+    return service.getPostList(page, limit, categoryId, subCategoryId);
+  } else {
+    return service.getPopularPostList({page, limit});
+  }
 };
 
 export const getPostDetail = async (id: number) => {
