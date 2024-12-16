@@ -5,13 +5,20 @@ import {useCategoryStore} from '@/client/store/CategoryStore';
 import {useLayoutStore} from '@/client/store/LayoutStore';
 import {Flex, HFlex, Text} from '@/client/ui/widgets';
 import {ClearButton} from '@/client/ui/widgets/Button';
-import {useRouter} from 'next/navigation';
+import {usePathname, useRouter, useSearchParams} from 'next/navigation';
 import {useEffect} from 'react';
 
 export const SidePanel = () => {
   const router = useRouter();
-  const {isSidebarOpen, toggleSidebar} = useLayoutStore();
+  const {isSidebarOpen, toggleSidebar, closeSidebar} = useLayoutStore();
   const {isFetched, categories, fetchCategories} = useCategoryStore();
+
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    closeSidebar();
+  }, [pathname, searchParams]);
 
   useEffect(() => {
     if (!isFetched) {
@@ -34,7 +41,7 @@ export const SidePanel = () => {
       height={'100%'}
       backgroundColor={'#1f1f1f'}
       zIndex={100}>
-      <Flex padding={30} gap={20} maxWidth={400}>
+      <Flex padding={30} gap={20} maxWidth={600}>
         {categories.map(categoryGroup => (
           <div key={categoryGroup.id}>
             <Text
