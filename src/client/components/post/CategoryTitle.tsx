@@ -52,7 +52,7 @@ export const CategoryTitle = ({
                     : '#444'
                   : undefined
               }
-              key={subCategory.id}
+              key={`subCategory-${subCategory.id}`}
               onClick={() => onClickSubCategory(subCategory.id)}>
               {subCategory.name}
             </Button>
