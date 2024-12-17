@@ -11,10 +11,12 @@ export type categoryGroup = {
 export type CategoryItem = {
   id: number;
   name: string;
-  subCategories: {
-    id: number;
-    name: string;
-  }[];
+  subCategories: SubCategoryItem[];
+};
+
+export type SubCategoryItem = {
+  id: number;
+  name: string;
 };
 
 interface CategoryStore {
@@ -22,7 +24,7 @@ interface CategoryStore {
   categories: categoryGroup[];
 
   getCategory: (id: number) => CategoryItem | undefined;
-  getSubCategory: (id: number) => CategoryItem | undefined;
+  getSubCategory: (id: number) => SubCategoryItem | undefined;
 
   fetchCategories: () => Promise<void>;
 }
@@ -43,7 +45,20 @@ export const useCategoryStore = create<CategoryStore>((set, get) => ({
     return category.categories.find(c => c.id === id);
   },
   getSubCategory: id => {
-    return undefined;
+    const {categories} = get();
+    const category = categories.find(category =>
+      category.categories.find(c =>
+        c.subCategories.find(subCategory => subCategory.id === id),
+      ),
+    );
+
+    if (!category) return undefined;
+
+    const subCategory = category.categories
+      .find(c => c.subCategories.find(subCategory => subCategory.id === id))
+      ?.subCategories.find(subCategory => subCategory.id === id);
+
+    return subCategory;
   },
 
   fetchCategories: async () => {

@@ -4,6 +4,7 @@ import {PageQeuryProps} from '@/types/common';
 const Home = async ({
   searchParams,
 }: PageQeuryProps<{
+  page?: string;
   categoryId?: string;
   subCategoryId?: string;
 }>) => {
@@ -11,6 +12,7 @@ const Home = async ({
 
   return (
     <PostListWrapper
+      page={query.page ? Number(query.page) : undefined}
       categoryId={query.categoryId ? Number(query.categoryId) : undefined}
       subCategoryId={
         query.subCategoryId ? Number(query.subCategoryId) : undefined

@@ -2,11 +2,18 @@ import {CSSProperties, ReactNode} from 'react';
 
 type ButtonProps = CSSProperties & {
   children?: ReactNode;
+  disabled?: boolean;
   onClick?: () => void;
 };
-export const Button = ({onClick, children, ...props}: ButtonProps) => {
+export const Button = ({
+  onClick,
+  disabled,
+  children,
+  ...props
+}: ButtonProps) => {
   return (
     <button
+      disabled={disabled}
       onClick={onClick}
       style={{
         padding: '5px 10px',
