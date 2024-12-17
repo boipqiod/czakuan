@@ -25,3 +25,10 @@ export const createComment = async (
   const service = new CommentService();
   return service.createComment(postId, userId, content, parentId, rootId);
 };
+
+export const getCommentList = async (postId: number, page: number) => {
+  const service = new CommentService();
+  const comments = await service.getCommentList(postId, 30);
+
+  return comments;
+};

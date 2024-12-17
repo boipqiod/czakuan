@@ -4,7 +4,7 @@ import {Flex, HFlex, Text} from '@/client/ui/widgets';
 import {Avatar} from '@/client/ui/widgets/Avatar';
 import {formatRelativeTime} from '@/lib/dayjs';
 import Link from 'next/link';
-import {AiOutlineLike} from 'react-icons/ai';
+import {AiFillNotification, AiOutlineLike} from 'react-icons/ai';
 import {FiEye} from 'react-icons/fi';
 import {LuDot} from 'react-icons/lu';
 
@@ -68,7 +68,8 @@ export const PostItem = ({
         />
         <Flex gap={'.2rem'}>
           <HFlex gap={8}>
-            <Text>{title}</Text>
+            {isNotice && <AiFillNotification color={colors.primary} />}
+            <Text fontWeight={isNotice ? 'bold' : 'normal'}>{title}</Text>
             <Text color={colors.primary}>{comments}</Text>
           </HFlex>
           <HFlex>

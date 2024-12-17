@@ -91,11 +91,6 @@ export class PostRepository {
 
   getNoticeList(categoryId?: number) {
     return prisma.post.findMany({
-      orderBy: {
-        likes: {
-          _count: 'desc',
-        },
-      },
       where: {
         deletedAt: null,
         categoryId: categoryId ?? 1,
