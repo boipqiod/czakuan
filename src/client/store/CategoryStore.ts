@@ -1,4 +1,4 @@
-import {actionWrapper} from '@/lib/actions';
+import {actionWrapper} from '@/client/action/actionWapper';
 import {getCategorise} from '@/server/actions/board.actions';
 import {create} from 'zustand';
 
@@ -62,7 +62,9 @@ export const useCategoryStore = create<CategoryStore>((set, get) => ({
   },
 
   fetchCategories: async () => {
-    const {categoryGroups} = await actionWrapper(getCategorise());
+    const {categoryGroups} = await actionWrapper({
+      action: getCategorise,
+    });
     set({isFetched: true, categories: categoryGroups});
   },
 }));

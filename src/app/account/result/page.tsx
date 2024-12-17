@@ -1,8 +1,8 @@
 'use client';
+import {actionWrapper} from '@/client/action/actionWapper';
 import {KakaoLoginMetaData} from '@/client/hooks/useKakao';
 import {useAuthStore} from '@/client/store/AuthStore';
 import {Flex} from '@/client/ui/widgets';
-import {actionWrapper} from '@/lib/actions';
 import {
   kakaoLogin,
   login,
@@ -36,20 +36,27 @@ const LoginResult = () => {
         decodeURIComponent(state),
       ) as KakaoLoginMetaData;
 
-      const {id} = await actionWrapper(kakaoLogin(code));
+      const {id} = await actionWrapper({
+        action: () => kakaoLogin(code),
+      });
 
       let user: User;
       if (metaData.type === 'login') {
         console.log('login', id);
 
-        user = await actionWrapper(login(id));
+        user = await actionWrapper({
+          action: () => login(id),
+        });
       } else {
         if (!metaData.nickName) {
           alert('정보가 올바르지 않습니다.');
           router.replace('/');
           return;
         }
-        user = await actionWrapper(register(id, metaData.nickName));
+
+        user = await actionWrapper({
+          action: () => register(id, metaData.nickName!),
+        });
       }
 
       if (!user) {
@@ -59,7 +66,9 @@ const LoginResult = () => {
       }
 
       loginStore(user);
-      await actionWrapper(saveUserInfo(user, true));
+      await actionWrapper({
+        action: () => saveUserInfo(user, true),
+      });
       router.replace('/');
     } catch (e) {
       console.error(e);

@@ -23,7 +23,7 @@ export class TokenService {
       profileImageUrl: user.profileImageUrl,
     };
 
-    const accessToken = this.createToken(payload, '1d');
+    const accessToken = this.createToken(payload, '1m');
     const refreshToken = this.createToken(payload, '7d');
 
     return {accessToken, refreshToken};
@@ -35,11 +35,26 @@ export class TokenService {
 
   async verifyCookieToken() {
     const cookieStore = await cookies();
+
     const token = cookieStore.get('token');
     const refreshToken = cookieStore.get('refreshToken');
     if (!token || !refreshToken) {
       return null;
     }
-    return this.verifyAccessToken(token.value);
+
+    try {
+      return this.verifyAccessToken(token.value);
+    } catch (e) {
+      const user = this.verifyAccessToken(refreshToken.value);
+      if (!user) {
+        return null;
+      }
+      const {accessToken: newAccessToken, refreshToken: newRefreshToken} =
+        this.createTokenByUser(user);
+      cookieStore.set('token', newAccessToken);
+      cookieStore.set('refreshToken', newRefreshToken);
+
+      return user;
+    }
   }
 }

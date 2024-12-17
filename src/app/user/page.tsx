@@ -1,10 +1,10 @@
 'use client';
 import {colors} from '@/assets/color';
+import {actionWrapper} from '@/client/action/actionWapper';
 import {useAuthStore} from '@/client/store/AuthStore';
 import {Avatar, Flex, Text} from '@/client/ui/widgets';
 import {Button, ClearButton} from '@/client/ui/widgets/Button';
 import {Input} from '@/client/ui/widgets/Input';
-import {actionWrapper} from '@/lib/actions';
 import {convertToJpeg, imageSelector} from '@/lib/image';
 import {changeUserInfo} from '@/server/actions/user.actions';
 import {useEffect, useRef, useState} from 'react';
@@ -36,12 +36,13 @@ const UserPage = () => {
   const handleSave = async () => {
     // save
     try {
-      const user = await actionWrapper(
-        changeUserInfo({
-          nickName,
-          profileImage: imageFileRef.current,
-        }),
-      );
+      const user = await actionWrapper({
+        action: () =>
+          changeUserInfo({
+            nickName,
+            profileImage: imageFileRef.current,
+          }),
+      });
       setUserInfo(user);
       alert('저장되었습니다.');
       window.location.reload();
