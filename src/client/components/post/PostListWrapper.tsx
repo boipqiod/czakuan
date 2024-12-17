@@ -21,7 +21,7 @@ export const PostListWrapper = async ({
         action: getNoticeList,
         options: {revalidate: 1000 * 60 * 60},
       }),
-      getNoticeList(categoryId),
+      categoryId ? getNoticeList(categoryId) : {list: []},
       getPostList({page, categoryId, subCategoryId}),
     ],
   );
