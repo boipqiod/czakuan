@@ -1,22 +1,18 @@
 'use client';
-import {useAddQeryPrams} from '@/client/hooks/useNavigate';
+import {useQueryParams} from '@/client/hooks/useNavigate';
 import {Button} from '@/client/ui/widgets/Button';
 import {HFlex} from '@/client/ui/widgets/Flex';
+import {MdNavigateBefore, MdNavigateNext} from 'react-icons/md';
 
 type PaginationProps = {
-  totalPage: number;
+  lastPage: number;
   currentPage: number;
 };
-export const Pagination = ({totalPage, currentPage}: PaginationProps) => {
-  // const router = useRouter();
-  const addQuery = useAddQeryPrams();
+export const Pagination = ({lastPage, currentPage}: PaginationProps) => {
+  const {addQuery} = useQueryParams();
 
   const onClickPage = (page: number) => {
     addQuery({page: page.toString()});
-    // const query = getSearchParam(window.location.search);
-    // query.page = page.toString();
-    // const search = new URLSearchParams(query).toString();
-    // router.push('?' + search);
   };
 
   return (
@@ -24,10 +20,11 @@ export const Pagination = ({totalPage, currentPage}: PaginationProps) => {
       <Button
         onClick={() => onClickPage(currentPage - 1)}
         disabled={currentPage === 1}>
-        {'<'}
+        <MdNavigateBefore size={'1.2rem'} />
       </Button>
-      {Array.from({length: totalPage}, (_, i) => i + 1).map(page => (
+      {Array.from({length: lastPage}, (_, i) => i + 1).map(page => (
         <Button
+          fontSize={'.8rem'}
           key={page}
           onClick={() => onClickPage(page)}
           fontWeight={currentPage === page ? 'bold' : 'normal'}>
@@ -36,8 +33,8 @@ export const Pagination = ({totalPage, currentPage}: PaginationProps) => {
       ))}
       <Button
         onClick={() => onClickPage(currentPage + 1)}
-        disabled={currentPage === totalPage}>
-        {'>'}
+        disabled={currentPage === lastPage}>
+        <MdNavigateNext />
       </Button>
     </HFlex>
   );

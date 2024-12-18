@@ -37,7 +37,7 @@ export const Header = () => {
       <Link href={'/'} className={styles.logo}>
         <Image height={40} src={logo} alt={'logo'} />
       </Link>
-      <DropdownMenu>
+      <DropdownMenu isRight>
         <DropdownMenuButton>
           <Avatar alt={'avatar'} size={25} src={user?.profileImageUrl} />
         </DropdownMenuButton>
@@ -50,13 +50,13 @@ export const Header = () => {
           <DropdownMenuItem onClick={onLogout}>로그아웃</DropdownMenuItem>
         )}
         {!isLogin && (
-          <DropdownMenuItem onClick={() => router.push('/account/register')}>
-            회원가입
+          <DropdownMenuItem onClick={() => router.push('/account/login')}>
+            로그인
           </DropdownMenuItem>
         )}
         {!isLogin && (
-          <DropdownMenuItem onClick={() => router.push('/account/login')}>
-            로그인
+          <DropdownMenuItem onClick={() => router.push('/account/register')}>
+            회원가입
           </DropdownMenuItem>
         )}
       </DropdownMenu>

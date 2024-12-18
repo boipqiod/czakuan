@@ -13,3 +13,31 @@ export const useAddQeryPrams = () => {
     router.push(path + '?' + search.toString());
   };
 };
+
+export const useQueryParams = () => {
+  const router = useRouter();
+
+  const addQuery = (query: Record<string, string>) => {
+    const originQuery = getSearchParam(window.location.search);
+    Object.entries(query).forEach(([key]) => {
+      originQuery[key] = query[key];
+    });
+    const path = window.location.pathname;
+    const search = new URLSearchParams(originQuery).toString();
+    router.push(path + '?' + search.toString());
+  };
+
+  const removeQuery = (key: string) => {
+    const originQuery = getSearchParam(window.location.search);
+    console.log(originQuery);
+
+    delete originQuery[key];
+    console.log(originQuery);
+
+    const path = window.location.pathname;
+    const search = new URLSearchParams(originQuery).toString();
+    router.push(path + '?' + search.toString());
+  };
+
+  return {addQuery, removeQuery};
+};

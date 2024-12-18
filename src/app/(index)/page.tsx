@@ -1,4 +1,6 @@
-import {PostListWrapper} from '@/client/components/post/PostListWrapper';
+import styles from '@/assets/styles/components/post/post.module.css';
+import {CategoryTitle} from '@/client/components/post/CategoryTitle';
+import {PostList} from '@/client/components/post/list/PostList';
 import {PageQeuryProps} from '@/types/common';
 
 const Home = async ({
@@ -9,15 +11,26 @@ const Home = async ({
   subCategoryId?: string;
 }>) => {
   const query = await searchParams;
+  const {
+    page: _page,
+    categoryId: _categoryId,
+    subCategoryId: _subCategoryId,
+  } = query;
+  const page = Number(_page || 1);
+  const categoryId = _categoryId ? Number(_categoryId) : undefined;
+  const subCategoryId = _subCategoryId ? Number(_subCategoryId) : undefined;
 
   return (
-    <PostListWrapper
-      page={query.page ? Number(query.page) : undefined}
-      categoryId={query.categoryId ? Number(query.categoryId) : undefined}
-      subCategoryId={
-        query.subCategoryId ? Number(query.subCategoryId) : undefined
-      }
-    />
+    <div className={styles.postListWrapper}>
+      <section className={styles.title}>
+        <CategoryTitle categoryId={categoryId} subCategoryId={subCategoryId} />
+      </section>
+      <PostList
+        page={page}
+        categoryId={categoryId}
+        subCategoryId={subCategoryId}
+      />
+    </div>
   );
 };
 

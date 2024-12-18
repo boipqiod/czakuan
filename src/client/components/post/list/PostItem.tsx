@@ -46,10 +46,11 @@ export const PostItem = ({
 }: PostItemProps) => {
   const {nickName, profileImageUrl} = author;
   const {comments, likes} = _count;
+  const query = new URLSearchParams(window.location.search).toString();
 
   return (
     <Link
-      href={`/post/${id}`}
+      href={`/post/${id}?${query}`}
       style={{
         color: 'white',
         textDecoration: 'none',
@@ -58,21 +59,39 @@ export const PostItem = ({
         alignItems={'center'}
         gap={'1rem'}
         paddingBottom={'.8rem'}
-        borderBottom={`1px solid ${colors['dark.400']}`}>
-        <Avatar
-          style={{
-            borderRadius: '8px',
-          }}
-          size={40}
-          src={thumbnailUrl}
-        />
+        borderBottom={`1px solid #d0d0d030`}>
+        {!isNotice && (
+          <Avatar
+            style={{
+              borderRadius: 4,
+            }}
+            size={40}
+            src={thumbnailUrl}
+          />
+        )}
+        {isNotice && (
+          <Flex
+            width={40}
+            height={40}
+            justifyContent={'center'}
+            alignItems={'center'}
+            backgroundColor={'white'}
+            borderRadius={'50%'}>
+            <AiFillNotification size={20} color={colors.primary} />
+          </Flex>
+        )}
         <Flex gap={'.2rem'}>
           <HFlex gap={8}>
-            {isNotice && <AiFillNotification color={colors.primary} />}
-            <Text fontWeight={isNotice ? 'bold' : 'normal'}>{title}</Text>
+            {/* {isNotice && <AiFillNotification color={colors.primary} />} */}
+            <Text
+              fontWeight={isNotice ? 'bold' : 'normal'}
+              textOverflow={'hidden'}
+              maxLines={1}>
+              {title}
+            </Text>
             <Text color={colors.primary}>{comments}</Text>
           </HFlex>
-          <HFlex>
+          <HFlex fontSize={'.8rem'}>
             {nickName}
             <LuDot />
             <span>{formatRelativeTime(createdAt)}</span>

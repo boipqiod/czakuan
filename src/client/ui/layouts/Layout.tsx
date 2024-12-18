@@ -5,7 +5,7 @@ import {Content} from '@/client/ui/layouts/Content';
 import {Footer} from '@/client/ui/layouts/Footer';
 import {Header} from '@/client/ui/layouts/Header';
 import {SidePanel} from '@/client/ui/layouts/SidePanel';
-import {getUserInfo} from '@/server/actions/user.actions';
+import {getMyInfo} from '@/server/actions/user.actions';
 import {ReactNode, useEffect, useState} from 'react';
 
 type LayoutProps = {
@@ -20,7 +20,7 @@ export const Layout = ({children}: LayoutProps) => {
       if (isLogin) return;
 
       const userInfo = await actionWrapper({
-        action: getUserInfo,
+        action: getMyInfo,
         error: error => {
           console.error('### 사용자 정보 조회 실패', error);
           if (error.status === 401) {

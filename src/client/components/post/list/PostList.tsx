@@ -1,20 +1,19 @@
-import styles from '@/assets/styles/components/post/post.module.css';
 import {actionWrapper} from '@/client/action/actionWapper';
-import {CategoryTitle} from '@/client/components/post/CategoryTitle';
-import {PostList} from '@/client/components/post/PostList';
+import {PostItem} from '@/client/components/post/list/PostItem';
+import {Flex} from '@/client/ui/widgets';
 import {Pagination} from '@/client/ui/widgets/Pagination';
 import {getNoticeList, getPostList} from '@/server/actions/post.actions';
 
-type PostListWrapperProps = {
-  page?: number;
+type PostListProps = {
+  page: number;
   categoryId?: number;
   subCategoryId?: number;
 };
-export const PostListWrapper = async ({
+export const PostList = async ({
   page,
   categoryId,
   subCategoryId,
-}: PostListWrapperProps) => {
+}: PostListProps) => {
   const [genelerNoticeResult, noticeResult, postListResult] = await Promise.all(
     [
       actionWrapper({
@@ -27,16 +26,17 @@ export const PostListWrapper = async ({
   );
 
   const {list: notice} = noticeResult;
-  const {total, page: currentPage, list} = postListResult;
+  const {page: currentPage, list, lastPage} = postListResult;
   const {list: allNotice} = genelerNoticeResult;
 
+  const posts = [...allNotice, ...notice, ...list];
+
   return (
-    <div className={styles.postListWrapper}>
-      <section className={styles.title}>
-        <CategoryTitle categoryId={categoryId} subCategoryId={subCategoryId} />
-      </section>
-      <PostList posts={[...allNotice, ...notice, ...list]} />
-      <Pagination totalPage={total} currentPage={currentPage} />
-    </div>
+    <Flex gap={10}>
+      {posts.map((post, index) => (
+        <PostItem key={post.id + index.toString()} {...post} />
+      ))}
+      <Pagination lastPage={lastPage} currentPage={currentPage} />
+    </Flex>
   );
 };

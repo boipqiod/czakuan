@@ -1,12 +1,12 @@
 .dropdown {
   position: relative;
   display: inline-block;
+  z-index: 2;
 }
 
 .dropdownButton {
   border: none;
   cursor: pointer;
-  font-size: 16px;
   transition: background-color 0.3s ease;
   background: inherit;
 }
@@ -30,7 +30,6 @@
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   min-width: 150px;
   z-index: 1;
-  right: 0;
 }
 
 .dropdownMenuItem {

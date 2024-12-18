@@ -3,7 +3,7 @@
 import {TokenService} from '@/server/service/token.service';
 import UserService from '@/server/service/user.service';
 
-export const getUserInfo = async () => {
+export const getMyInfo = async () => {
   const service = new TokenService();
   const userService = new UserService();
   const tokenUser = await service.verifyCookieToken();
@@ -11,6 +11,12 @@ export const getUserInfo = async () => {
     return null;
   }
   const user = await userService.getUser(tokenUser.id);
+  return user;
+};
+
+export const getUserInfo = async (id: number) => {
+  const userService = new UserService();
+  const user = await userService.getUser(id);
   return user;
 };
 

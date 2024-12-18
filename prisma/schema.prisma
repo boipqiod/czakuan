@@ -103,6 +103,7 @@ model DislikeToPost {
 model ReportToPost {
   postId Int
   userId Int
+  reason String
   post   Post @relation(fields: [postId], references: [id])
   user   User @relation(fields: [userId], references: [id])
 
@@ -147,6 +148,7 @@ model DislikeToComment {
 model ReportToComment {
   commentId Int
   userId    Int
+  reason    String
   comment   Comment @relation(fields: [commentId], references: [id])
   user      User    @relation(fields: [userId], references: [id])
 

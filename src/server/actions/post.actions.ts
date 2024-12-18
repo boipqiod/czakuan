@@ -40,15 +40,21 @@ export const getPostDetail = async (id: number) => {
 
 export const getNoticeList = unstable_cache(
   async (categoryId?: number) => {
-    console.log('getNoticeList');
-
     const service = new PostService();
-    const allNotice = (await service.getNoticePostList({categoryId: 1})).list;
-    const categoryNotice = categoryId
-      ? (await service.getNoticePostList({categoryId})).list
-      : [];
-    return {list: [...allNotice, ...categoryNotice]};
+    return await service.getNoticePostList({categoryId: categoryId ?? 1});
   },
   ['getNoticeList'],
   {revalidate: 1000 * 60 * 60},
 );
+
+export const likePost = async (postId: number, userId: number) => {
+  const service = new PostService();
+  await service.likePost(postId, userId);
+  return null;
+};
+
+export const dislikePost = async (postId: number, userId: number) => {
+  const service = new PostService();
+  await service.dislikePost(postId, userId);
+  return null;
+};

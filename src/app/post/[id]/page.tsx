@@ -1,28 +1,24 @@
-import {CommentItem} from '@/client/components/comment/CommentItem';
-import {Profile} from '@/client/ui/components/Profile';
-import {Flex, HFlex} from '@/client/ui/widgets';
-import {Button} from '@/client/ui/widgets/Button';
-import {Divider} from '@/client/ui/widgets/Divider';
-import {formatRelativeTime} from '@/lib/dayjs';
+import {PostDetail} from '@/client/components/post/detail/PostDetail';
+import {PostList} from '@/client/components/post/list/PostList';
+import {Flex} from '@/client/ui/widgets';
 import {getPostDetail} from '@/server/actions/post.actions';
 import {getCommentList} from '@/server/actions/post.comment.actions';
-import {AiOutlineDislike, AiOutlineLike} from 'react-icons/ai';
-import {FiEye} from 'react-icons/fi';
-import {LuDot} from 'react-icons/lu';
+import {PageProps} from '@/types/common';
 
-const PostDetailPage = async (data: {
-  params: Promise<{
-    id: string;
-  }>;
-}) => {
-  const {id} = await data.params;
+const PostDetailPage = async ({
+  params,
+  searchParams,
+}: PageProps<
+  {id: string},
+  {page?: string; categoryId?: string; subCategoryId?: string}
+>) => {
+  const {id} = await params;
+  const {page, categoryId, subCategoryId} = await searchParams;
 
   const [post, commentListItem] = await Promise.all([
     getPostDetail(Number(id)),
     getCommentList(Number(id), 1),
   ]);
-
-  const {author} = post;
 
   if (!post || !commentListItem) {
     return <div>Post not found</div>;
@@ -30,61 +26,14 @@ const PostDetailPage = async (data: {
 
   const {list: comments} = commentListItem;
 
-  const onLike = () => {
-    console.log('like');
-  };
-
-  const onDislike = () => {
-    console.log('dislike');
-  };
-
   return (
-    <Flex width={'100%'}>
-      {/* title */}
-      <section>
-        <HFlex>
-          <h1>{post.title}</h1>
-        </HFlex>
-        <Divider marginBottom={10} />
-        <HFlex alignItems={'center'}>
-          <Profile author={author} />
-          <LuDot />
-          <>{formatRelativeTime(post.createdAt)}</>
-          <LuDot />
-          <>
-            <FiEye />
-            {post.views}
-          </>
-        </HFlex>
-      </section>
-      {/* content */}
-      <section>
-        <Flex margin={20}>
-          <div dangerouslySetInnerHTML={{__html: post.content}}></div>
-        </Flex>
-        <HFlex justifyContent={'center'} alignItems={'center'} gap={10}>
-          <Button>
-            좋아요 <AiOutlineLike />
-            {post.likes.length}
-          </Button>
-          <Button>
-            싫어요 <AiOutlineDislike /> {post.dislikes.length}
-          </Button>
-        </HFlex>
-        <Divider marginY={10} />
-      </section>
-      <section>
-        <h2>Comments</h2>
-        <Divider marginY={10} />
-        {comments.map(comment => (
-          <CommentItem
-            key={comment.id}
-            comment={comment}
-            ownerId={author.id}
-            parentAuthor={comments.find(c => c.id === comment.parentId)?.author}
-          />
-        ))}
-      </section>
+    <Flex gap={30} width={'100%'}>
+      <PostDetail post={post} comments={comments} />
+      <PostList
+        page={Number(page ?? 1)}
+        categoryId={categoryId ? Number(categoryId) : undefined}
+        subCategoryId={subCategoryId ? Number(subCategoryId) : undefined}
+      />
     </Flex>
   );
 };

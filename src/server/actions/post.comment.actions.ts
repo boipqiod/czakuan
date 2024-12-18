@@ -3,16 +3,19 @@ import {CommentService} from '@/server/service/comment.service';
 
 export const likeComment = async (commentId: number, userId: number) => {
   const service = new CommentService();
-  return service.likeComment(commentId, userId);
+  await service.likeComment(commentId, userId);
+  return null;
 };
 export const dislikeComment = async (commentId: number, userId: number) => {
   const service = new CommentService();
-  return service.dislikeComment(commentId, userId);
+  await service.dislikeComment(commentId, userId);
+  return null;
 };
 
 export const deleteComment = async (commentId: number, userId: number) => {
   const service = new CommentService();
-  return service.deleteComment(commentId, userId);
+  await service.deleteComment(commentId, userId);
+  return null;
 };
 
 export const createComment = async (

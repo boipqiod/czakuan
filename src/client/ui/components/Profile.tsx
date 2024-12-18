@@ -1,7 +1,16 @@
+'use client';
 import {colors} from '@/assets/color';
-import {Avatar, HFlex} from '@/client/ui/widgets';
+import {
+  Avatar,
+  DropdownMenu,
+  DropdownMenuButton,
+  DropdownMenuItem,
+  Flex,
+  HFlex,
+} from '@/client/ui/widgets';
 import {Author} from '@/types/user';
 import {Role} from '@prisma/client';
+import {useRouter} from 'next/navigation';
 import {LiaCertificateSolid} from 'react-icons/lia';
 
 type ProfileProps = {
@@ -9,12 +18,25 @@ type ProfileProps = {
 };
 
 export const Profile = ({author}: ProfileProps) => {
+  const router = useRouter();
   return (
-    <HFlex alignItems={'center'} gap={5}>
-      <Avatar src={author.profileImageUrl} size={25} />
-      <div>{author.nickName}</div>
-      <MarkOfRole role={author.role} />
-    </HFlex>
+    <DropdownMenu>
+      <DropdownMenuButton>
+        <HFlex alignItems={'center'} gap={5}>
+          <Avatar src={author.profileImageUrl} size={25} />
+          <Flex color={'#d4d4d4'} fontWeight={'1rem'}>
+            {author.nickName}
+          </Flex>
+          <MarkOfRole role={author.role} />
+        </HFlex>
+      </DropdownMenuButton>
+      <DropdownMenuItem
+        onClick={() => {
+          router.push(`/user/${author.id}`);
+        }}>
+        프로필
+      </DropdownMenuItem>
+    </DropdownMenu>
   );
 };
 

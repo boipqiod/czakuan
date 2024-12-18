@@ -5,10 +5,18 @@ type InputProps = {
   value?: string;
   onChange?: (value: string) => void;
   placeholder?: string;
+  disabled?: boolean;
 } & CSSProperties;
-export const Input = ({value, onChange, placeholder, ...sytle}: InputProps) => {
+export const Input = ({
+  value,
+  onChange,
+  placeholder,
+  disabled,
+  ...sytle
+}: InputProps) => {
   return (
     <input
+      disabled={disabled}
       placeholder={placeholder}
       type={'text'}
       value={value}

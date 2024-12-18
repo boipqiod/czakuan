@@ -1,7 +1,7 @@
 'use client';
 
 import {colors} from '@/assets/color';
-import {useAddQeryPrams} from '@/client/hooks/useNavigate';
+import {useQueryParams} from '@/client/hooks/useNavigate';
 import {useCategoryStore} from '@/client/store/CategoryStore';
 import {HFlex} from '@/client/ui/widgets';
 import {Button} from '@/client/ui/widgets/Button';
@@ -17,10 +17,16 @@ export const CategoryTitle = ({
   const {getCategory, getSubCategory} = useCategoryStore();
   const category = categoryId ? getCategory(categoryId) : undefined;
   const subCategory = subCategoryId ? getSubCategory(subCategoryId) : undefined;
-  const addQuery = useAddQeryPrams();
+  const {addQuery, removeQuery} = useQueryParams();
 
-  const onClickSubCategory = (subCategoryId: number) => {
-    addQuery({subCategoryId: subCategoryId.toString()});
+  const onClickSubCategory = (_subCategoryId: number) => {
+    console.log('onClickSubCategory', subCategoryId, _subCategoryId);
+
+    if (subCategoryId === _subCategoryId) {
+      removeQuery('subCategoryId');
+    } else {
+      addQuery({subCategoryId: _subCategoryId.toString()});
+    }
   };
 
   const getBoardName = () => {
@@ -42,15 +48,12 @@ export const CategoryTitle = ({
         {category &&
           category.subCategories.map(subCategory => (
             <Button
-              disabled={
-                subCategoryId ? subCategory.id === subCategoryId : false
-              }
               backgroundColor={
                 subCategoryId
                   ? subCategory.id === subCategoryId
                     ? colors['primary.500']
                     : '#444'
-                  : undefined
+                  : '#444'
               }
               key={`subCategory-${subCategory.id}`}
               onClick={() => onClickSubCategory(subCategory.id)}>

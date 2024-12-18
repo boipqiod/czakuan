@@ -1,6 +1,6 @@
 export type PageProps<T = any, U = any> = {
-  searchParams: Promise<T>;
-  params: Promise<U>;
+  params: Promise<T>;
+  searchParams: Promise<U>;
 };
 
 export type PageQeuryProps<T = any> = {

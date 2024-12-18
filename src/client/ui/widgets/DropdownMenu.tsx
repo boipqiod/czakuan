@@ -4,6 +4,7 @@ import React, {ReactNode, useState} from 'react';
 
 interface DropdownMenuProps {
   children: ReactNode;
+  isRight?: boolean;
 }
 
 interface DropdownMenuButtonProps {
@@ -21,7 +22,7 @@ interface DropdownMenuLinkProps {
   href: string;
 }
 
-export const DropdownMenu = ({children}: DropdownMenuProps) => {
+export const DropdownMenu = ({children, isRight}: DropdownMenuProps) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const toggleMenu = () => {
@@ -39,7 +40,12 @@ export const DropdownMenu = ({children}: DropdownMenuProps) => {
         }
       })}
       {isOpen && (
-        <ul className={styles.dropdownMenu}>
+        <ul
+          className={styles.dropdownMenu}
+          style={{
+            right: isRight ? 0 : 'auto',
+            left: isRight ? 'auto' : 0,
+          }}>
           {React.Children.map(children, child => {
             if (
               React.isValidElement<DropdownMenuItemProps>(child) &&
