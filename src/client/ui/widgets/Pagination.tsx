@@ -7,12 +7,21 @@ import {MdNavigateBefore, MdNavigateNext} from 'react-icons/md';
 type PaginationProps = {
   lastPage: number;
   currentPage: number;
+  setPage?: (page: number) => void;
 };
-export const Pagination = ({lastPage, currentPage}: PaginationProps) => {
+export const Pagination = ({
+  lastPage,
+  currentPage,
+  setPage,
+}: PaginationProps) => {
   const {addQuery} = useQueryParams();
 
   const onClickPage = (page: number) => {
-    addQuery({page: page.toString()});
+    if (setPage) {
+      setPage(page);
+    } else {
+      addQuery({page: page.toString()});
+    }
   };
 
   return (

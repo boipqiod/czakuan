@@ -15,20 +15,17 @@ const PostDetailPage = async ({
   const {id} = await params;
   const {page, categoryId, subCategoryId} = await searchParams;
 
-  const [post, commentListItem] = await Promise.all([
+  const [post, commentReulst] = await Promise.all([
     getPostDetail(Number(id)),
     getCommentList(Number(id), 1),
   ]);
 
-  if (!post || !commentListItem) {
+  if (!post || !commentReulst) {
     return <div>Post not found</div>;
   }
-
-  const {list: comments} = commentListItem;
-
   return (
     <Flex gap={30} width={'100%'}>
-      <PostDetail post={post} comments={comments} />
+      <PostDetail post={post} commentRelust={commentReulst} />
       <PostList
         page={Number(page ?? 1)}
         categoryId={categoryId ? Number(categoryId) : undefined}

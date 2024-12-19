@@ -59,7 +59,7 @@ export const CommentItem = ({
             <DropdownMenuButton>
               <IoIosMore color={'white'} />
             </DropdownMenuButton>
-            {isCommentOwner && (
+            {isCommentOwner && !isDeleted && (
               <DropdownMenuItem onClick={handleDelete}>삭제</DropdownMenuItem>
             )}
             <DropdownMenuItem

@@ -5,15 +5,13 @@ import {PostContent} from '@/client/components/post/detail/PostContent';
 import {PostLike} from '@/client/components/post/detail/PostLike';
 import {Flex, HFlex} from '@/client/ui/widgets';
 import {Divider} from '@/client/ui/widgets/Divider';
-import {CommentType, PostDetailType} from '@/types/post';
+import {CommentResultType, PostDetailType} from '@/types/post';
 
 type PostDetailProps = {
   post: PostDetailType;
-  comments: CommentType[];
+  commentRelust: CommentResultType;
 };
-export const PostDetail = ({post, comments}: PostDetailProps) => {
-  const {author} = post;
-
+export const PostDetail = ({post, commentRelust}: PostDetailProps) => {
   return (
     <Flex minWidth={'100%'}>
       {/* title */}
@@ -32,7 +30,7 @@ export const PostDetail = ({post, comments}: PostDetailProps) => {
       </section>
       <section>
         <h3>댓글</h3>
-        <CommentItems postAuthor={author} comments={comments} />
+        <CommentItems post={post} commentRelust={commentRelust} />
       </section>
     </Flex>
   );

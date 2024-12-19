@@ -36,6 +36,7 @@ export const PostList = async ({
       {posts.map((post, index) => (
         <PostItem key={post.id + index.toString()} {...post} />
       ))}
+      {list.length === 0 && <p>작성된 글이 없습니다.</p>}
       <Pagination lastPage={lastPage} currentPage={currentPage} />
     </Flex>
   );
