@@ -1,6 +1,5 @@
-import {colors} from '@/assets/color';
-import {Avatar, Flex, Text} from '@/client/ui/widgets';
-import {Input} from '@/client/ui/widgets/Input';
+import {MarkOfRole} from '@/client/ui/components/Profile';
+import {Avatar, Flex} from '@/client/ui/widgets';
 import {getUserInfo} from '@/server/actions/user.actions';
 import {PagePathProps} from '@/types/common';
 
@@ -8,11 +7,13 @@ const UserPage = async ({params}: PagePathProps<{id: string}>) => {
   const {id: _id} = await params;
   const id = Number(_id);
 
-  const {nickName, profileImageUrl} = await getUserInfo(id);
+  const {nickName, profileImageUrl, role} = await getUserInfo(id);
 
   return (
     <Flex width={'100%'}>
-      <h1>내정보</h1>
+      <h1>
+        {nickName} <MarkOfRole role={role} />
+      </h1>
       <Flex gap={'1rem'}>
         <Flex width={'100%'}>
           <Avatar
@@ -24,10 +25,6 @@ const UserPage = async ({params}: PagePathProps<{id: string}>) => {
             }}
             src={profileImageUrl}
           />
-        </Flex>
-        <Flex padding={10}>
-          <Text color={colors['dark.400']}>닉네임</Text>
-          <Input value={nickName} disabled />
         </Flex>
       </Flex>
     </Flex>

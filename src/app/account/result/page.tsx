@@ -4,7 +4,7 @@ import {KakaoLoginMetaData} from '@/client/hooks/useKakao';
 import {useAuthStore} from '@/client/store/AuthStore';
 import {Flex} from '@/client/ui/widgets';
 import {
-  kakaoLogin,
+  kakaoLogin as kakaoLoginAction,
   login,
   register,
   saveUserInfo,
@@ -16,65 +16,62 @@ import {useEffect} from 'react';
 const LoginResult = () => {
   const router = useRouter();
   const {login: loginStore} = useAuthStore();
-  useEffect(() => {
-    init();
-  }, []);
+  const searchParams = new URLSearchParams(window.location.search);
+  const code = searchParams.get('code');
+  const state = searchParams.get('state');
 
-  const init = async () => {
-    try {
-      const searchParams = new URLSearchParams(window.location.search);
-      const code = searchParams.get('code');
-      const state = searchParams.get('state');
+  if (!code || !state) {
+    alert('정보가 올바르지 않습니다.');
+    router.replace('/');
+    return;
+  }
 
-      if (!code || !state) {
-        alert('정보가 올바르지 않습니다.');
-        router.replace('/');
-        return;
-      }
+  const metaData = JSON.parse(decodeURIComponent(state)) as KakaoLoginMetaData;
 
-      const metaData = JSON.parse(
-        decodeURIComponent(state),
-      ) as KakaoLoginMetaData;
+  useEffect(() => kakaoLogin(), []);
 
-      const {id} = await actionWrapper({
-        action: () => kakaoLogin(code),
-      });
-
-      let user: User;
-      if (metaData.type === 'login') {
-        console.log('login', id);
-
-        user = await actionWrapper({
-          action: () => login(id),
-        });
-      } else {
-        if (!metaData.nickName) {
-          alert('정보가 올바르지 않습니다.');
-          router.replace('/');
-          return;
+  const kakaoLogin = () => {
+    actionWrapper({
+      action: () => kakaoLoginAction(code),
+      success: response => {
+        if (metaData.type === 'login') {
+          loginUser(response.data.id);
+        } else {
+          createUser(response.data.id);
         }
+      },
+    });
+  };
 
-        user = await actionWrapper({
-          action: () => register(id, metaData.nickName!),
-        });
-      }
-
-      if (!user) {
-        alert('로그인에 실패했습니다.');
-        router.replace('/');
-        return;
-      }
-
-      loginStore(user);
-      await actionWrapper({
-        action: () => saveUserInfo(user, true),
-      });
+  const createUser = (kakaoId: number) => {
+    const {nickName} = metaData;
+    if (!nickName) {
+      alert('정보가 올바르지 않습니다.');
       router.replace('/');
-    } catch (e) {
-      console.error(e);
-      alert('로그인에 실패했습니다.');
-      router.replace('/');
+      return;
     }
+
+    actionWrapper({
+      action: () => register(kakaoId, nickName),
+      success: response => setLogin(response.data),
+    });
+  };
+
+  const loginUser = (kakaoId: number) => {
+    actionWrapper({
+      action: () => login(kakaoId),
+      success: response => setLogin(response.data),
+    });
+  };
+
+  const setLogin = (user: User) => {
+    loginStore(user);
+    actionWrapper({
+      action: () => saveUserInfo(user, true),
+      success: () => {
+        router.replace('/');
+      },
+    });
   };
 
   return (

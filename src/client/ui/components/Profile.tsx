@@ -40,7 +40,7 @@ export const Profile = ({author}: ProfileProps) => {
   );
 };
 
-const MarkOfRole = ({role}: {role: Role}) => {
+export const MarkOfRole = ({role}: {role: Role}) => {
   const sx = {width: 15, height: 15, color: colors.primary};
 
   switch (role) {

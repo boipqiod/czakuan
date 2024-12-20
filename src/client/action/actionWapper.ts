@@ -9,9 +9,15 @@ type ActionResponse<T extends ResponseData> = {
   data?: T;
 };
 
+type ActionSuccessResponse<T extends ResponseData> = {
+  status: number;
+  message: string;
+  data: T;
+};
+
 type ActionWrapper<T extends ResponseData> = {
   action: () => Promise<T>; // 서버 액션 함수
-  success?: (response: ActionResponse<T>) => void; // 성공 콜백
+  success?: (response: ActionSuccessResponse<T>) => void; // 성공 콜백
   error?: (error: ActionResponse<null>) => void; // 에러 콜백
   options?: {
     revalidate?: number; // 캐싱 유효 시간 (ms)
@@ -45,6 +51,5 @@ export const actionWrapper = async <T extends ResponseData, U>({
     };
 
     error?.(errorResponse); // 에러 콜백 실행
-    throw new Error(errorResponse.message);
   }
 };

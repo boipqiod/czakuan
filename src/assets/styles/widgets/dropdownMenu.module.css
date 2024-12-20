@@ -1,7 +1,16 @@
+.dropdownOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100svw;
+  height: 100svh;
+  z-index: -1;
+}
+
 .dropdown {
   position: relative;
   display: inline-block;
-  z-index: 2;
+  z-index: 1;
 }
 
 .dropdownButton {

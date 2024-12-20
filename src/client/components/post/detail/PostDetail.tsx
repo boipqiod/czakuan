@@ -9,9 +9,9 @@ import {CommentResultType, PostDetailType} from '@/types/post';
 
 type PostDetailProps = {
   post: PostDetailType;
-  commentRelust: CommentResultType;
+  commentResult: CommentResultType;
 };
-export const PostDetail = ({post, commentRelust}: PostDetailProps) => {
+export const PostDetail = ({post, commentResult}: PostDetailProps) => {
   return (
     <Flex minWidth={'100%'}>
       {/* title */}
@@ -30,7 +30,7 @@ export const PostDetail = ({post, commentRelust}: PostDetailProps) => {
       </section>
       <section>
         <h3>댓글</h3>
-        <CommentItems post={post} commentRelust={commentRelust} />
+        <CommentItems post={post} commentResult={commentResult} />
       </section>
     </Flex>
   );

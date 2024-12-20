@@ -26,7 +26,7 @@ export const useComment = (
   const [dislikeCount, setDislikeCount] = useState(comment.dislikes.length);
 
   const isPostOwner = ownerId === comment.author.id;
-  const isHasParent = !!parentAuthor;
+  const isHasParent = comment.parentId !== null;
   const isDeleted = !!comment.deletedAt;
   const isCommentOwner = user?.id === comment.author.id;
 
@@ -49,7 +49,7 @@ export const useComment = (
       action: () => likeComment(comment.id, user.id),
       success: () => {
         setIsLike(!isLike);
-        setLikeCount(isLike ? dislikeCount - 1 : dislikeCount + 1);
+        setLikeCount(isLike ? likeCount - 1 : likeCount + 1);
       },
     });
   };

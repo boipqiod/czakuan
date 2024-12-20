@@ -1,5 +1,5 @@
 import {useEffect} from 'react';
-const client_id = '06d84dded26abc302eb7ea2073a3e183';
+const client_id = process.env.NEXT_PUBLIC_KAKAO_CLIENT_ID;
 
 declare global {
   interface Window {

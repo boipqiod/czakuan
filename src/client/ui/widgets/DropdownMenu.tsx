@@ -46,6 +46,8 @@ export const DropdownMenu = ({children, isRight}: DropdownMenuProps) => {
             right: isRight ? 0 : 'auto',
             left: isRight ? 'auto' : 0,
           }}>
+          <div onClick={toggleMenu} className={styles.dropdownOverlay} />
+
           {React.Children.map(children, child => {
             if (
               React.isValidElement<DropdownMenuItemProps>(child) &&

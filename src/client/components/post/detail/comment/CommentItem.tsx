@@ -1,5 +1,6 @@
 'use client';
 import {colors} from '@/assets/color';
+import {CommentInput} from '@/client/components/post/detail/comment/CommentInput';
 import {useComment} from '@/client/hooks/useComment';
 import {Profile} from '@/client/ui/components/Profile';
 import {
@@ -14,7 +15,7 @@ import {Badge} from '@/client/ui/widgets/Badge';
 import {Button, ClearButton} from '@/client/ui/widgets/Button';
 import {formatRelativeTime} from '@/lib/dayjs';
 import {CommentType} from '@/types/post';
-import {Author} from '@/types/user';
+import {useEffect, useState} from 'react';
 import {AiOutlineDislike, AiOutlineLike} from 'react-icons/ai';
 import {IoIosMore} from 'react-icons/io';
 import {LuDot} from 'react-icons/lu';
@@ -22,14 +23,17 @@ import {LuDot} from 'react-icons/lu';
 type CommentItemProps = {
   ownerId: number;
   comment: CommentType;
-  parentAuthor?: Author;
+  parentComment?: CommentType;
+  addComment: (comment: CommentType) => void;
 };
 
 export const CommentItem = ({
   ownerId,
   comment,
-  parentAuthor,
+  parentComment,
+  addComment,
 }: CommentItemProps) => {
+  const {author: parentAuthor} = parentComment || {};
   const {
     isPostOwner,
     isHasParent,
@@ -41,18 +45,31 @@ export const CommentItem = ({
     onClickLike,
     onClickDislike,
     handleDelete,
-  } = useComment(ownerId, comment, parentAuthor);
+  } = useComment(ownerId, comment, parentComment?.author);
+
+  useEffect(() => {
+    console.log('CommentItem', {ownerId, comment, parentComment});
+  }, []);
+
+  const [openReply, setOpenReply] = useState(false);
 
   return (
-    <Flex gap={6} padding={'10px 0'} marginLeft={isHasParent ? 30 : 0}>
+    <Flex gap={6} padding={5} marginLeft={isHasParent ? 30 : 0}>
       <HFlex
+        padding={5}
         borderBottom={'1px solid #444'}
-        borderRadius={'4px'}
         alignItems={'center'}
         justifyContent={'space-between'}>
         <HFlex alignItems={'center'}>
           <Profile author={comment.author} />
           {isPostOwner && <Badge bg={colors['primary.700']}>작성자</Badge>}
+          <LuDot />
+          {formatRelativeTime(comment.createdAt)}
+          <LuDot />
+          <HFlex gap={4}>
+            <AiOutlineLike />
+            {likeCount}
+          </HFlex>
         </HFlex>
         <HFlex>
           <DropdownMenu isRight>
@@ -88,22 +105,29 @@ export const CommentItem = ({
           )}
         </div>
       </Flex>
-      <HFlex alignItems={'center'} gap={4}>
-        <Button>답글</Button>
+      <HFlex alignItems={'center'} gap={4} paddingLeft={10}>
+        <Button onClick={() => setOpenReply(!openReply)}>답글</Button>
         <ClearButton onClick={onClickLike}>
           <HFlex gap={3}>
             <AiOutlineLike color={isLike ? colors['primary.500'] : 'white'} />
-            {likeCount}
           </HFlex>
         </ClearButton>
         <ClearButton
+          width={10}
           onClick={onClickDislike}
           color={isDislike ? colors['red.400'] : 'white'}>
           <AiOutlineDislike />
         </ClearButton>
-        <LuDot />
-        {formatRelativeTime(comment.createdAt)}
       </HFlex>
+      {openReply && (
+        <CommentInput
+          postId={comment.postId}
+          rootId={comment.rootId}
+          parentComment={comment}
+          addComment={addComment}
+          onClose={() => setOpenReply(false)}
+        />
+      )}
     </Flex>
   );
 };

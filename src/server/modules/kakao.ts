@@ -15,7 +15,7 @@ export interface KakaoUserResponse {
 }
 
 export class Kakao {
-  readonly clientId: string = process.env.KAKAO_CLIENT_ID ?? '';
+  readonly clientId: string = process.env.NEXT_PUBLIC_KAKAO_CLIENT_ID ?? '';
 
   async getToken(code: string) {
     console.log('### Kakao.getToken', {code});

@@ -43,6 +43,10 @@ const UserPage = () => {
             profileImage: imageFileRef.current,
           }),
       });
+      if (!user) {
+        throw new Error('사용자 정보 변경에 실패했습니다.');
+      }
+
       setUserInfo(user);
       alert('저장되었습니다.');
       window.location.reload();
