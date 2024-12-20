@@ -1,12 +1,17 @@
 'use client';
+import {colors} from '@/assets/color';
 import {actionWrapper} from '@/client/action/actionWapper';
 import {useAuthStore} from '@/client/store/AuthStore';
 import {Content} from '@/client/ui/layouts/Content';
 import {Footer} from '@/client/ui/layouts/Footer';
 import {Header} from '@/client/ui/layouts/Header';
 import {SidePanel} from '@/client/ui/layouts/SidePanel';
+import {Flex} from '@/client/ui/widgets';
+import {ClearButton} from '@/client/ui/widgets/Button';
 import {getMyInfo} from '@/server/actions/user.actions';
+import {useRouter} from 'next/navigation';
 import {ReactNode, useEffect, useState} from 'react';
+import {IoIosAddCircle} from 'react-icons/io';
 
 type LayoutProps = {
   children: ReactNode;
@@ -44,9 +49,22 @@ export const Layout = ({children}: LayoutProps) => {
       <Header />
       <Content>
         <SidePanel />
+        <AddPost />
         {children}
       </Content>
       <Footer />
     </>
+  );
+};
+
+const AddPost = () => {
+  const router = useRouter();
+
+  return (
+    <Flex position={'absolute'} right={40} bottom={40} zIndex={2}>
+      <ClearButton onClick={() => router.push('/post/create')}>
+        <IoIosAddCircle color={colors.primary} size={50} />
+      </ClearButton>
+    </Flex>
   );
 };
