@@ -2,7 +2,7 @@ import {actionWrapper} from '@/client/action/actionWapper';
 import {getCategorise} from '@/server/actions/board.actions';
 import {create} from 'zustand';
 
-export type categoryGroup = {
+export type CategoryGroup = {
   id: number;
   name: string;
   categories: CategoryItem[];
@@ -21,7 +21,7 @@ export type SubCategoryItem = {
 
 interface CategoryStore {
   isFetched: boolean;
-  categories: categoryGroup[];
+  categories: CategoryGroup[];
 
   getCategory: (id: number) => CategoryItem | undefined;
   getSubCategory: (id: number) => SubCategoryItem | undefined;
@@ -31,8 +31,42 @@ interface CategoryStore {
 
 export const useCategoryStore = create<CategoryStore>((set, get) => ({
   isFetched: false,
-  categories: [],
-  categoryGroups: [],
+  categories: [
+    {
+      id: 1,
+      name: '...',
+      categories: [
+        {
+          id: 1,
+          name: '...',
+          subCategories: [
+            {
+              id: 1,
+              name: '...',
+            },
+          ],
+        },
+      ],
+    },
+  ],
+  categoryGroups: [
+    {
+      id: 1,
+      name: '...',
+      categories: [
+        {
+          id: 1,
+          name: '...',
+          subCategories: [
+            {
+              id: 1,
+              name: '...',
+            },
+          ],
+        },
+      ],
+    },
+  ],
 
   getCategory: id => {
     const {categories} = get();

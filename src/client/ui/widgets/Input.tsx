@@ -27,7 +27,7 @@ export const Input = ({
       style={{
         border: '1px solid #979797',
         borderRadius: '5px',
-        padding: '10px',
+        padding: '4px',
         fontSize: '14px',
         ...sytle,
       }}

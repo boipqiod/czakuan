@@ -1,6 +1,8 @@
+import {getUniqueString} from '@/lib/random';
 import prisma from '@/server/modules/prisma';
 import s3 from '@/server/modules/s3';
 import {PostRepository} from '@/server/repositories/post.repository';
+import {Role} from '@prisma/client';
 
 export class PostService {
   constructor(
@@ -72,19 +74,19 @@ export class PostService {
   async create(
     user: {
       id: number;
-      role: 'SUPER_ADMIN' | 'BOARD_ADMIN' | 'USER';
+      role: Role;
     },
-    createPostReqDto: {
-      images: string[];
+    post: {
       title: string;
-      categoryId: number;
-      subCategoryId: number;
       content: string;
+
+      images: string[];
+      categoryId: number;
+      subCategoryId?: number;
       isNotice: boolean;
     },
   ) {
-    const {images, title, categoryId, subCategoryId, content, isNotice} =
-      createPostReqDto;
+    const {images, title, categoryId, subCategoryId, content, isNotice} = post;
 
     if (
       isNotice &&
@@ -94,7 +96,7 @@ export class PostService {
       throw new Error('404 Not Found');
     }
 
-    const post = await this.postRepository.create(
+    const newPost = await this.postRepository.create(
       user.id,
       title,
       content,
@@ -105,7 +107,11 @@ export class PostService {
     // 이미지 파일 이동
     const movedImageUrls = await Promise.all(
       images.map((imageUrl, index) =>
-        this.s3Helper.moveObject(imageUrl, `post/${post.id}`, index.toString()),
+        this.s3Helper.moveObject(
+          imageUrl,
+          `post/${getUniqueString()}`,
+          index.toString(),
+        ),
       ),
     );
 
@@ -115,12 +121,12 @@ export class PostService {
       updatedContent = updatedContent.replace(imageUrl, movedImageUrls[index]);
     });
 
-    const newPost = await this.postRepository.update(post.id, {
+    const updatedPost = await this.postRepository.update(newPost.id, {
       content: updatedContent,
       images: movedImageUrls,
       thumbnailUrl: movedImageUrls.length > 0 ? movedImageUrls[0] : undefined,
     });
-    return {id: newPost.id};
+    return {id: updatedPost.id};
   }
 
   /**
