@@ -27,7 +27,7 @@ export const PostList = async ({
 
   const {list: notice} = noticeResult;
   const {page: currentPage, list, lastPage} = postListResult;
-  const {list: allNotice} = genelerNoticeResult;
+  const {list: allNotice} = genelerNoticeResult ?? {list: []};
 
   const posts = [...allNotice, ...notice, ...list];
 

@@ -50,7 +50,7 @@ export const SidePanel = () => {
       height={'100%'}
       maxHeight={'100svh'}
       onClick={closeSidebar}
-      zIndex={1}>
+      zIndex={999}>
       <Flex
         left={0}
         width={'300px'}

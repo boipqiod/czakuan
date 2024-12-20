@@ -62,9 +62,16 @@ export const useCategoryStore = create<CategoryStore>((set, get) => ({
   },
 
   fetchCategories: async () => {
-    const {categoryGroups} = await actionWrapper({
+    await actionWrapper({
       action: getCategorise,
+      success: response => {
+        const {
+          data: {categoryGroups},
+        } = response;
+        set({isFetched: true, categories: categoryGroups});
+
+        return response.data;
+      },
     });
-    set({isFetched: true, categories: categoryGroups});
   },
 }));
