@@ -24,7 +24,7 @@ export const Profile = ({author}: ProfileProps) => {
       <DropdownMenuButton>
         <HFlex alignItems={'center'} gap={5}>
           <Avatar src={author.profileImageUrl} size={25} />
-          <Flex color={'#d4d4d4'} fontWeight={'1rem'}>
+          <Flex color={'var(--font-color)'} fontWeight={'1rem'}>
             {author.nickName}
           </Flex>
           <MarkOfRole role={author.role} />

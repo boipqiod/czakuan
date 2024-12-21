@@ -52,7 +52,7 @@ export const PostItem = ({
     <Link
       href={`/post/${id}?${query}`}
       style={{
-        color: 'white',
+        color: 'var(--font-color)',
         textDecoration: 'none',
       }}>
       <HFlex

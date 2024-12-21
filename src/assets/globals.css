@@ -60,9 +60,13 @@
   --blue-800: #0c4f74;
   --blue-900: #093f5f;
   --bg-color: #1f1f1f;
+  /* --bg-color: #f4f4f4; */
+  --font-color: #d4d4d4;
+  /* --font-color: #151515; */
 
   font-size: 12px;
-  color: #d4d4d4;
+  color: var(--font-color);
+  background-color: var(--bg-color);
   font-family: 'Roboto', sans-serif;
 }
 

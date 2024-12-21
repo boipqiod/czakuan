@@ -61,6 +61,18 @@ const LoginResult = () => {
     actionWrapper({
       action: () => login(kakaoId),
       success: response => setLogin(response.data),
+      error: err => {
+        console.log(err);
+        if (err.message.includes('404')) {
+          alert('가입되지 않은 사용자입니다. 회원가입을 진행해주세요.');
+          router.replace('/account/register');
+          return;
+        } else {
+          alert('로그인 중 오류가 발생했습니다.');
+          router.replace('/');
+          return;
+        }
+      },
     });
   };
 

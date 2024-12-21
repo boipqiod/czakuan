@@ -50,6 +50,7 @@ const RegisterPage = () => {
         다른 사용자와 겹치지 않는 닉네임을 입력해주세요. <br />
       </Text>
       <Flex>
+        <Text fontSize={'1.2rem'}>닉네임</Text>
         <Input value={nickName} onChange={onChange} placeholder={'닉네임'} />
       </Flex>
       <Flex alignItems={'center'}>
