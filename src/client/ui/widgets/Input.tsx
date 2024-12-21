@@ -26,8 +26,8 @@ export const Input = ({
       onChange={e => onChange && onChange(e.target.value)}
       style={{
         border: '1px solid #979797',
-        borderRadius: '5px',
-        padding: '4px',
+        borderRadius: '4px',
+        padding: '0.5rem',
         fontSize: '14px',
         ...sytle,
       }}

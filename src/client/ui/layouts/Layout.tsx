@@ -59,9 +59,11 @@ export const Layout = ({children}: LayoutProps) => {
 
 const AddPost = () => {
   const router = useRouter();
+  const {isLogin} = useAuthStore();
+  if (!isLogin) return null;
 
   return (
-    <Flex position={'absolute'} right={40} bottom={40} zIndex={2}>
+    <Flex position={'absolute'} right={'5%'} bottom={40} zIndex={2}>
       <ClearButton onClick={() => router.push('/post/create')}>
         <IoIosAddCircle color={colors.primary} size={50} />
       </ClearButton>

@@ -74,6 +74,7 @@ export const CommentInput = ({
           width={'100%'}
           height={10}
           borderRadius={3}
+          padding={'0.8rem'}
           disabled={!isLogin}
           placeholder={isLogin ? '댓글을 입력해주세요' : '로그인이 필요합니다.'}
           onChange={handleChangeComment}

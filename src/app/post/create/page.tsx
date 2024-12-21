@@ -72,14 +72,6 @@ const CreatePostPage = () => {
       return;
     }
 
-    console.log('create post', {
-      title,
-      content,
-      images,
-      category,
-      subCategoryId,
-    });
-
     actionWrapper({
       action: () =>
         createPost(
@@ -99,12 +91,12 @@ const CreatePostPage = () => {
   };
 
   return (
-    <Flex width={'100%'} gap={5}>
+    <Flex width={'100%'} gap={10}>
       <h2>게시글 작성</h2>
-      <Flex gap={5}>
+      <Flex gap={10}>
         <HFlex>
           <Flex width={'100%'}>
-            <Text>제목</Text>
+            <Text fontSize={'1.2rem'}>제목</Text>
             <Input onChange={setTitle} placeholder={'제목'} />
           </Flex>
           {user && user.role.includes('ADMIN') && (
@@ -121,11 +113,11 @@ const CreatePostPage = () => {
         </HFlex>
 
         <Flex gap={5}>
-          <Text>게시판</Text>
+          <Text fontSize={'1.2rem'}>게시판</Text>
           <select
             style={{
               borderRadius: 4,
-              padding: '0.2rem',
+              padding: '0.5rem',
             }}
             value={categoryGroup.id}
             onChange={e =>
@@ -144,7 +136,7 @@ const CreatePostPage = () => {
           <select
             style={{
               borderRadius: 4,
-              padding: '0.2rem',
+              padding: '0.5rem',
             }}
             value={category.id}
             onChange={e =>
@@ -177,9 +169,11 @@ const CreatePostPage = () => {
           )}
         </Flex>
       </Flex>
-      <Text>본문</Text>
+      <Text fontSize={'1.2rem'}>본문</Text>
       {Editor}
-      <Button onClick={handleSubmit}>작성하기</Button>
+      <Button padding={'0.5rem'} onClick={handleSubmit}>
+        작성하기
+      </Button>
     </Flex>
   );
 };
