@@ -60,6 +60,17 @@ const LoginResult = () => {
 
     actionWrapper(() => register(kakaoId, nickName), {
       success: response => setLogin(response.data),
+      error: err => {
+        if (err.status === 400) {
+          alert('이미 존재하는 닉네임입니다. 다른 닉네임을 입력해주세요.');
+          router.back();
+          return;
+        } else if (err.status === 409) {
+          alert('이미 가입된 사용자입니다. 로그인을 진행해주세요.');
+          router.replace('/account/login');
+          return;
+        }
+      },
     });
   };
 
@@ -92,7 +103,7 @@ const LoginResult = () => {
 
   return (
     <Flex>
-      <h3>로그인 처리 중입니다. 잠시만 기다려주세요...</h3>
+      <h5>로그인 처리 중입니다. 잠시만 기다려주세요...</h5>
     </Flex>
   );
 };

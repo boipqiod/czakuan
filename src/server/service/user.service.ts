@@ -21,7 +21,7 @@ class UserService {
 
     if (!user) {
       throw NextResponse.json(
-        {message: '사용자 정보가 존재하지 않습니다.'},
+        {statusText: '사용자 정보가 존재하지 않습니다.'},
         {status: 404},
       );
     }
@@ -43,7 +43,7 @@ class UserService {
 
     if (!user) {
       throw NextResponse.json(
-        {message: '사용자 정보가 존재하지 않습니다.'},
+        {statusText: '사용자 정보가 존재하지 않습니다.'},
         {status: 404},
       );
     }
@@ -74,7 +74,7 @@ class UserService {
 
     if (isNickNameExist) {
       throw NextResponse.json(
-        {message: '이미 존재하는 닉네임입니다.'},
+        {statusText: '이미 존재하는 닉네임입니다.'},
         {status: 400},
       );
     }
@@ -83,8 +83,8 @@ class UserService {
 
     if (user) {
       throw NextResponse.json(
-        {message: '이미 가입된 사용자입니다.'},
-        {status: 400},
+        {statusText: '이미 가입된 사용자입니다.'},
+        {status: 409},
       );
     }
 
