@@ -7,22 +7,23 @@ import {cookies} from 'next/headers';
 
 export const kakaoLogin = async (code: string) =>
   serverAction(async () => {
-    console.log('### 카카오 로그인 요청', {code});
     const token = await kakao.getToken(code);
-    console.log('### 카카오 토큰', {token});
-    const {id} = await kakao.getUserData(token.access_token);
-    console.log('### 카카오 사용자 조회', {kakaoId: id});
-
-    return {id};
+    const {id, kakao_account} = await kakao.getUserData(token.access_token);
+    return {id, email: kakao_account?.email};
   });
 
-export const register = async (kakaoId: number, nickName: string) =>
+export const register = async (
+  kakaoId: number,
+  nickName: string,
+  email?: string,
+) =>
   serverAction(async () => {
     const service = new UserService();
 
     const user = await service.createUser({
       id: kakaoId,
-      nickName: nickName as string,
+      nickName,
+      email,
     });
 
     return user;

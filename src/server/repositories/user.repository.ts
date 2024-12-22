@@ -30,16 +30,12 @@ export class UserRepository {
   async createUser(
     kakaoId: number,
     nickName: string,
-    name?: string,
-    phoneNumber?: string,
     email?: string,
     profileImageUrl?: string,
   ) {
     return prisma.user.create({
       data: {
         kakaoId,
-        name,
-        phoneNumber,
         nickName,
         email,
         profileImageUrl,
