@@ -36,10 +36,11 @@ const LoginResult = () => {
   const kakaoLogin = async () => {
     await actionWrapper(() => kakaoLoginAction(code), {
       success: response => {
+        const {id, email} = response.data;
         if (metaData.type === 'login') {
-          loginUser(response.data.id);
+          loginUser(id);
         } else {
-          createUser(response.data.id);
+          createUser(id, email);
         }
       },
       error: err => {
@@ -50,7 +51,7 @@ const LoginResult = () => {
     });
   };
 
-  const createUser = (kakaoId: number) => {
+  const createUser = (kakaoId: number, email?: string) => {
     const {nickName} = metaData;
     if (!nickName) {
       alert('정보가 올바르지 않습니다.');
@@ -58,7 +59,7 @@ const LoginResult = () => {
       return;
     }
 
-    actionWrapper(() => register(kakaoId, nickName), {
+    actionWrapper(() => register(kakaoId, nickName, email), {
       success: response => setLogin(response.data),
       error: err => {
         if (err.status === 400) {
