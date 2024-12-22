@@ -10,7 +10,7 @@
     "migrate": "prisma migrate dev",
     "generate": "prisma generate",
     "migrate-and-generate": "npm run generate && npm run migrate",
-    "migrate-and-generate:prod": "dotenv -e .env.production -- npm run generate && npm run migrate",
+    "migrate:prod": "dotenv -e .env.production -- yarn migrate",
     "postinstall": "prisma generate"
   },
   "dependencies": {

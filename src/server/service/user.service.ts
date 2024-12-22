@@ -26,9 +26,6 @@ class UserService {
       );
     }
 
-    const {accessToken, refreshToken} =
-      this.tokenService.createTokenByUser(user);
-
     return {
       id: user.id,
       role: user.role,
@@ -48,26 +45,23 @@ class UserService {
       );
     }
 
-    const {accessToken, refreshToken} =
-      this.tokenService.createTokenByUser(user);
-
     return {
       id: user.id,
       role: user.role,
       nickName: user.nickName,
       profileImageUrl: user.profileImageUrl,
-      accessToken,
-      refreshToken,
     };
   }
 
   async createUser({
     id,
     nickName,
+    email,
   }: {
     id: number;
     nickName: string;
     profileImageUrl?: string;
+    email?: string;
   }) {
     const isNickNameExist =
       await this.userRepository.getUserByNickName(nickName);
@@ -89,18 +83,17 @@ class UserService {
     }
 
     try {
-      const createdUser = await this.userRepository.createUser(id, nickName);
-
-      const {accessToken, refreshToken} =
-        this.tokenService.createTokenByUser(createdUser);
+      const createdUser = await this.userRepository.createUser(
+        id,
+        nickName,
+        email,
+      );
 
       return {
         id: createdUser.id,
         role: createdUser.role,
         profileImageUrl: createdUser.profileImageUrl,
         nickName: createdUser.nickName,
-        accessToken,
-        refreshToken,
       };
     } catch (error) {
       console.error('### 사용자 생성 실패', error);
