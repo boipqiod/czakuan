@@ -33,6 +33,14 @@ jobs:
       - name: Install dependencies
         run: yarn install
 
+      # AWS 자격 증명 설정
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ap-northeast-2 # 리전 설정
+
       # S3에서 .env 파일 다운로드 및 적용
       - name: Download env file from S3
         run: |
