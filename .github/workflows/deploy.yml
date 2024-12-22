@@ -18,6 +18,15 @@ jobs:
         with:
           node-version: '20'
 
+      # 수정 1: 의존성 캐싱 추가
+      - name: Cache dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.yarn/cache
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+
       - name: Install Yarn
         run: npm install -g yarn
 
@@ -27,8 +36,9 @@ jobs:
       - name: Build project
         run: yarn build
 
+      # 수정 2: Prisma migration 폴더 추가 포함
       - name: Archive build files
-        run: zip -r build.zip .next package.json yarn.lock prisma/schema.prisma
+        run: zip -r build.zip .next package.json yarn.lock prisma/
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v3
@@ -54,16 +64,27 @@ jobs:
 
       - name: Deploy to EC2
         run: |
-          scp -o StrictHostKeyChecking=no -r build/build.zip ec2-user@ec2-52-79-47-97.ap-northeast-2.compute.amazonaws.com:/home/ec2-user/czakuan
           ssh -o StrictHostKeyChecking=no ec2-user@ec2-52-79-47-97.ap-northeast-2.compute.amazonaws.com << 'EOF'
-            sudo yum update -y
-            sudo yum install -y unzip
+            sudo mkdir -p /home/ec2-user/czakuan
+            sudo chown ec2-user:ec2-user /home/ec2-user/czakuan
+          EOF
+          scp -o StrictHostKeyChecking=no build/build.zip ec2-user@ec2-52-79-47-97.ap-northeast-2.compute.amazonaws.com:/home/ec2-user/czakuan
+          ssh -o StrictHostKeyChecking=no ec2-user@ec2-52-79-47-97.ap-northeast-2.compute.amazonaws.com << 'EOF'
             cd /home/ec2-user/czakuan
             unzip -o build.zip
             aws s3 cp s3://czakuan-env/.env.production .env
-            yarn install --production # 필요한 의존성만 설치
+
+            if [ ! -d "node_modules" ]; then yarn install --production; fi
             yarn prisma generate --schema=./prisma/schema.prisma
-            pm2 delete all || true
+
+            pm2 delete czakuan || true
             pm2 start 'yarn next start' --name czakuan
-            pm2 save # 현재 실행중인 프로세스 상태를 저장
+            pm2 save
+            curl -f http://localhost:2953/health || exit 1
+          EOF
+
+      - name: Check logs
+        run: |
+          ssh -o StrictHostKeyChecking=no ec2-user@ec2-52-79-47-97.ap-northeast-2.compute.amazonaws.com << 'EOF'
+            pm2 logs czakuan --lines 100
           EOF
