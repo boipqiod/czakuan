@@ -1,6 +1,6 @@
 import prisma from '@/server/modules/prisma';
 
-export class UserReopsitory {
+export class UserRepository {
   constructor() {}
 
   async getUserByKakaoId(kakaoId: number) {

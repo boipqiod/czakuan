@@ -4,13 +4,13 @@
   width: 100%;
   min-height: calc(100svh - 150px);
   height: 100%;
-  background-color: var(--bg-color);
   margin: 0 auto;
+  position: relative;
 }
 
 .content {
   display: flex;
-  width: 100%;
+  width: 90%;
   height: 100%;
   max-width: 600px;
   margin: 0 auto;

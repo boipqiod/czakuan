@@ -1,11 +1,20 @@
-import {CSSProperties} from 'react';
+import {CSSProperties, ReactNode} from 'react';
 
-type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> &
-  CSSProperties;
-export const Button = ({children, ...props}: ButtonProps) => {
+type ButtonProps = CSSProperties & {
+  children?: ReactNode;
+  disabled?: boolean;
+  onClick?: () => void;
+};
+export const Button = ({
+  onClick,
+  disabled,
+  children,
+  ...props
+}: ButtonProps) => {
   return (
     <button
-      {...props}
+      disabled={disabled}
+      onClick={onClick}
       style={{
         padding: '5px 10px',
         borderRadius: 4,
@@ -19,16 +28,18 @@ export const Button = ({children, ...props}: ButtonProps) => {
     </button>
   );
 };
-export const ClearButton = ({children, ...props}: ButtonProps) => {
+export const ClearButton = (props: ButtonProps) => {
+  return <Button backgroundColor={'transparent'} {...props} />;
+};
+
+type ImageButtonProps = {
+  src?: string;
+  alt?: string;
+} & ButtonProps;
+export const ImageButton = ({src, alt, ...props}: ImageButtonProps) => {
   return (
-    <Button
-      {...props}
-      style={{
-        backgroundColor: '#00011',
-        color: '#444',
-        ...props,
-      }}>
-      {children}
-    </Button>
+    <ClearButton {...props}>
+      <img width={'100%'} src={src} alt={alt ?? 'imageButton'} />
+    </ClearButton>
   );
 };

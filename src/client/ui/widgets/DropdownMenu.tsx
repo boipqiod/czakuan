@@ -4,6 +4,7 @@ import React, {ReactNode, useState} from 'react';
 
 interface DropdownMenuProps {
   children: ReactNode;
+  isRight?: boolean;
 }
 
 interface DropdownMenuButtonProps {
@@ -16,7 +17,12 @@ interface DropdownMenuItemProps {
   onClick?: () => void;
 }
 
-export const DropdownMenu = ({children}: DropdownMenuProps) => {
+interface DropdownMenuLinkProps {
+  children: ReactNode;
+  href: string;
+}
+
+export const DropdownMenu = ({children, isRight}: DropdownMenuProps) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const toggleMenu = () => {
@@ -34,14 +40,33 @@ export const DropdownMenu = ({children}: DropdownMenuProps) => {
         }
       })}
       {isOpen && (
-        <ul className={styles.dropdownMenu}>
+        <ul
+          className={styles.dropdownMenu}
+          style={{
+            right: isRight ? 0 : 'auto',
+            left: isRight ? 'auto' : 0,
+          }}>
+          <div onClick={toggleMenu} className={styles.dropdownOverlay} />
+
           {React.Children.map(children, child => {
             if (
               React.isValidElement<DropdownMenuItemProps>(child) &&
               child.type === DropdownMenuItem
             ) {
-              return <li className={styles.dropdownMenuItem}>{child}</li>;
+              return (
+                <li className={styles.dropdownMenuItem}>
+                  {React.cloneElement(child, {
+                    onClick: () => {
+                      if (child.props.onClick) {
+                        child.props.onClick();
+                      }
+                      toggleMenu();
+                    },
+                  })}
+                </li>
+              );
             }
+
             return null;
           })}
         </ul>
