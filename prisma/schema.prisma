@@ -8,24 +8,18 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
-enum Role {
-  SUPER_ADMIN
-  BOARD_ADMIN // 게시판 관리자 - 공지사항 등록 가능
-  USER
-}
-
 model User {
   id              Int                @id @default(autoincrement())
-  role            Role               @default(USER)
+  email           String?
   nickName        String             @unique
   profileImageUrl String?
   createdAt       DateTime           @default(now())
   deletedAt       DateTime?
   updatedAt       DateTime           @default(now()) @updatedAt
-  email           String?
   name            String?
   phoneNumber     String?
-  kakaoId         BigInt               @unique
+  role            Role               @default(USER)
+  kakaoId         BigInt             @unique
   Comment         Comment[]
   dislikeComment  DislikeToComment[]
   dislikePost     DislikeToPost[]
@@ -37,50 +31,48 @@ model User {
 }
 
 model CategoryGroup {
-  id       Int    @id @default(autoincrement())
-  name     String
-  priority Int    @default(0)
-
+  id         Int        @id @default(autoincrement())
+  name       String
+  priority   Int        @default(0)
+  isUse      Boolean    @default(false)
   categories Category[]
 }
 
 model Category {
-  id       Int     @id @default(autoincrement())
-  groupId  Int?
-  name     String
-  isUse    Boolean @default(false)
-  priority Int     @default(0)
-
+  id            Int           @id @default(autoincrement())
+  name          String
+  isUse         Boolean       @default(false)
+  groupId       Int
+  priority      Int           @default(0)
+  group         CategoryGroup @relation(fields: [groupId], references: [id])
   posts         Post[]
-  group         CategoryGroup? @relation(fields: [groupId], references: [id])
   subCategories SubCategory[]
 }
 
 model SubCategory {
-  id         Int     @id @default(autoincrement())
+  id         Int      @id @default(autoincrement())
   name       String
   categoryId Int
-  isUse      Boolean @default(false)
-  priority   Int     @default(0)
-
-  posts  Post[]
-  parent Category @relation(fields: [categoryId], references: [id])
+  isUse      Boolean  @default(false)
+  priority   Int      @default(0)
+  posts      Post[]
+  parent     Category @relation(fields: [categoryId], references: [id])
 }
 
 model Post {
   id            Int             @id @default(autoincrement())
-  categoryId    Int
   subCategoryId Int?
   title         String
   content       String
   thumbnailUrl  String?
   views         Int             @default(0)
+  deletedAt     DateTime?
   createdAt     DateTime        @default(now())
   updatedAt     DateTime?       @updatedAt
-  deletedAt     DateTime?
   userId        Int
   images        String[]
-  isNotice      Boolean         @default(false) // 공지사항 여부
+  categoryId    Int
+  isNotice      Boolean         @default(false)
   comments      Comment[]
   dislikes      DislikeToPost[]
   likes         LikeToPost[]
@@ -111,6 +103,7 @@ model DislikeToPost {
 model ReportToPost {
   postId Int
   userId Int
+  reason String
   post   Post @relation(fields: [postId], references: [id])
   user   User @relation(fields: [userId], references: [id])
 
@@ -155,8 +148,15 @@ model DislikeToComment {
 model ReportToComment {
   commentId Int
   userId    Int
+  reason    String
   comment   Comment @relation(fields: [commentId], references: [id])
   user      User    @relation(fields: [userId], references: [id])
 
   @@id([userId, commentId])
+}
+
+enum Role {
+  SUPER_ADMIN
+  BOARD_ADMIN
+  USER
 }

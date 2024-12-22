@@ -1,15 +1,13 @@
-import {Content} from '@/client/ui/layouts/Content';
-import {Footer} from '@/client/ui/layouts/Footer';
-import {Header} from '@/client/ui/layouts/Header';
+import {Layout} from '@/client/ui/layouts/Layout';
 import type {Metadata} from 'next';
-import React, {ReactNode} from 'react';
+import {ReactNode} from 'react';
 import '../assets/globals.css';
 
 export const metadata: Metadata = {
   description: '에대숲 with 시작관',
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: ReactNode;
@@ -17,13 +15,15 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
+        <meta
+          name="viewport"
+          content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+        />
         <link rel="icon" href="/favicon.png" sizes="any" />
         <title>에대숲 with 시작관</title>
       </head>
       <body>
-        <Header />
-        <Content>{children}</Content>
-        <Footer />
+        <Layout>{children}</Layout>
       </body>
     </html>
   );

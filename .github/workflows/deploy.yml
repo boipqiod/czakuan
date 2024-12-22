@@ -1,0 +1,69 @@
+name: Deploy to EC2
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+
+      - name: Install Yarn
+        run: npm install -g yarn
+
+      - name: Install dependencies
+        run: yarn install
+
+      - name: Build project
+        run: yarn build
+
+      - name: Archive build files
+        run: zip -r build.zip .next package.json yarn.lock prisma/schema.prisma
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: build
+          path: build.zip
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+      - name: Download build artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: build
+          path: build
+
+      - name: Set up SSH
+        uses: webfactory/ssh-agent@v0.5.4
+        with:
+          ssh-private-key: ${{ secrets.SERVER_SSH_KEY }}
+
+      - name: Deploy to EC2
+        run: |
+          scp -o StrictHostKeyChecking=no -r build/build.zip ec2-user@ec2-52-79-47-97.ap-northeast-2.compute.amazonaws.com:/home/ec2-user/czakuan
+          ssh -o StrictHostKeyChecking=no ec2-user@ec2-52-79-47-97.ap-northeast-2.compute.amazonaws.com << 'EOF'
+            sudo yum update -y
+            sudo yum install -y unzip
+            cd /home/ec2-user/czakuan
+            unzip -o build.zip
+            aws s3 cp s3://czakuan-env/api/.env .env
+            yarn install --production # 필요한 의존성만 설치
+            yarn prisma generate --schema=./prisma/schema.prisma
+            pm2 delete all || true
+            pm2 start 'yarn next start' --name czakuan
+            pm2 save # 현재 실행중인 프로세스 상태를 저장
+          EOF

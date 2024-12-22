@@ -1,57 +1,100 @@
 'use server';
 
-import {CommentRepository} from '@/server/repositories/comment.repository';
-import {PostRepository} from '@/server/repositories/post.repository';
+import {serverAction} from '@/server/actions/action';
+import s3 from '@/server/modules/s3';
+import {PostService} from '@/server/service/post.service';
+import {TokenService} from '@/server/service/token.service';
 
 type getPostListParams = {
   page?: number;
   limit?: number;
+  categoryId?: number;
+  subCategoryId?: number;
 };
 
 export const getPostList = async ({
   page = 1,
   limit = 10,
-}: getPostListParams | undefined = {}) => {
-  const repo = new PostRepository();
-  const [posts, count] = await Promise.all([
-    repo.getList(page ?? 1, 10),
-    repo.getCount(),
-  ]);
-  const lastPage = Math.ceil(count / limit);
+  categoryId,
+  subCategoryId,
+}: getPostListParams | undefined = {}) =>
+  serverAction(async () => {
+    const service = new PostService();
+    if (categoryId || subCategoryId) {
+      return service.getPostList(page, limit, categoryId, subCategoryId);
+    } else {
+      return service.getPopularPostList({page, limit});
+    }
+  });
 
-  console.log(posts);
+export const getPostDetail = async (id: number) =>
+  serverAction(async () => {
+    const service = new PostService();
+    const post = await service.getPostDetail(id);
 
-  return {
-    page,
-    lastPage,
-    total: count,
-    list: posts,
-  };
-};
+    if (!post) {
+      throw new Error('Post not found');
+    }
 
-export const getPostDetail = async (id: number) => {
-  const repo = new PostRepository();
-  const post = await repo.getDetail(id);
+    return post;
+  });
 
-  if (!post) {
-    throw new Error('Post not found');
-  }
+export const getNoticeList = async (categoryId?: number) =>
+  serverAction(async () => {
+    const service = new PostService();
+    return await service.getNoticePostList({categoryId: categoryId ?? 1});
+  });
 
-  return post;
-};
+export const likePost = async (postId: number, userId: number) =>
+  serverAction(async () => {
+    const service = new PostService();
+    await service.likePost(postId, userId);
+    return null;
+  });
 
-export const getCommentList = async (postId: number, page: number) => {
-  const repo = new CommentRepository();
-  const [comments, count] = await Promise.all([
-    repo.getList(postId, 30, page),
-    repo.getCount(postId),
-  ]);
-  const lastPage = Math.ceil(count / 10);
+export const dislikePost = async (postId: number, userId: number) =>
+  serverAction(async () => {
+    const service = new PostService();
+    await service.dislikePost(postId, userId);
+    return null;
+  });
 
-  return {
-    page,
-    lastPage,
-    total: count,
-    list: comments,
-  };
-};
+export const uploadTempPostImage = async (file: File) =>
+  serverAction(async () => {
+    const url = await s3.uploadTempImage('post', file);
+    return {url};
+  });
+
+export const createPost = async (
+  title: string,
+  content: string,
+  images: string[],
+  categoryId: number,
+  subCategoryId?: number,
+  isNotice?: boolean,
+) =>
+  serverAction(async () => {
+    const tokenService = new TokenService();
+    const service = new PostService();
+
+    const user = await tokenService.verifyCookieToken();
+
+    if (!user) {
+      throw new Error('User not found'); //TODO: Error handling
+    }
+
+    return await service.create(
+      {
+        id: user.id,
+        role: user.role,
+      },
+      {
+        title,
+        content,
+        categoryId,
+        images,
+        subCategoryId,
+        isNotice: isNotice ?? false,
+      },
+    );
+  });

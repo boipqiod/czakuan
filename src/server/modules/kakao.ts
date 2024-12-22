@@ -15,10 +15,11 @@ export interface KakaoUserResponse {
 }
 
 export class Kakao {
-  readonly clientId: string = process.env.KAKAO_CLIENT_ID ?? '';
-  readonly clientSecret: string = process.env.KAKAO_CLIENT_SECRET ?? '';
+  readonly clientId: string = process.env.NEXT_PUBLIC_KAKAO_CLIENT_ID ?? '';
 
   async getToken(code: string) {
+    console.log('### Kakao.getToken', {code});
+
     const response = await axios.post<KakaoTokenResponse>(
       'https://kauth.kakao.com/oauth/token',
       {
@@ -36,12 +37,15 @@ export class Kakao {
     return response.data;
   }
 
-  async getUserData(token: string) {
-    const response = await axios.get('https://kapi.kakao.com/v2/user/me', {
-      headers: {
-        Authorization: `Bearer ${token}`,
+  async getUserData(token: string): Promise<KakaoUserResponse> {
+    const response = await axios.get<KakaoUserResponse>(
+      'https://kapi.kakao.com/v2/user/me',
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       },
-    });
+    );
 
     return response.data;
   }
