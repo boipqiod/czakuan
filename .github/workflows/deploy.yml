@@ -78,7 +78,7 @@ jobs:
             yarn prisma generate --schema=./prisma/schema.prisma
 
             pm2 delete czakuan || true
-            pm2 start 'yarn next start' --name czakuan
+            pm2 start 'yarn start' --name czakuan
             pm2 save
             curl -f http://localhost:2953/health || exit 1
           EOF
