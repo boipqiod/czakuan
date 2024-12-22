@@ -45,8 +45,7 @@ export const useComment = (
       return;
     }
 
-    actionWrapper({
-      action: () => likeComment(comment.id, user.id),
+    actionWrapper(() => likeComment(comment.id, user.id), {
       success: () => {
         setIsLike(!isLike);
         setLikeCount(isLike ? likeCount - 1 : likeCount + 1);
@@ -60,8 +59,7 @@ export const useComment = (
       return;
     }
 
-    actionWrapper({
-      action: () => dislikeComment(comment.id, user.id),
+    actionWrapper(() => dislikeComment(comment.id, user.id), {
       success: () => {
         setIsDislike(!isDislike);
         setDislikeCount(isDislike ? dislikeCount - 1 : dislikeCount + 1);
@@ -79,8 +77,7 @@ export const useComment = (
       return;
     }
 
-    actionWrapper({
-      action: () => deleteComment(comment.id, user.id),
+    actionWrapper(() => deleteComment(comment.id, user.id), {
       success: () => {
         alert('삭제되었습니다.');
       },

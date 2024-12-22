@@ -1,3 +1,4 @@
+import {actionWrapper} from '@/client/action/actionWapper';
 import {PostDetail} from '@/client/components/post/detail/PostDetail';
 import {PostList} from '@/client/components/post/list/PostList';
 import {Flex} from '@/client/ui/widgets';
@@ -16,8 +17,8 @@ const PostDetailPage = async ({
   const {page, categoryId, subCategoryId} = await searchParams;
 
   const [post, commentResult] = await Promise.all([
-    getPostDetail(Number(id)),
-    getCommentList(Number(id)),
+    actionWrapper(() => getPostDetail(Number(id))),
+    actionWrapper(() => getCommentList(Number(id))),
   ]);
 
   if (!post || !commentResult) {

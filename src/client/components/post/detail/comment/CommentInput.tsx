@@ -46,16 +46,18 @@ export const CommentInput = ({
       return;
     }
 
-    actionWrapper({
-      action: () => createComment(postId, authorId, comment, parentId, rootId),
-      success: response => {
-        setComment('');
-        const {data} = response;
-        addComment(data);
-        onClose && onClose();
-        alert('댓글이 등록되었습니다.');
+    actionWrapper(
+      () => createComment(postId, authorId, comment, parentId, rootId),
+      {
+        success: response => {
+          setComment('');
+          const {data} = response;
+          addComment(data);
+          onClose && onClose();
+          alert('댓글이 등록되었습니다.');
+        },
       },
-    });
+    );
   };
 
   return (

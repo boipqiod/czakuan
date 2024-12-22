@@ -16,17 +16,16 @@ export const PostList = async ({
 }: PostListProps) => {
   const [genelerNoticeResult, noticeResult, postListResult] = await Promise.all(
     [
-      actionWrapper({
-        action: getNoticeList,
+      actionWrapper(getNoticeList, {
         options: {revalidate: 1000 * 60 * 60},
       }),
-      categoryId ? getNoticeList(categoryId) : {list: []},
-      getPostList({page, categoryId, subCategoryId}),
+      categoryId ? actionWrapper(() => getNoticeList(categoryId)) : {list: []},
+      actionWrapper(() => getPostList({page, categoryId, subCategoryId})),
     ],
   );
 
-  const {list: notice} = noticeResult;
-  const {page: currentPage, list, lastPage} = postListResult;
+  const {list: notice} = noticeResult!;
+  const {page: currentPage, list, lastPage} = postListResult!;
   const {list: allNotice} = genelerNoticeResult ?? {list: []};
 
   const posts = [...allNotice, ...notice, ...list];

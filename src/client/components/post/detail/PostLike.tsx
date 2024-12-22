@@ -37,8 +37,7 @@ export const PostLike = ({post}: PostLikeProps) => {
       return;
     }
 
-    await actionWrapper({
-      action: () => likePost(post.id, user.id),
+    await actionWrapper(() => likePost(post.id, user.id), {
       success: () => {
         setIsLiked(!isLiked);
         setLikeCount(isLiked ? likeCount - 1 : likeCount + 1);
@@ -52,8 +51,7 @@ export const PostLike = ({post}: PostLikeProps) => {
       return;
     }
 
-    await actionWrapper({
-      action: () => dislikePost(post.id, user.id),
+    await actionWrapper(() => dislikePost(post.id, user.id), {
       success: () => {
         setIsDisliked(!isDisliked);
         setDislikeCount(isDisliked ? dislikeCount - 1 : dislikeCount + 1);

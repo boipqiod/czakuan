@@ -42,7 +42,10 @@ class UserService {
     console.log('### 카카오 사용자 조회 요청', {kakaoId, user});
 
     if (!user) {
-      throw new Error('[404] 사용자 정보가 존재하지 않습니다.');
+      throw NextResponse.json(
+        {message: '사용자 정보가 존재하지 않습니다.'},
+        {status: 404},
+      );
     }
 
     const {accessToken, refreshToken} =
@@ -70,13 +73,19 @@ class UserService {
       await this.userRepository.getUserByNickName(nickName);
 
     if (isNickNameExist) {
-      throw new Error('닉네임이 이미 존재합니다.');
+      throw NextResponse.json(
+        {message: '이미 존재하는 닉네임입니다.'},
+        {status: 400},
+      );
     }
 
     const user = await this.userRepository.getUserByKakaoId(id);
 
     if (user) {
-      throw new Error('이미 존재하는 유저입니다. 로그인 해주세요.');
+      throw NextResponse.json(
+        {message: '이미 가입된 사용자입니다.'},
+        {status: 400},
+      );
     }
 
     try {

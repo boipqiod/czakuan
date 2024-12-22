@@ -74,8 +74,7 @@ const imageHandler = async (
     if (!file) return;
     const _file = await convertToJpeg(file);
 
-    actionWrapper({
-      action: () => uploadTempPostImage(_file),
+    actionWrapper(() => uploadTempPostImage(_file), {
       success: res => {
         const {url} = res.data;
         const editor = quill.getEditor();

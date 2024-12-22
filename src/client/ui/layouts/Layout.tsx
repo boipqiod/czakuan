@@ -24,8 +24,7 @@ export const Layout = ({children}: LayoutProps) => {
     const fetchUserInfo = async () => {
       if (isLogin) return;
 
-      const userInfo = await actionWrapper({
-        action: getMyInfo,
+      const userInfo = await actionWrapper(getMyInfo, {
         error: error => {
           console.error('### 사용자 정보 조회 실패', error);
           if (error.status === 401) {

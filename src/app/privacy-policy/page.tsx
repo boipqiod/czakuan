@@ -1,3 +1,4 @@
+'use client';
 import {Flex} from '@/client/ui/widgets';
 
 const PrivacyPolicy = () => {

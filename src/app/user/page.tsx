@@ -36,13 +36,12 @@ const UserPage = () => {
   const handleSave = async () => {
     // save
     try {
-      const user = await actionWrapper({
-        action: () =>
-          changeUserInfo({
-            nickName,
-            profileImage: imageFileRef.current,
-          }),
-      });
+      const user = await actionWrapper(() =>
+        changeUserInfo({
+          nickName,
+          profileImage: imageFileRef.current,
+        }),
+      );
       if (!user) {
         throw new Error('사용자 정보 변경에 실패했습니다.');
       }

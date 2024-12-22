@@ -1,4 +1,5 @@
 'use client';
+
 import {actionWrapper} from '@/client/action/actionWapper';
 import {KakaoLoginMetaData} from '@/client/hooks/useKakao';
 import {useAuthStore} from '@/client/store/AuthStore';
@@ -23,22 +24,28 @@ const LoginResult = () => {
   if (!code || !state) {
     alert('정보가 올바르지 않습니다.');
     router.replace('/');
-    return;
+    return <></>;
   }
 
   const metaData = JSON.parse(decodeURIComponent(state)) as KakaoLoginMetaData;
 
-  useEffect(() => kakaoLogin(), []);
+  useEffect(() => {
+    kakaoLogin();
+  }, []);
 
-  const kakaoLogin = () => {
-    actionWrapper({
-      action: () => kakaoLoginAction(code),
+  const kakaoLogin = async () => {
+    await actionWrapper(() => kakaoLoginAction(code), {
       success: response => {
         if (metaData.type === 'login') {
           loginUser(response.data.id);
         } else {
           createUser(response.data.id);
         }
+      },
+      error: err => {
+        console.log(err);
+        alert('로그인 중 오류가 발생했습니다.1111');
+        router.replace('/');
       },
     });
   };
@@ -51,19 +58,17 @@ const LoginResult = () => {
       return;
     }
 
-    actionWrapper({
-      action: () => register(kakaoId, nickName),
+    actionWrapper(() => register(kakaoId, nickName), {
       success: response => setLogin(response.data),
     });
   };
 
   const loginUser = (kakaoId: number) => {
-    actionWrapper({
-      action: () => login(kakaoId),
+    actionWrapper(() => login(kakaoId), {
       success: response => setLogin(response.data),
       error: err => {
         console.log(err);
-        if (err.message.includes('404')) {
+        if (err.status === 404) {
           alert('가입되지 않은 사용자입니다. 회원가입을 진행해주세요.');
           router.replace('/account/register');
           return;
@@ -78,8 +83,7 @@ const LoginResult = () => {
 
   const setLogin = (user: User) => {
     loginStore(user);
-    actionWrapper({
-      action: () => saveUserInfo(user, true),
+    actionWrapper(() => saveUserInfo(user, true), {
       success: () => {
         router.replace('/');
       },

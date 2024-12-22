@@ -1,3 +1,4 @@
+import {actionWrapper} from '@/client/action/actionWapper';
 import {MarkOfRole} from '@/client/ui/components/Profile';
 import {Avatar, Flex} from '@/client/ui/widgets';
 import {getUserInfo} from '@/server/actions/user.actions';
@@ -7,7 +8,13 @@ const UserPage = async ({params}: PagePathProps<{id: string}>) => {
   const {id: _id} = await params;
   const id = Number(_id);
 
-  const {nickName, profileImageUrl, role} = await getUserInfo(id);
+  const data = await actionWrapper(() => getUserInfo(id));
+
+  if (!data) {
+    return <div>User not found</div>;
+  }
+
+  const {nickName, role, profileImageUrl} = data;
 
   return (
     <Flex width={'100%'}>

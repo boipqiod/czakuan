@@ -33,8 +33,7 @@ export const CommentItems = ({
   }, [page]);
 
   const fetchComments = async (page: number) => {
-    actionWrapper({
-      action: () => getCommentList(postId, page),
+    actionWrapper(() => getCommentList(postId, page), {
       success: response => {
         const {data} = response;
         if (data) setCommentResult(data);

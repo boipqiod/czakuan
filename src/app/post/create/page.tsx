@@ -72,8 +72,8 @@ const CreatePostPage = () => {
       return;
     }
 
-    actionWrapper({
-      action: () =>
+    actionWrapper(
+      () =>
         createPost(
           title,
           content,
@@ -82,12 +82,14 @@ const CreatePostPage = () => {
           subCategoryId,
           isNotice,
         ),
-      success: res => {
-        const {id} = res.data;
-        alert('게시글이 등록되었습니다.');
-        router.push(`/post/${id}`);
+      {
+        success: res => {
+          const {id} = res.data;
+          alert('게시글이 등록되었습니다.');
+          router.push(`/post/${id}`);
+        },
       },
-    });
+    );
   };
 
   return (
