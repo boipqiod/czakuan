@@ -5,12 +5,12 @@
   "scripts": {
     "dev": "next dev -p 2953 --turbopack -H 0.0.0.0",
     "build": "next build",
-    "start": "next start",
+    "start": "next start -p 2953",
     "lint": "next lint",
     "migrate": "prisma migrate dev",
     "generate": "prisma generate",
     "migrate-and-generate": "npm run generate && npm run migrate",
-    "migrate-and-generate:prod": "NODE_ENV=production npm run generate && npm run migrate",
+    "migrate-and-generate:prod": "dotenv -e .env.production -- npm run generate && npm run migrate",
     "postinstall": "prisma generate"
   },
   "dependencies": {
@@ -36,6 +36,7 @@
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "@typescript-eslint/parser": "^8.12.2",
+    "dotenv-cli": "^8.0.0",
     "eslint": "^9.14.0",
     "eslint-config-next": "15.0.2",
     "eslint-config-prettier": "^9.1.0",

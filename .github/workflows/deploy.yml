@@ -60,7 +60,7 @@ jobs:
             sudo yum install -y unzip
             cd /home/ec2-user/czakuan
             unzip -o build.zip
-            aws s3 cp s3://czakuan-env/api/.env .env
+            aws s3 cp s3://czakuan-env/.env.production .env
             yarn install --production # 필요한 의존성만 설치
             yarn prisma generate --schema=./prisma/schema.prisma
             pm2 delete all || true
