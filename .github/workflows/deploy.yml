@@ -33,12 +33,18 @@ jobs:
       - name: Install dependencies
         run: yarn install
 
+      # S3에서 .env 파일 다운로드 및 적용
+      - name: Download env file from S3
+        run: |
+          aws s3 cp s3://czakuan-env/.env.production .env.production
+          export $(cat .env.production | xargs) # 환경 변수 로드
+
       - name: Build project
         run: yarn build
 
       # 수정 2: Prisma migration 폴더 추가 포함
       - name: Archive build files
-        run: zip -r build.zip .next package.json yarn.lock prisma/
+        run: zip -r build.zip .next public package.json yarn.lock prisma/
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v3
@@ -80,10 +86,4 @@ jobs:
             pm2 delete czakuan || true
             pm2 start 'yarn start' --name czakuan
             pm2 save
-          EOF
-
-      - name: Check logs
-        run: |
-          ssh -o StrictHostKeyChecking=no ec2-user@ec2-52-79-47-97.ap-northeast-2.compute.amazonaws.com << 'EOF'
-            pm2 logs czakuan --lines 100
           EOF
