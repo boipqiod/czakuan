@@ -45,7 +45,6 @@ jobs:
       - name: Download env file from S3
         run: |
           aws s3 cp s3://czakuan-env/.env.production .env.production
-          export $(cat .env.production | xargs) # 환경 변수 로드
 
       - name: Build project
         run: yarn build
