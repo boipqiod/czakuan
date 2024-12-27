@@ -22,7 +22,7 @@ export default async function RootLayout({
         <link rel="icon" href="/favicon.png" sizes="any" />
         <title>에대숲 with 시작관</title>
       </head>
-      <body>
+      <body className={'dark'}>
         <Layout>{children}</Layout>
       </body>
     </html>
