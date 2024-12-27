@@ -1,24 +1,18 @@
-'use client';
-import {useAuthStore} from '@/client/store/AuthStore';
-import {useRouter} from 'next/navigation';
-import {ReactNode, useEffect} from 'react';
+import {AlertAndRedirect} from '@/client/ui/widgets/Alert';
+import {AuthService} from '@/server/service/auth.service';
+import {ReactNode} from 'react';
 
 const AdminLayout = ({
   children,
 }: Readonly<{
   children: ReactNode;
 }>) => {
-  const {isLogin, user} = useAuthStore();
-  const router = useRouter();
-
-  useEffect(() => {
-    if (!isLogin || user?.role !== 'SUPER_ADMIN') {
-      alert('접근 권한이 없습니다.');
-      router.replace('/');
-    }
-  }, []);
-
-  return children;
+  try {
+    new AuthService().verifySuperAdmin();
+    return children;
+  } catch (error) {
+    return <AlertAndRedirect message={'접근 불가능합니다.'} to={'/'} />;
+  }
 };
 
 export default AdminLayout;

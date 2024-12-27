@@ -36,6 +36,9 @@ export class AuthService {
 
   verifySuperAdmin = async () => {
     const user = await this.tokenService.verifyCookieToken();
+
+    console.log('verifySuperAdmin', user);
+
     if (!user) {
       throw UnauthorizedError();
     }
