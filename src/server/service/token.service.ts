@@ -1,3 +1,4 @@
+'use server';
 import {User} from '@/types/user';
 import jwt from 'jsonwebtoken';
 import {cookies} from 'next/headers';
@@ -5,7 +6,7 @@ import {cookies} from 'next/headers';
 const TOKEN_NAME = '_t';
 const REFRESH_TOKEN_NAME = '_rt';
 
-export class TokenService {
+class TokenService {
   constructor(
     private readonly jwtSectet: string = process.env.JWT_SECRET as string,
   ) {}
@@ -88,3 +89,5 @@ export class TokenService {
     }
   }
 }
+
+export default TokenService;
