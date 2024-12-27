@@ -12,6 +12,10 @@ type getPostListParams = {
   subCategoryId?: number;
 };
 
+//###################
+//#### Post List ####
+//###################
+
 export const getPostList = async ({
   page = 1,
   limit = 10,
@@ -26,6 +30,10 @@ export const getPostList = async ({
       return service.getPopularPostList({page, limit});
     }
   });
+
+//###################
+//### Post Detail ###
+//###################
 
 export const getPostDetail = async (id: number) =>
   serverAction(async () => {
@@ -59,6 +67,35 @@ export const dislikePost = async (postId: number, userId: number) =>
     return null;
   });
 
+export const reportPost = async (
+  postId: number,
+  userId: number,
+  reason: string,
+) =>
+  serverAction(async () => {
+    const service = new PostService();
+    await service.report(postId, userId, reason);
+    return null;
+  });
+
+export const deletePost = async (postId: number) =>
+  serverAction(async () => {
+    const tokenService = new TokenService();
+    const service = new PostService();
+
+    const user = await tokenService.verifyCookieToken();
+
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    await service.delete(postId, user.id);
+    return null;
+  });
+
+//###################
+//### Create Post ###
+//###################
 export const uploadTempPostImage = async (file: File) =>
   serverAction(async () => {
     const url = await s3.uploadTempImage('post', file);

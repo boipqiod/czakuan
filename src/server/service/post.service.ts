@@ -205,7 +205,11 @@ export class PostService {
   /**
    * 게시글 삭제
    */
-  delete(postId: number, userId: number) {
-    this.postRepository.delete(postId, userId);
+  async delete(postId: number, userId: number) {
+    await this.postRepository.delete(postId, userId);
   }
+
+  report = async (postId: number, userId: number, reason: string) => {
+    await this.postRepository.report(postId, userId, reason);
+  };
 }
