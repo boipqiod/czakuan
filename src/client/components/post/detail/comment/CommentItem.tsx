@@ -15,7 +15,7 @@ import {Badge} from '@/client/ui/widgets/Badge';
 import {Button, ClearButton} from '@/client/ui/widgets/Button';
 import {formatRelativeTime} from '@/lib/dayjs';
 import {CommentType} from '@/types/post';
-import {useEffect, useState} from 'react';
+import {useState} from 'react';
 import {AiOutlineDislike, AiOutlineLike} from 'react-icons/ai';
 import {IoIosMore} from 'react-icons/io';
 import {LuDot} from 'react-icons/lu';
@@ -46,10 +46,6 @@ export const CommentItem = ({
     onClickDislike,
     handleDelete,
   } = useComment(ownerId, comment, parentComment?.author);
-
-  useEffect(() => {
-    console.log('CommentItem', {ownerId, comment, parentComment});
-  }, []);
 
   const [openReply, setOpenReply] = useState(false);
 
