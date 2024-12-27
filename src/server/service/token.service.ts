@@ -16,9 +16,6 @@ class TokenService {
     const _accessToken = accessToken.split('').toReversed().join('');
     const _refreshToken = refreshToken.split('').toReversed().join('');
 
-    console.log('accessToken', _accessToken);
-    console.log('refreshToken', _refreshToken);
-
     cookieStore.set(TOKEN_NAME, _accessToken);
     cookieStore.set(REFRESH_TOKEN_NAME, _refreshToken);
   }
