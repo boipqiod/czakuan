@@ -1,5 +1,6 @@
 'use client';
 import {colors} from '@/assets/color';
+import {checkViewPost} from '@/client/hooks/usePost';
 import {Flex, HFlex, Text} from '@/client/ui/widgets';
 import {Avatar} from '@/client/ui/widgets/Avatar';
 import {formatRelativeTime} from '@/lib/dayjs';
@@ -27,24 +28,22 @@ export type PostItemProps = {
     profileImageUrl: string | null;
     role: string;
   };
+  isNowPost?: boolean;
 };
 
 export const PostItem = ({
   id,
-  categoryId,
-  subCategoryId,
   isNotice,
   title,
-  content,
   thumbnailUrl,
   views,
-  reports,
-  updatedAt,
   createdAt,
   _count,
   author,
+  isNowPost,
 }: PostItemProps) => {
-  const {nickName, profileImageUrl} = author;
+  const isViewed = checkViewPost(id);
+  const {nickName} = author;
   const {comments, likes} = _count;
   const query = new URLSearchParams(window.location.search).toString();
 
@@ -52,13 +51,14 @@ export const PostItem = ({
     <Link
       href={`/post/${id}?${query}`}
       style={{
-        color: 'var(--font-color)',
+        color: isViewed ? 'var(--font-read-color)' : 'var(--font-color)',
         textDecoration: 'none',
       }}>
       <HFlex
+        backgroundColor={isNowPost ? colors['primary.400'] : undefined}
         alignItems={'center'}
         gap={'1rem'}
-        paddingBottom={'.8rem'}
+        padding={'.4rem'}
         borderBottom={`1px solid #d0d0d030`}>
         {!isNotice && (
           <Avatar

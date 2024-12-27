@@ -4,7 +4,7 @@ import {CommentItems} from '@/client/components/post/detail/comment/CommentItems
 import {PostAuthor} from '@/client/components/post/detail/PostAuthor';
 import {PostContent} from '@/client/components/post/detail/PostContent';
 import {PostLike} from '@/client/components/post/detail/PostLike';
-import {usePostView} from '@/client/hooks/usePost';
+import {usePostViewIncrease} from '@/client/hooks/usePost';
 import {useAuthStore} from '@/client/store/AuthStore';
 import {
   DropdownMenu,
@@ -26,7 +26,7 @@ type PostDetailProps = {
 export const PostDetail = ({post, commentResult}: PostDetailProps) => {
   const {isLogin, user} = useAuthStore();
   const router = useRouter();
-  usePostView(post.id || 0);
+  usePostViewIncrease(post.id || 0);
 
   const handleDelete = () => {
     const isDelete = confirm('정말 삭제하시겠습니까?');

@@ -1,12 +1,8 @@
 import {UnauthorizedError} from '@/server/Error';
-import {UserRepository} from '@/server/repositories/user.repository';
 import {TokenService} from '@/server/service/token.service';
 
 export class AuthService {
-  constructor(
-    private readonly userRepository: UserRepository = new UserRepository(),
-    private readonly tokenService = new TokenService(),
-  ) {}
+  constructor(private readonly tokenService = new TokenService()) {}
 
   verifyUser = async () => {
     const user = await this.tokenService.verifyCookieToken();
