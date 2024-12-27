@@ -1,7 +1,7 @@
 'use server';
 import {serverAction} from '@/server/actions/action';
 import kakao from '@/server/modules/kakao';
-import {TokenService} from '@/server/service/token.service';
+import TokenService from '@/server/service/token.service';
 import UserService from '@/server/service/user.service';
 
 export const kakaoLogin = async (code: string) =>

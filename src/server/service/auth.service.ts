@@ -1,5 +1,5 @@
 import {UnauthorizedError} from '@/server/Error';
-import {TokenService} from '@/server/service/token.service';
+import TokenService from '@/server/service/token.service';
 
 export class AuthService {
   constructor(private readonly tokenService = new TokenService()) {}
