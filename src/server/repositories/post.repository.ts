@@ -134,9 +134,9 @@ export class PostRepository {
     userId: number,
     title: string,
     content: string,
-    isNotice: boolean,
     categoryId: number,
     subCategoryId?: number,
+    isNotice?: boolean,
   ) {
     return prisma.post.create({
       data: {
