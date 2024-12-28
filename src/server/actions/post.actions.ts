@@ -3,7 +3,6 @@
 import {serverAction} from '@/server/actions/action';
 import s3 from '@/server/modules/s3';
 import {PostService} from '@/server/service/post.service';
-import {TokenService} from '@/server/service/token.service';
 
 type getPostListParams = {
   page?: number;
@@ -11,6 +10,10 @@ type getPostListParams = {
   categoryId?: number;
   subCategoryId?: number;
 };
+
+//###################
+//#### Post List ####
+//###################
 
 export const getPostList = async ({
   page = 1,
@@ -27,22 +30,20 @@ export const getPostList = async ({
     }
   });
 
+//###################
+//### Post Detail ###
+//###################
+
 export const getPostDetail = async (id: number) =>
-  serverAction(async () => {
+  serverAction(() => {
     const service = new PostService();
-    const post = await service.getPostDetail(id);
-
-    if (!post) {
-      throw new Error('Post not found');
-    }
-
-    return post;
+    return service.getPostDetail(id);
   });
 
 export const getNoticeList = async (categoryId?: number) =>
-  serverAction(async () => {
+  serverAction(() => {
     const service = new PostService();
-    return await service.getNoticePostList({categoryId: categoryId ?? 1});
+    return service.getNoticePostList({categoryId: categoryId ?? 1});
   });
 
 export const likePost = async (postId: number, userId: number) =>
@@ -59,6 +60,33 @@ export const dislikePost = async (postId: number, userId: number) =>
     return null;
   });
 
+export const reportPost = async (
+  postId: number,
+  userId: number,
+  reason: string,
+) =>
+  serverAction(async () => {
+    const service = new PostService();
+    await service.report(postId, userId, reason);
+    return null;
+  });
+
+export const deletePost = async (postId: number, userId: number) =>
+  serverAction(async () => {
+    const service = new PostService();
+    await service.delete(postId, userId);
+    return null;
+  });
+
+export const increaseViewCountPost = async (postId: number) =>
+  serverAction(async () => {
+    await new PostService().increaseViewCount(postId);
+    return null;
+  });
+
+//###################
+//### Create Post ###
+//###################
 export const uploadTempPostImage = async (file: File) =>
   serverAction(async () => {
     const url = await s3.uploadTempImage('post', file);
@@ -74,27 +102,13 @@ export const createPost = async (
   isNotice?: boolean,
 ) =>
   serverAction(async () => {
-    const tokenService = new TokenService();
     const service = new PostService();
-
-    const user = await tokenService.verifyCookieToken();
-
-    if (!user) {
-      throw new Error('User not found'); //TODO: Error handling
-    }
-
-    return await service.create(
-      {
-        id: user.id,
-        role: user.role,
-      },
-      {
-        title,
-        content,
-        categoryId,
-        images,
-        subCategoryId,
-        isNotice: isNotice ?? false,
-      },
+    return service.create(
+      title,
+      content,
+      images,
+      categoryId,
+      subCategoryId,
+      isNotice,
     );
   });

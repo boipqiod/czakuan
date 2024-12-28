@@ -134,9 +134,9 @@ export class PostRepository {
     userId: number,
     title: string,
     content: string,
-    isNotice: boolean,
     categoryId: number,
     subCategoryId?: number,
+    isNotice?: boolean,
   ) {
     return prisma.post.create({
       data: {
@@ -172,12 +172,22 @@ export class PostRepository {
 
   async delete(postId: number, userId: number) {
     // 소프트 딜리트
-    return await prisma.post.update({
+    return prisma.post.update({
       where: {id: postId, userId: userId},
       data: {
         deletedAt: new Date(),
       },
       select: {id: true},
+    });
+  }
+
+  report(postId: number, userId: number, reason: string) {
+    return prisma.reportToPost.create({
+      data: {
+        postId,
+        userId,
+        reason,
+      },
     });
   }
 }
