@@ -46,6 +46,11 @@ export const Header = () => {
             내 정보
           </DropdownMenuItem>
         )}
+        {user?.role === 'SUPER_ADMIN' && (
+          <DropdownMenuItem onClick={() => router.push('/admin')}>
+            관리자 페이지
+          </DropdownMenuItem>
+        )}
         {isLogin && (
           <DropdownMenuItem onClick={onLogout}>로그아웃</DropdownMenuItem>
         )}

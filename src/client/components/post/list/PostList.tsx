@@ -8,11 +8,13 @@ type PostListProps = {
   page: number;
   categoryId?: number;
   subCategoryId?: number;
+  postId?: number;
 };
 export const PostList = async ({
   page,
   categoryId,
   subCategoryId,
+  postId,
 }: PostListProps) => {
   const [genelerNoticeResult, noticeResult, postListResult] = await Promise.all(
     [
@@ -33,7 +35,11 @@ export const PostList = async ({
   return (
     <Flex gap={10}>
       {posts.map((post, index) => (
-        <PostItem key={post.id + index.toString()} {...post} />
+        <PostItem
+          key={post.id + index.toString()}
+          {...post}
+          isNowPost={postId === post.id}
+        />
       ))}
       {list.length === 0 && <p>작성된 글이 없습니다.</p>}
       <Pagination lastPage={lastPage} currentPage={currentPage} />
