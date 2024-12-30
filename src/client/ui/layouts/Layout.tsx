@@ -9,6 +9,8 @@ import {SidePanel} from '@/client/ui/layouts/SidePanel';
 import {Flex} from '@/client/ui/widgets';
 import {ClearButton} from '@/client/ui/widgets/Button';
 import {getMyInfo} from '@/server/actions/user.actions';
+import {getAnalytics} from 'firebase/analytics';
+import {initializeApp} from 'firebase/app';
 import {useRouter} from 'next/navigation';
 import {ReactNode, useEffect, useState} from 'react';
 import {IoIosAddCircle} from 'react-icons/io';
@@ -16,9 +18,23 @@ import {IoIosAddCircle} from 'react-icons/io';
 type LayoutProps = {
   children: ReactNode;
 };
+const firebaseConfig = {
+  apiKey: 'AIzaSyCaUK-Ps0LcGlrLCeNWKB0jbcpKrGOmzVk',
+  authDomain: 'czakuan-df076.firebaseapp.com',
+  projectId: 'czakuan-df076',
+  storageBucket: 'czakuan-df076.firebasestorage.app',
+  messagingSenderId: '97362793494',
+  appId: '1:97362793494:web:b37ab6afab977b16d09137',
+  measurementId: 'G-DB5B1CF1SG',
+};
+
 export const Layout = ({children}: LayoutProps) => {
   const {user, isLogin, setUserInfo} = useAuthStore();
   const [isLoading, setIsLoading] = useState(true);
+
+  const aa: {isCom: boolean}[] = [];
+
+  aa.filter(a => a.isCom);
 
   useEffect(() => {
     const fetchUserInfo = async () => {
@@ -38,7 +54,13 @@ export const Layout = ({children}: LayoutProps) => {
       setUserInfo(userInfo);
     };
 
+    const setFirebase = async () => {
+      const app = initializeApp(firebaseConfig);
+      getAnalytics(app);
+    };
+
     fetchUserInfo().finally(() => setIsLoading(false));
+    setFirebase();
   }, []);
 
   if (isLoading) return null;
