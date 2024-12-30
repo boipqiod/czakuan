@@ -1,7 +1,7 @@
 'use server';
+import {getCookieStorage} from '@/server/modules/cookies';
 import {User} from '@/types/user';
 import jwt from 'jsonwebtoken';
-import {cookies} from 'next/headers';
 
 const TOKEN_NAME = '_t';
 const REFRESH_TOKEN_NAME = '_rt';
@@ -12,7 +12,7 @@ class TokenService {
   ) {}
 
   private async saveTokens(accessToken: string, refreshToken: string) {
-    const cookieStore = await cookies();
+    const cookieStore = await getCookieStorage();
     const _accessToken = accessToken.split('').toReversed().join('');
     const _refreshToken = refreshToken.split('').toReversed().join('');
 
@@ -21,7 +21,7 @@ class TokenService {
   }
 
   private async getTokens() {
-    const cookieStore = await cookies();
+    const cookieStore = await getCookieStorage();
     const _token = cookieStore.get(TOKEN_NAME);
     const _refreshToken = cookieStore.get(REFRESH_TOKEN_NAME);
 
@@ -34,7 +34,7 @@ class TokenService {
   }
 
   async deleteTokens() {
-    const cookieStore = await cookies();
+    const cookieStore = await getCookieStorage();
     cookieStore.delete(TOKEN_NAME);
     cookieStore.delete(REFRESH_TOKEN_NAME);
   }
