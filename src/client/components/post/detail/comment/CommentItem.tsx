@@ -1,7 +1,9 @@
 'use client';
 import {colors} from '@/assets/color';
+import {actionWrapper} from '@/client/action/actionWapper';
 import {CommentInput} from '@/client/components/post/detail/comment/CommentInput';
 import {useComment} from '@/client/hooks/useComment';
+import {useAuthStore} from '@/client/store/AuthStore';
 import {Profile} from '@/client/ui/components/Profile';
 import {
   DropdownMenu,
@@ -14,6 +16,7 @@ import {
 import {Badge} from '@/client/ui/widgets/Badge';
 import {Button, ClearButton} from '@/client/ui/widgets/Button';
 import {formatRelativeTime} from '@/lib/dayjs';
+import {reportComment} from '@/server/actions/post.comment.actions';
 import {CommentType} from '@/types/post';
 import {useState} from 'react';
 import {AiOutlineDislike, AiOutlineLike} from 'react-icons/ai';
@@ -34,6 +37,8 @@ export const CommentItem = ({
   addComment,
 }: CommentItemProps) => {
   const {author: parentAuthor} = parentComment || {};
+  const {isLogin, user} = useAuthStore();
+
   const {
     isPostOwner,
     isHasParent,
@@ -48,6 +53,29 @@ export const CommentItem = ({
   } = useComment(ownerId, comment, parentComment?.author);
 
   const [openReply, setOpenReply] = useState(false);
+  const report = () => {
+    if (!isLogin || !user) {
+      alert('로그인이 필요합니다.');
+      return;
+    }
+
+    const reason = prompt('신고 사유를 입력해주세요.');
+
+    if (!reason) {
+      return;
+    }
+
+    if (reason.trim().length < 5) {
+      alert('신고 사유는 5자 이상 입력해주세요.');
+      return;
+    }
+
+    actionWrapper(() => reportComment(comment.id, user.id, reason), {
+      success: () => {
+        alert('신고가 완료되었습니다.');
+      },
+    });
+  };
 
   return (
     <Flex gap={6} padding={5} marginLeft={isHasParent ? 30 : 0}>
@@ -75,12 +103,7 @@ export const CommentItem = ({
             {isCommentOwner && !isDeleted && (
               <DropdownMenuItem onClick={handleDelete}>삭제</DropdownMenuItem>
             )}
-            <DropdownMenuItem
-              onClick={() => {
-                alert('기능 준비중입니다.');
-              }}>
-              신고
-            </DropdownMenuItem>
+            <DropdownMenuItem onClick={report}>신고</DropdownMenuItem>
           </DropdownMenu>
         </HFlex>
       </HFlex>

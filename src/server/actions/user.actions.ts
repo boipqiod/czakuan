@@ -1,14 +1,13 @@
 'use server';
 
 import {serverAction} from '@/server/actions/action';
-import TokenService from '@/server/service/token.service';
+import {verifyUser} from '@/server/modules/auth';
 import UserService from '@/server/service/user.service';
 
 export const getMyInfo = async () =>
   serverAction(async () => {
-    const service = new TokenService();
     const userService = new UserService();
-    const tokenUser = await service.verifyCookieToken();
+    const tokenUser = await verifyUser();
     if (!tokenUser) {
       return null;
     }
@@ -31,11 +30,8 @@ export const changeUserInfo = async ({
   profileImage?: File;
 }) =>
   serverAction(async () => {
-    console.log('### changeUserInfo', {nickName, profileImage});
-
-    const service = new TokenService();
     const userService = new UserService();
-    const tokenUser = await service.verifyCookieToken();
+    const tokenUser = await verifyUser();
     if (!tokenUser) {
       throw new Error('로그인이 필요합니다.');
     }

@@ -1,14 +1,13 @@
 import {getUniqueString} from '@/lib/random';
-import {ForbiddenError, NotFoundError, UnauthorizedError} from '@/server/Error';
+import {NotFoundError} from '@/server/Error';
 import prisma from '@/server/modules/prisma';
 import s3 from '@/server/modules/s3';
 import {PostRepository} from '@/server/repositories/post.repository';
-import {AuthService} from '@/server/service/auth.service';
+import {User} from '@/types/user';
 
 export class PostService {
   constructor(
     private readonly postRepository: PostRepository = new PostRepository(),
-    private readonly authService = new AuthService(),
     private readonly prismaHelper = prisma,
     private readonly s3Helper = s3,
   ) {}
@@ -75,6 +74,7 @@ export class PostService {
    * 게시글 생성
    */
   async create(
+    user: User,
     title: string,
     content: string,
     images: string[],
@@ -82,10 +82,6 @@ export class PostService {
     subCategoryId?: number,
     isNotice?: boolean,
   ) {
-    const user = isNotice
-      ? await this.authService.verifyAdmin()
-      : await this.authService.verifyUser();
-
     const newPost = await this.postRepository.create(
       user.id,
       title,
@@ -123,8 +119,6 @@ export class PostService {
    * 게시글 좋아요
    */
   async likePost(postId: number, userId: number) {
-    await this.authService.verifyUserId(userId);
-
     const like = await this.prismaHelper.likeToPost.findUnique({
       where: {
         userId_postId: {
@@ -158,8 +152,6 @@ export class PostService {
    * 게시글 싫어요
    */
   async dislikePost(postId: number, userId: number) {
-    await this.authService.verifyUserId(userId);
-
     const dislikes = await this.prismaHelper.dislikeToPost.findUnique({
       where: {userId_postId: {userId, postId}},
     });
@@ -200,20 +192,26 @@ export class PostService {
    * 게시글 삭제
    */
   async delete(postId: number, userId: number) {
-    const loginUser = await this.authService.verifyUser();
-
-    if (!loginUser) {
-      throw UnauthorizedError();
-    }
-
-    if (loginUser.id !== userId && loginUser.role !== 'SUPER_ADMIN') {
-      throw ForbiddenError();
-    }
-
     await this.postRepository.delete(postId, userId);
   }
 
   report = async (postId: number, userId: number, reason: string) => {
     await this.postRepository.report(postId, userId, reason);
   };
+
+  /**
+   * [어드민] 게시글 신고 목록 조회
+   */
+  async getReportedList(page: number, limit: number) {
+    const list = await this.postRepository.reportList(page, limit);
+    const total = await this.postRepository.reportCount();
+    const lastPage = Math.ceil(total / limit);
+
+    return {
+      page,
+      lastPage,
+      total,
+      list,
+    };
+  }
 }

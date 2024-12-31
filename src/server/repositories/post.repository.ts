@@ -190,4 +190,29 @@ export class PostRepository {
       },
     });
   }
+
+  reportCount() {
+    return prisma.reportToPost.count();
+  }
+
+  reportList(page: number, limit: number) {
+    return prisma.reportToPost.findMany({
+      skip: (page - 1) * limit,
+      take: limit,
+      select: {
+        postId: true,
+        userId: true,
+        reason: true,
+        createdAt: true,
+        user: {
+          select: {
+            id: true,
+            role: true,
+            nickName: true,
+            profileImageUrl: true,
+          },
+        },
+      },
+    });
+  }
 }

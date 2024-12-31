@@ -1,4 +1,5 @@
 import {actionWrapper} from '@/client/action/actionWapper';
+import {AddPost} from '@/client/components/post/AddPost';
 import {PostItem} from '@/client/components/post/list/PostItem';
 import {Flex} from '@/client/ui/widgets';
 import {Pagination} from '@/client/ui/widgets/Pagination';
@@ -33,16 +34,19 @@ export const PostList = async ({
   const posts = [...allNotice, ...notice, ...list];
 
   return (
-    <Flex gap={10}>
-      {posts.map((post, index) => (
-        <PostItem
-          key={post.id + index.toString()}
-          {...post}
-          isNowPost={postId === post.id}
-        />
-      ))}
-      {list.length === 0 && <p>작성된 글이 없습니다.</p>}
+    <Flex gap={30}>
+      <Flex>
+        {posts.map((post, index) => (
+          <PostItem
+            key={post.id + index.toString()}
+            {...post}
+            isNowPost={postId === post.id}
+          />
+        ))}
+        {list.length === 0 && <p>작성된 글이 없습니다.</p>}
+      </Flex>
       <Pagination lastPage={lastPage} currentPage={currentPage} />
+      <AddPost />
     </Flex>
   );
 };
