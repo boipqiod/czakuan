@@ -21,6 +21,11 @@ export type CommentType = {
   createdAt: Date;
   deletedAt: Date | null;
   author: Author;
+  parent: {
+    author: {
+      nickName: string;
+    };
+  } | null;
 };
 
 export type PostDetailType = {

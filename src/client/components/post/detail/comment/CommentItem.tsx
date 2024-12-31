@@ -26,17 +26,16 @@ import {LuDot} from 'react-icons/lu';
 type CommentItemProps = {
   ownerId: number;
   comment: CommentType;
-  parentComment?: CommentType;
+  parentNicname?: string;
   addComment: (comment: CommentType) => void;
 };
 
 export const CommentItem = ({
   ownerId,
   comment,
-  parentComment,
+  parentNicname,
   addComment,
 }: CommentItemProps) => {
-  const {author: parentAuthor} = parentComment || {};
   const {isLogin, user} = useAuthStore();
 
   const {
@@ -50,7 +49,7 @@ export const CommentItem = ({
     onClickLike,
     onClickDislike,
     handleDelete,
-  } = useComment(ownerId, comment, parentComment?.author);
+  } = useComment(ownerId, comment);
 
   const [openReply, setOpenReply] = useState(false);
   const report = () => {
@@ -109,9 +108,9 @@ export const CommentItem = ({
       </HFlex>
 
       <Flex padding={10}>
-        {parentAuthor && (
+        {parentNicname && (
           <Text color={colors['blue']} fontWeight={'bold'} fontSize={'1.1rem'}>
-            @{parentAuthor?.nickName}
+            @{parentNicname}
           </Text>
         )}
         <div>

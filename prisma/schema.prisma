@@ -123,9 +123,13 @@ model Comment {
   rootId    Int
   post      Post               @relation(fields: [postId], references: [id])
   author    User               @relation(fields: [userId], references: [id])
+  parent    Comment?           @relation("CommentToParent", fields: [parentId], references: [id]) // 부모 관계
+  children  Comment[]          @relation("CommentToParent") // 자식 관계
+  
   dislikes  DislikeToComment[]
   likes     LikeToComment[]
   reports   ReportToComment[]
+
 }
 
 model LikeToComment {
