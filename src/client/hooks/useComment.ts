@@ -6,14 +6,9 @@ import {
   likeComment,
 } from '@/server/actions/post.comment.actions';
 import {CommentType} from '@/types/post';
-import {Author} from '@/types/user';
 import {useEffect, useState} from 'react';
 
-export const useComment = (
-  ownerId: number,
-  comment: CommentType,
-  parentAuthor?: Author,
-) => {
+export const useComment = (ownerId: number, comment: CommentType) => {
   const {isLogin, user} = useAuthStore();
 
   const [isLike, setIsLike] = useState(

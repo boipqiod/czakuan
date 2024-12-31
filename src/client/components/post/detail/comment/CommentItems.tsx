@@ -86,7 +86,7 @@ const CommentGroup = ({
         comment={comment}
         ownerId={ownerId}
         addComment={addComment}
-        parentComment={commentList.find(c => c.id === comment.parentId)}
+        parentNicname={comment.parent?.author.nickName}
       />
     );
   });
