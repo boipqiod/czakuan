@@ -1,4 +1,4 @@
-import {UnauthorizedError} from '@/server/Error';
+import {ForbiddenError, UnauthorizedError} from '@/server/Error';
 import {deleteCookie, getCookie, setCookie} from '@/server/modules/cookies';
 import TokenService, {
   REFRESH_TOKEN_NAME,
@@ -8,6 +8,7 @@ import {User} from '@/types/user';
 import {cookies} from 'next/headers';
 
 export const verifyUser = async () => {
+  await cookies();
   const token = await getCookie(TOKEN_NAME);
   const refreshToken = await getCookie(REFRESH_TOKEN_NAME);
   if (!token || !refreshToken) return null;
@@ -35,17 +36,17 @@ export const verifyUserId = async (userId: number) => {
     throw UnauthorizedError();
   }
   if (user.id !== userId) {
-    throw UnauthorizedError();
+    throw ForbiddenError();
   }
   return user;
 };
 
 export const verifyAdmin = async (text?: string) => {
   const user = await verifyUser();
+  if (!user) throw UnauthorizedError(text);
   console.log('verifyAdmin', user);
 
-  if (!user) throw UnauthorizedError(text);
-  if (!user.role.includes('ADMIN')) throw UnauthorizedError(text);
+  if (!user.role.includes('ADMIN')) throw ForbiddenError(text);
 
   return user;
 };
@@ -59,7 +60,7 @@ export const verifySuperAdmin = async () => {
     throw UnauthorizedError();
   }
   if (!user.role.includes('SUPER_ADMIN')) {
-    throw UnauthorizedError();
+    throw ForbiddenError();
   }
   return user;
 };
@@ -70,7 +71,7 @@ export const verifyAdminOrOwner = async (userId: number) => {
     throw UnauthorizedError();
   }
   if (!user.role.includes('SUPER_ADMIN') && user.id !== userId) {
-    throw UnauthorizedError();
+    throw ForbiddenError();
   }
   return user;
 };
