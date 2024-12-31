@@ -1,5 +1,5 @@
 import {UnauthorizedError} from '@/server/Error';
-import {getCookie, setCookie} from '@/server/modules/cookies';
+import {deleteCookie, getCookie, setCookie} from '@/server/modules/cookies';
 import TokenService, {
   REFRESH_TOKEN_NAME,
   TOKEN_NAME,
@@ -75,14 +75,22 @@ export const verifyAdminOrOwner = async (userId: number) => {
   return user;
 };
 
-export const setTokens = async (accessToken: string, refreshToken: string) => {
-  const cookiesStore = await cookies();
-  // cookiesStore.set(TOKEN_NAME, accessToken, {
-  //   httpOnly: true,
-  // });
-  // cookiesStore.set(REFRESH_TOKEN_NAME, refreshToken, {
-  //   httpOnly: true,
-  // });
-  setCookie(TOKEN_NAME, accessToken);
-  setCookie(REFRESH_TOKEN_NAME, refreshToken);
+export const setTokens = async (
+  accessToken: string,
+  refreshToken: string,
+  isSave: boolean,
+) => {
+  await cookies();
+  setCookie(TOKEN_NAME, accessToken, isSave ? 60 * 60 * 24 * 7 : undefined);
+  setCookie(
+    REFRESH_TOKEN_NAME,
+    refreshToken,
+    isSave ? 60 * 60 * 24 * 7 : undefined,
+  );
+};
+
+export const deleteTokens = async () => {
+  await cookies();
+  deleteCookie(TOKEN_NAME);
+  deleteCookie(REFRESH_TOKEN_NAME);
 };
