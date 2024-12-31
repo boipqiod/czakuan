@@ -14,13 +14,8 @@ class TokenService {
   }
 
   verifyToken(token: string) {
-    try {
-      const _token = token.split('').toReversed().join('');
-      return jwt.verify(_token, this.jwtSectet);
-    } catch (e) {
-      console.error('### verifyToken', e);
-      throw e;
-    }
+    const _token = token.split('').toReversed().join('');
+    return jwt.verify(_token, this.jwtSectet);
   }
 
   createTokenByUser(user: User) {
