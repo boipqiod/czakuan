@@ -1,7 +1,12 @@
 'use server';
 import {serverAction} from '@/server/actions/action';
+import {setTokens, verifyUser} from '@/server/modules/auth';
+import {deleteCookie} from '@/server/modules/cookies';
 import kakao from '@/server/modules/kakao';
-import TokenService from '@/server/service/token.service';
+import TokenService, {
+  REFRESH_TOKEN_NAME,
+  TOKEN_NAME,
+} from '@/server/service/token.service';
 import UserService from '@/server/service/user.service';
 
 export const kakaoLogin = async (code: string) =>
@@ -31,14 +36,15 @@ export const login = async (kakaoId: number) =>
 
 export const logout = async () =>
   serverAction(async () => {
-    new TokenService().deleteTokens();
+    deleteCookie(TOKEN_NAME);
+    deleteCookie(REFRESH_TOKEN_NAME);
     return null;
   });
 
 export const userInfo = async () =>
   serverAction(async () => {
     try {
-      return new TokenService().verifyCookieToken();
+      return verifyUser();
     } catch (error) {
       return null;
     }
@@ -46,6 +52,9 @@ export const userInfo = async () =>
 
 export const saveUserInfo = async (user: any, isSave: boolean) =>
   serverAction(async () => {
-    await new TokenService().saveUserToken(user);
+    const {accessToken, refreshToken} = new TokenService().createTokenByUser(
+      user,
+    );
+    await setTokens(accessToken, refreshToken);
     return null;
   });

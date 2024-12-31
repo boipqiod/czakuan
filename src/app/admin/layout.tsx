@@ -1,18 +1,11 @@
-import {AlertAndRedirect} from '@/client/ui/widgets/Alert';
-import {AuthService} from '@/server/service/auth.service';
 import {ReactNode} from 'react';
 
-const AdminLayout = ({
+const AdminLayout = async ({
   children,
 }: Readonly<{
   children: ReactNode;
 }>) => {
-  try {
-    new AuthService().verifySuperAdmin();
-    return children;
-  } catch (error) {
-    return <AlertAndRedirect message={'접근 불가능합니다.'} to={'/'} />;
-  }
+  return children;
 };
 
 export default AdminLayout;

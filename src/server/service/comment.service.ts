@@ -72,4 +72,21 @@ export class CommentService {
       this.commentRepository.createDislike(commentId, userId);
     }
   }
+
+  async reportComment(commentId: number, userId: number, reason: string) {
+    return this.commentRepository.report(commentId, userId, reason);
+  }
+
+  async getReportedList(page: number, limit: number) {
+    const list = await this.commentRepository.reportList(page, limit);
+    const total = await this.commentRepository.reportCount();
+    const lastPage = Math.ceil(total / limit);
+
+    return {
+      page,
+      lastPage,
+      total,
+      list,
+    };
+  }
 }
