@@ -12,6 +12,9 @@ export class CategoryService {
         id: true,
         name: true,
         categories: {
+          orderBy: {
+            priority: 'asc',
+          },
           where: {
             isUse: true,
           },
