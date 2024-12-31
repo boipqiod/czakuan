@@ -6,6 +6,14 @@ import {getPostDetail} from '@/server/actions/post.actions';
 import {getCommentList} from '@/server/actions/post.comment.actions';
 import {PageProps} from '@/types/common';
 
+export async function generateMetadata({params}: {params: {id: string}}) {
+  // 메타데이터 전용 요청
+  const post = await actionWrapper(() => getPostDetail(Number(params.id)));
+  return {
+    title: '에대숲 :: ' + (post?.title ?? ''),
+  };
+}
+
 const PostDetailPage = async ({
   params,
   searchParams,
