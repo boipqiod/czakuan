@@ -166,4 +166,50 @@ export class CommentRepository {
       },
     });
   }
+
+  report(id: number, userId: number, reason: string) {
+    return prisma.reportToComment.create({
+      data: {
+        commentId: id,
+        userId,
+        reason,
+      },
+    });
+  }
+
+  reportCount() {
+    return prisma.reportToComment.count();
+  }
+
+  reportList(page: number, limit: number) {
+    return prisma.reportToComment.findMany({
+      skip: (page - 1) * limit,
+      take: limit,
+      select: {
+        commentId: true,
+        reason: true,
+        user: {
+          select: {
+            id: true,
+            nickName: true,
+            role: true,
+            profileImageUrl: true,
+          },
+        },
+        createdAt: true,
+        comment: {
+          select: {
+            content: true,
+            postId: true,
+            author: {
+              select: {
+                id: true,
+                nickName: true,
+              },
+            },
+          },
+        },
+      },
+    });
+  }
 }

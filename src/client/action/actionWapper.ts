@@ -50,6 +50,8 @@ export const actionWrapper = async <T extends ResponseData, U>(
 
     return data.data;
   } catch (err: any) {
+    console.log('### actionWrapper error', err);
+
     const errorResponse = {
       status: err?.status || 500,
       statusText: err?.statusText || err?.message || 'Internal Server Error',

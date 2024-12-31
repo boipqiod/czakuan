@@ -106,6 +106,7 @@ model ReportToPost {
   reason String
   post   Post @relation(fields: [postId], references: [id])
   user   User @relation(fields: [userId], references: [id])
+  createdAt   DateTime @default(now())
 
   @@id([userId, postId])
 }
@@ -151,6 +152,7 @@ model ReportToComment {
   reason    String
   comment   Comment @relation(fields: [commentId], references: [id])
   user      User    @relation(fields: [userId], references: [id])
+  createdAt   DateTime @default(now())
 
   @@id([userId, commentId])
 }

@@ -14,10 +14,27 @@ import {createPost} from '@/server/actions/post.actions';
 import {useRouter} from 'next/navigation';
 import {useEffect, useMemo, useState} from 'react';
 
+const adminCategoryGroup = {
+  id: 0,
+  name: '관리자용',
+  categories: [
+    {
+      id: 1,
+      name: '공지사항',
+      subCategories: [],
+    },
+  ],
+};
+
 const CreatePostPage = () => {
   const {user} = useAuthStore();
-  const {categories, getCategory, getSubCategory} = useCategoryStore();
+  const {categories: originCategories} = useCategoryStore();
   const router = useRouter();
+
+  const categories =
+    user && user.role === 'SUPER_ADMIN'
+      ? [adminCategoryGroup, ...originCategories]
+      : originCategories;
 
   const [categoryGroup, setCategoryGroup] = useState<CategoryGroup>(
     categories[0],
@@ -37,6 +54,14 @@ const CreatePostPage = () => {
   const uploadImage = async (imageUrl: string) => {
     setImages([...images, imageUrl]);
   };
+
+  useEffect(() => {
+    if (categoryGroup.id === 0) {
+      setIsNotice(true);
+    } else {
+      setIsNotice(false);
+    }
+  }, [categoryGroup]);
 
   useEffect(() => {
     if (category.subCategories.length > 0) {
@@ -104,12 +129,13 @@ const CreatePostPage = () => {
           {user && user.role.includes('ADMIN') && (
             <Flex width={'4rem'} alignItems={'center'}>
               <Text>공지</Text>
-              <input
-                width={'10px'}
-                type={'checkbox'}
-                checked={isNotice}
-                onChange={e => setIsNotice(e.target.checked)}
-              />
+              <Flex justifyContent={'center'} height={'100%'}>
+                <input
+                  type={'checkbox'}
+                  checked={isNotice}
+                  onChange={e => setIsNotice(e.target.checked)}
+                />
+              </Flex>
             </Flex>
           )}
         </HFlex>
