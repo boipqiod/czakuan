@@ -8,7 +8,7 @@ export const cashingAction = async <T extends ResponseData>(
   action: () => Promise<ActionResponse<T>>,
   options?: {staleTime?: number},
 ) => {
-  return await unstable_cache(
+  return unstable_cache(
     () => action(),
     [], // 캐시 태그에 액션 이름을 추가
     {revalidate: options?.staleTime ?? 1000 * 60 * 60}, // 기본 1시간 캐싱

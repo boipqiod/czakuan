@@ -42,3 +42,19 @@ export const getCommentList = async (postId: number, page?: number) =>
 
     return comments;
   });
+
+export const reportComment = async (
+  commentId: number,
+  userId: number,
+  reason: string,
+) =>
+  serverAction(async () => {
+    const service = new CommentService();
+    return service.reportComment(commentId, userId, reason);
+  });
+
+export const getReportedCommentList = async (page: number) =>
+  serverAction(async () => {
+    const service = new CommentService();
+    return service.getReportedList(page, 30);
+  });

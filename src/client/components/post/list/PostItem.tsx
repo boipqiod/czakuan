@@ -55,10 +55,10 @@ export const PostItem = ({
         textDecoration: 'none',
       }}>
       <HFlex
-        backgroundColor={isNowPost ? colors['primary.400'] : undefined}
+        backgroundColor={isNowPost ? 'rgba(0, 0, 0, 0.5)' : undefined}
         alignItems={'center'}
         gap={'1rem'}
-        padding={'.4rem'}
+        padding={'.5rem'}
         borderBottom={`1px solid #d0d0d030`}>
         {!isNotice && (
           <Avatar

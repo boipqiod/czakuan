@@ -1,6 +1,8 @@
 'use server';
 
 import {serverAction} from '@/server/actions/action';
+import {UnauthorizedError} from '@/server/Error';
+import {verifyUser} from '@/server/modules/auth';
 import s3 from '@/server/modules/s3';
 import {PostService} from '@/server/service/post.service';
 
@@ -102,8 +104,13 @@ export const createPost = async (
   isNotice?: boolean,
 ) =>
   serverAction(async () => {
+    const user = await verifyUser();
+
+    if (!user) throw UnauthorizedError();
+
     const service = new PostService();
     return service.create(
+      user,
       title,
       content,
       images,
@@ -111,4 +118,20 @@ export const createPost = async (
       subCategoryId,
       isNotice,
     );
+  });
+
+//###################
+//### Admin Post ###
+//###################
+
+export const getReportedPostList = async (page: number) =>
+  serverAction(async () => {
+    // try {
+    //   await verifyAdmin();
+    // } catch (error) {
+    //   console.log('### getReportedPostList error', error);
+    // }
+
+    const service = new PostService();
+    return service.getReportedList(page ?? 1, 30);
   });
