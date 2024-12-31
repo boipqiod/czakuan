@@ -20,7 +20,7 @@ export const PostList = async ({
   const [genelerNoticeResult, noticeResult, postListResult] = await Promise.all(
     [
       actionWrapper(getNoticeList, {
-        options: {revalidate: 1000 * 60 * 60},
+        options: {revalidate: 1000 * 60},
       }),
       categoryId ? actionWrapper(() => getNoticeList(categoryId)) : {list: []},
       actionWrapper(() => getPostList({page, categoryId, subCategoryId})),

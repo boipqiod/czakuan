@@ -1,5 +1,6 @@
 'use server';
 import {ActionResponse, ResponseData} from '@/client/action/actionWapper';
+import {randomUUID} from 'crypto';
 import {unstable_cache} from 'next/cache';
 import {NextResponse} from 'next/server';
 
@@ -10,7 +11,7 @@ export const cashingAction = async <T extends ResponseData>(
 ) => {
   return unstable_cache(
     () => action(),
-    [], // 캐시 태그에 액션 이름을 추가
+    [randomUUID()], // 캐시 태그에 액션 이름을 추가
     {revalidate: options?.staleTime ?? 1000 * 60 * 60}, // 기본 1시간 캐싱
   );
 };
