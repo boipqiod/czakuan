@@ -21,6 +21,15 @@ export class CommentRepository {
         role: true,
       },
     },
+    parent: {
+      select: {
+        author: {
+          select: {
+            nickName: true,
+          },
+        },
+      },
+    },
   };
 
   getDetail(id: number) {
