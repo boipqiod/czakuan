@@ -38,7 +38,7 @@ export const CommentItem = ({
 }: CommentItemProps) => {
   const {author: parentAuthor} = parentComment || {};
   const {isLogin, user} = useAuthStore();
-  
+
   const {
     isPostOwner,
     isHasParent,
@@ -54,18 +54,18 @@ export const CommentItem = ({
 
   const [openReply, setOpenReply] = useState(false);
   const report = () => {
-    if(!isLogin || !user) {
+    if (!isLogin || !user) {
       alert('로그인이 필요합니다.');
       return;
     }
 
     const reason = prompt('신고 사유를 입력해주세요.');
 
-    if(!reason) {
+    if (!reason) {
       return;
     }
 
-    if(reason.trim().length < 5) {
+    if (reason.trim().length < 5) {
       alert('신고 사유는 5자 이상 입력해주세요.');
       return;
     }
@@ -75,8 +75,7 @@ export const CommentItem = ({
         alert('신고가 완료되었습니다.');
       },
     });
-    
-  }
+  };
 
   return (
     <Flex gap={6} padding={5} marginLeft={isHasParent ? 30 : 0}>
@@ -104,10 +103,7 @@ export const CommentItem = ({
             {isCommentOwner && !isDeleted && (
               <DropdownMenuItem onClick={handleDelete}>삭제</DropdownMenuItem>
             )}
-            <DropdownMenuItem
-              onClick={report}>
-              신고
-            </DropdownMenuItem>
+            <DropdownMenuItem onClick={report}>신고</DropdownMenuItem>
           </DropdownMenu>
         </HFlex>
       </HFlex>
