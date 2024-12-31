@@ -12,6 +12,9 @@ export default async function RootLayout({
 }: Readonly<{
   children: ReactNode;
 }>) {
+  const isProd = process.env.NODE_ENV === 'production';
+  const name = isProd ? '에대숲 with 시작관' : '에대숲 with 시작관 (개발)';
+
   return (
     <html lang="en">
       <head>
@@ -20,7 +23,7 @@ export default async function RootLayout({
           content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
         />
         <link rel="icon" href="/favicon.png" sizes="any" />
-        <title>에대숲 with 시작관</title>
+        <title>{name}</title>
       </head>
       <body className={'dark'}>
         <Layout>{children}</Layout>
