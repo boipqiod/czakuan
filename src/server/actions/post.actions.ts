@@ -2,7 +2,7 @@
 
 import {serverAction} from '@/server/actions/action';
 import {UnauthorizedError} from '@/server/Error';
-import {verifyUser} from '@/server/modules/auth';
+import {verifyAdmin, verifyUser} from '@/server/modules/auth';
 import s3 from '@/server/modules/s3';
 import {PostService} from '@/server/service/post.service';
 
@@ -126,12 +126,7 @@ export const createPost = async (
 
 export const getReportedPostList = async (page: number) =>
   serverAction(async () => {
-    // try {
-    //   await verifyAdmin();
-    // } catch (error) {
-    //   console.log('### getReportedPostList error', error);
-    // }
-
+    await verifyAdmin();
     const service = new PostService();
     return service.getReportedList(page ?? 1, 30);
   });
