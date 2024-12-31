@@ -33,8 +33,6 @@ export const PostList = async ({
 
   const posts = [...allNotice, ...notice, ...list];
 
-  console.log('posts', {genelerNoticeResult, noticeResult, postListResult});
-
   return (
     <Flex gap={30}>
       <Flex>
