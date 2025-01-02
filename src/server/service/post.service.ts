@@ -43,11 +43,13 @@ export class PostService {
    */
   async getPopularPostList({page, limit}: {page: number; limit: number}) {
     const posts = await this.postRepository.getPopularList(page, limit);
+    const total = await this.postRepository.getPopularCount();
+    const lastPage = Math.ceil(total / limit);
 
     return {
       page: page,
-      lastPage: 1,
-      total: posts.length,
+      lastPage: lastPage,
+      total,
       list: posts,
     };
   }
