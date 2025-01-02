@@ -89,6 +89,21 @@ export class PostRepository {
     });
   }
 
+  getPopularCount() {
+    const oneMonthAgo = new Date();
+    oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
+
+    return prisma.post.count({
+      where: {
+        isNotice: false,
+        deletedAt: null,
+        createdAt: {
+          gte: oneMonthAgo,
+        },
+      },
+    });
+  }
+
   getNoticeList(categoryId?: number) {
     return prisma.post.findMany({
       where: {
