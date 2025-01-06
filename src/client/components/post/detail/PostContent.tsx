@@ -11,6 +11,7 @@ export const PostContent = ({content}: PostContentProps) => {
         margin: '30px 0',
         maxWidth: '100%',
         width: '100%',
+        overflowWrap: 'break-word',
       }}
       dangerouslySetInnerHTML={{__html: _content}}
     />
