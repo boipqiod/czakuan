@@ -29,6 +29,11 @@ export class PostRepository {
       },
     },
   };
+  private readonly postSelectFieldsWithAnonym = {
+    ...this.postSelectFields,
+    isAnonymous: true,
+    AnonymousUserInPost: true,
+  };
 
   getCount(categoryId?: number, subCategoryId?: number) {
     return prisma.post.count({
@@ -60,8 +65,9 @@ export class PostRepository {
         deletedAt: null,
         categoryId,
         subCategoryId,
+        isAnonymous: !categoryId ? false : undefined, // 특정 카테고리가 아닌 경우 익명 글 제외, 익명 카테고리로 올라오는 경우만
       },
-      select: this.postSelectFields,
+      select: this.postSelectFieldsWithAnonym,
     });
   }
 
@@ -84,6 +90,7 @@ export class PostRepository {
         createdAt: {
           gte: oneMonthAgo,
         },
+        isAnonymous: false,
       },
       select: this.postSelectFields,
     });
@@ -100,6 +107,7 @@ export class PostRepository {
         createdAt: {
           gte: oneMonthAgo,
         },
+        isAnonymous: false,
       },
     });
   }
@@ -110,6 +118,7 @@ export class PostRepository {
         deletedAt: null,
         categoryId: categoryId ?? 1,
         isNotice: true,
+        isAnonymous: false,
       },
       select: this.postSelectFields,
     });
@@ -133,6 +142,7 @@ export class PostRepository {
         reports: true,
         updatedAt: true,
         createdAt: true,
+        isAnonymous: true,
         author: {
           select: {
             id: true,
@@ -150,6 +160,7 @@ export class PostRepository {
     title: string,
     content: string,
     categoryId: number,
+    isAnonymous: boolean,
     subCategoryId?: number,
     isNotice?: boolean,
   ) {
@@ -161,6 +172,7 @@ export class PostRepository {
         isNotice,
         categoryId,
         subCategoryId,
+        isAnonymous,
       },
       select: {id: true},
     });
