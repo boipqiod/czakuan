@@ -49,34 +49,30 @@ export class PostService {
       });
 
       // 이제 게시글 리스트 순회
-      list.forEach(post => {
-        // 현재 post의 작성자 정보
+      const anonymList = list.map(post => {
         const key = `${post.id}-${post.author.id}`;
         const anonymId = anonymMap.get(key);
         if (anonymId) {
-          post.author = {
-            id: 0,
-            nickName: anonymId,
-            role: 'USER',
-            profileImageUrl: null,
+          return {
+            ...post,
+            author: {
+              id: 0,
+              nickName: anonymId,
+              role: 'USER',
+              profileImageUrl: null,
+            },
+            isAnonymous: undefined,
+            AnonymousUserInPost: undefined,
           };
         }
       });
 
-      list.forEach(post => {
-        const key = `${post.id}-${post.author.id}`;
-        const anonymId = anonymMap.get(key);
-        if (anonymId) {
-          post.author = {
-            id: 0,
-            nickName: anonymId,
-            role: 'USER',
-            profileImageUrl: null,
-          };
-        }
-        // delete post.isAnonymous;
-        // delete post.AnonymousUserInPost;
-      });
+      return {
+        page,
+        lastPage,
+        total,
+        list: anonymList,
+      };
     }
 
     return {
@@ -126,11 +122,17 @@ export class PostService {
       if (!anonymousUser) {
         throw NotFoundError('익명 사용자를 찾을 수 없습니다.');
       }
-      post.author = {
-        id: anonymousUser.id,
-        nickName: anonymousUser.anonymId,
-        role: 'USER',
-        profileImageUrl: null,
+
+      return {
+        ...post,
+        author: {
+          id: anonymousUser.id,
+          nickName: anonymousUser.anonymId,
+          role: 'USER',
+          profileImageUrl: null,
+        },
+        isAnonymous: undefined,
+        AnonymousUserInPost: undefined,
       };
     }
 
