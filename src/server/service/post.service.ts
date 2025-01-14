@@ -35,16 +35,24 @@ export class PostService {
     const lastPage = Math.ceil(total / limit);
 
     if (isAnonymous) {
-      const anonymMap = new Map<number, string>();
+      const anonymMap = new Map<string, string>();
+
+      // 익명 유저 레코드 일괄 조회
       const anonymUsers = await this.prismaHelper.anonymousUserInPost.findMany({
         where: {postId: {in: list.map(post => post.id)}},
       });
+
+      // (postId, userId)로 맵핑
       anonymUsers.forEach(user => {
-        anonymMap.set(user.userId, user.anonymId);
+        const key = `${user.postId}-${user.userId}`;
+        anonymMap.set(key, user.anonymId);
       });
 
+      // 이제 게시글 리스트 순회
       list.forEach(post => {
-        const anonymId = anonymMap.get(post.author.id);
+        // 현재 post의 작성자 정보
+        const key = `${post.id}-${post.author.id}`;
+        const anonymId = anonymMap.get(key);
         if (anonymId) {
           post.author = {
             id: 0,
@@ -53,6 +61,21 @@ export class PostService {
             profileImageUrl: null,
           };
         }
+      });
+
+      list.forEach(post => {
+        const key = `${post.id}-${post.author.id}`;
+        const anonymId = anonymMap.get(key);
+        if (anonymId) {
+          post.author = {
+            id: 0,
+            nickName: anonymId,
+            role: 'USER',
+            profileImageUrl: null,
+          };
+        }
+        // delete post.isAnonymous;
+        // delete post.AnonymousUserInPost;
       });
     }
 

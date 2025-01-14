@@ -35,7 +35,7 @@ const CreatePostPage = () => {
     getCategoryGroupByCategoryId,
   } = useCategoryStore();
   const router = useRouter();
-  const {toPathWithQuery, getQueryParams} = useQueryParams();
+  const {getQueryParams} = useQueryParams();
 
   const {categoryId} = getQueryParams<{categoryId: string}>();
   const queryCategoryGroup = getCategoryGroupByCategoryId(Number(categoryId));
@@ -122,7 +122,7 @@ const CreatePostPage = () => {
         success: res => {
           const {id} = res.data;
           alert('게시글이 등록되었습니다.');
-          router.push(`/post/${id}`);
+          router.push(`/post/${id}?categoryId=${category.id}`);
         },
       },
     );
