@@ -21,6 +21,10 @@ export class PostService {
     categoryId?: number,
     subCategoryId?: number,
   ) {
+    const category = await this.prismaHelper.category.findUnique({
+      where: {id: categoryId},
+    });
+    const isAnonymous = category?.isAnonymous ?? false;
     const list = await this.postRepository.getList(
       page,
       limit,
@@ -29,6 +33,28 @@ export class PostService {
     );
     const total = await this.postRepository.getCount(categoryId, subCategoryId);
     const lastPage = Math.ceil(total / limit);
+
+    if (isAnonymous) {
+      const anonymMap = new Map<number, string>();
+      const anonymUsers = await this.prismaHelper.anonymousUserInPost.findMany({
+        where: {postId: {in: list.map(post => post.id)}},
+      });
+      anonymUsers.forEach(user => {
+        anonymMap.set(user.userId, user.anonymId);
+      });
+
+      list.forEach(post => {
+        const anonymId = anonymMap.get(post.author.id);
+        if (anonymId) {
+          post.author = {
+            id: 0,
+            nickName: anonymId,
+            role: 'USER',
+            profileImageUrl: null,
+          };
+        }
+      });
+    }
 
     return {
       page,
@@ -69,6 +95,22 @@ export class PostService {
     const post = await this.postRepository.getDetail(id);
     if (!post) throw NotFoundError();
 
+    if (post.isAnonymous) {
+      const anonymousUser =
+        await this.prismaHelper.anonymousUserInPost.findFirst({
+          where: {postId: id},
+        });
+      if (!anonymousUser) {
+        throw NotFoundError('익명 사용자를 찾을 수 없습니다.');
+      }
+      post.author = {
+        id: anonymousUser.id,
+        nickName: anonymousUser.anonymId,
+        role: 'USER',
+        profileImageUrl: null,
+      };
+    }
+
     return post;
   }
 
@@ -84,11 +126,19 @@ export class PostService {
     subCategoryId?: number,
     isNotice?: boolean,
   ) {
+    const category = await this.prismaHelper.category.findUnique({
+      where: {id: categoryId},
+    });
+    if (!category) {
+      throw NotFoundError('카테고리를 찾을 수 없습니다.');
+    }
+
     const newPost = await this.postRepository.create(
       user.id,
       title,
       content,
       categoryId,
+      category.isAnonymous,
       subCategoryId,
       isNotice,
     );
@@ -114,6 +164,16 @@ export class PostService {
       images: movedImageUrls,
       thumbnailUrl: movedImageUrls.length > 0 ? movedImageUrls[0] : undefined,
     });
+
+    if (category.isAnonymous && isNotice !== true) {
+      await this.prismaHelper.anonymousUserInPost.create({
+        data: {
+          userId: user.id,
+          postId: updatedPost.id,
+          anonymId: getUniqueString(),
+        },
+      });
+    }
     return {id: updatedPost.id};
   }
 

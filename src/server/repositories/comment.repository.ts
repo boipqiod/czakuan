@@ -25,6 +25,7 @@ export class CommentRepository {
       select: {
         author: {
           select: {
+            id: true,
             nickName: true,
           },
         },

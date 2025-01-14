@@ -1,6 +1,7 @@
 'use client';
 import {actionWrapper} from '@/client/action/actionWapper';
 import TextEditor from '@/client/components/post/creat/TextEditor';
+import {useQueryParams} from '@/client/hooks/useNavigate';
 import {useAuthStore} from '@/client/store/AuthStore';
 import {
   CategoryGroup,
@@ -28,8 +29,17 @@ const adminCategoryGroup = {
 
 const CreatePostPage = () => {
   const {user} = useAuthStore();
-  const {categories: originCategories} = useCategoryStore();
+  const {
+    categories: originCategories,
+    getCategory,
+    getCategoryGroupByCategoryId,
+  } = useCategoryStore();
   const router = useRouter();
+  const {toPathWithQuery, getQueryParams} = useQueryParams();
+
+  const {categoryId} = getQueryParams<{categoryId: string}>();
+  const queryCategoryGroup = getCategoryGroupByCategoryId(Number(categoryId));
+  const qeuryCategory = getCategory(Number(categoryId));
 
   const categories =
     user && user.role === 'SUPER_ADMIN'
@@ -37,13 +47,14 @@ const CreatePostPage = () => {
       : originCategories;
 
   const [categoryGroup, setCategoryGroup] = useState<CategoryGroup>(
-    categories[0],
+    queryCategoryGroup ?? categories[0],
   );
 
   const [title, setTitle] = useState<string>('');
   const [content, setContent] = useState<string>('');
   const [category, setCategory] = useState<CategoryItem>(
-    categoryGroup?.categories[0] ?? {id: 0, name: '', subCategories: []},
+    qeuryCategory ??
+      categoryGroup?.categories[0] ?? {id: 0, name: '', subCategories: []},
   );
   const [subCategoryId, setSubCategoryId] = useState<number | undefined>(
     category.subCategories[0]?.id,
