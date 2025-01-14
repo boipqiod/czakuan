@@ -19,7 +19,7 @@ export const CommentItems = ({
 }: CommentItemsType) => {
   const {
     id: postId,
-    author: {id: ownerId},
+    author: {nickName: ownerNickName},
   } = post;
   const [page, setPage] = useState<number>();
   const [commentResult, setCommentResult] = useState(originCommentResult);
@@ -52,7 +52,7 @@ export const CommentItems = ({
         <CommentGroup
           key={'CommentItems' + index}
           commentList={comments}
-          ownerId={ownerId}
+          ownerNickName={ownerNickName}
         />
       ))}
       <Pagination
@@ -67,10 +67,10 @@ export const CommentItems = ({
 
 const CommentGroup = ({
   commentList: originCommentList,
-  ownerId,
+  ownerNickName,
 }: {
   commentList: CommentType[];
-  ownerId: number;
+  ownerNickName: string;
 }) => {
   const [addedComment, setAddedComment] = useState<CommentType[]>([]);
   const commentList = [...originCommentList, ...addedComment];
@@ -84,7 +84,7 @@ const CommentGroup = ({
       <CommentItem
         key={comment.id}
         comment={comment}
-        ownerId={ownerId}
+        ownerNickName={ownerNickName}
         addComment={addComment}
         parentNicname={comment.parent?.author.nickName}
       />

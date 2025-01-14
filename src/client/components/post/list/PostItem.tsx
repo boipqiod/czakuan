@@ -1,11 +1,12 @@
 'use client';
 import {colors} from '@/assets/color';
+import {useQueryParams} from '@/client/hooks/useNavigate';
 import {checkViewPost} from '@/client/hooks/usePost';
 import {Flex, HFlex, Text} from '@/client/ui/widgets';
 import {Avatar} from '@/client/ui/widgets/Avatar';
+import {ClearButton} from '@/client/ui/widgets/Button';
 import {formatRelativeTime} from '@/lib/dayjs';
 import {PostListType} from '@/types/post';
-import Link from 'next/link';
 import {AiFillNotification, AiOutlineLike} from 'react-icons/ai';
 import {FiEye} from 'react-icons/fi';
 import {LuDot} from 'react-icons/lu';
@@ -28,15 +29,14 @@ export const PostItem = ({
   const isViewed = checkViewPost(id);
   const {nickName} = author;
   const {comments, likes} = _count;
-  const query = new URLSearchParams(window.location.search).toString();
+  const {toPathWithQuery} = useQueryParams();
 
   return (
-    <Link
-      href={`/post/${id}?${query}`}
-      style={{
-        color: isViewed ? 'var(--font-read-color)' : 'var(--font-color)',
-        textDecoration: 'none',
-      }}>
+    <ClearButton
+      onClick={() => {
+        toPathWithQuery(`/post/${id}`);
+      }}
+      color={isViewed ? 'var(--font-read-color)' : 'var(--font-color)'}>
       <HFlex
         backgroundColor={isNowPost ? 'rgba(0, 0, 0, 0.5)' : undefined}
         alignItems={'center'}
@@ -91,6 +91,6 @@ export const PostItem = ({
           </HFlex>
         </Flex>
       </HFlex>
-    </Link>
+    </ClearButton>
   );
 };

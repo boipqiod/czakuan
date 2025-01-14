@@ -24,14 +24,14 @@ import {IoIosMore} from 'react-icons/io';
 import {LuDot} from 'react-icons/lu';
 
 type CommentItemProps = {
-  ownerId: number;
+  ownerNickName: string;
   comment: CommentType;
   parentNicname?: string;
   addComment: (comment: CommentType) => void;
 };
 
 export const CommentItem = ({
-  ownerId,
+  ownerNickName,
   comment,
   parentNicname,
   addComment,
@@ -49,7 +49,7 @@ export const CommentItem = ({
     onClickLike,
     onClickDislike,
     handleDelete,
-  } = useComment(ownerId, comment);
+  } = useComment(ownerNickName, comment);
 
   const [openReply, setOpenReply] = useState(false);
   const report = () => {
