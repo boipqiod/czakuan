@@ -3,6 +3,7 @@ import {NotFoundError} from '@/server/Error';
 import prisma from '@/server/modules/prisma';
 import s3 from '@/server/modules/s3';
 import {PostRepository} from '@/server/repositories/post.repository';
+import {ListType, PostDetailType, PostListType} from '@/types/post';
 import {User} from '@/types/user';
 
 export class PostService {
@@ -20,7 +21,7 @@ export class PostService {
     limit: number,
     categoryId?: number,
     subCategoryId?: number,
-  ) {
+  ): Promise<ListType<PostListType>> {
     const category = await this.prismaHelper.category.findUnique({
       where: {id: categoryId},
     });
@@ -53,17 +54,19 @@ export class PostService {
         const key = `${post.id}-${post.author.id}`;
         const anonymId = anonymMap.get(key);
         if (anonymId) {
-          return {
-            ...post,
-            author: {
-              id: 0,
-              nickName: anonymId,
-              role: 'USER',
-              profileImageUrl: null,
-            },
-            isAnonymous: undefined,
-            AnonymousUserInPost: undefined,
+          post.author = {
+            id: 0,
+            nickName: anonymId,
+            role: 'USER',
+            profileImageUrl: null,
           };
+
+          delete (post as any).isAnonymous;
+          delete (post as any).AnonymousUserInPost;
+
+          return post;
+        } else {
+          return post;
         }
       });
 
@@ -86,7 +89,13 @@ export class PostService {
   /**
    * 인기 게시글 목록 조회
    */
-  async getPopularPostList({page, limit}: {page: number; limit: number}) {
+  async getPopularPostList({
+    page,
+    limit,
+  }: {
+    page: number;
+    limit: number;
+  }): Promise<ListType<PostListType>> {
     const posts = await this.postRepository.getPopularList(page, limit);
     const total = await this.postRepository.getPopularCount();
     const lastPage = Math.ceil(total / limit);
@@ -102,7 +111,11 @@ export class PostService {
   /**
    * 공지사항 목록 조회
    */
-  async getNoticePostList({categoryId}: {categoryId: number}) {
+  async getNoticePostList({
+    categoryId,
+  }: {
+    categoryId: number;
+  }): Promise<{list: PostListType[]}> {
     const list = await this.postRepository.getNoticeList(categoryId);
     return {list};
   }
@@ -110,7 +123,7 @@ export class PostService {
   /**
    * 게시글 상세 조회
    */
-  async getPostDetail(id: number) {
+  async getPostDetail(id: number): Promise<PostDetailType> {
     const post = await this.postRepository.getDetail(id);
     if (!post) throw NotFoundError();
 
@@ -123,17 +136,15 @@ export class PostService {
         throw NotFoundError('익명 사용자를 찾을 수 없습니다.');
       }
 
-      return {
-        ...post,
-        author: {
-          id: anonymousUser.id,
-          nickName: anonymousUser.anonymId,
-          role: 'USER',
-          profileImageUrl: null,
-        },
-        isAnonymous: undefined,
-        AnonymousUserInPost: undefined,
+      post.author = {
+        id: 0,
+        nickName: anonymousUser.anonymId,
+        role: 'USER',
+        profileImageUrl: null,
       };
+
+      delete (post as any).isAnonymous;
+      delete (post as any).AnonymousUserInPost;
     }
 
     return post;

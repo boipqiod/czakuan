@@ -4,30 +4,13 @@ import {checkViewPost} from '@/client/hooks/usePost';
 import {Flex, HFlex, Text} from '@/client/ui/widgets';
 import {Avatar} from '@/client/ui/widgets/Avatar';
 import {formatRelativeTime} from '@/lib/dayjs';
+import {PostListType} from '@/types/post';
 import Link from 'next/link';
 import {AiFillNotification, AiOutlineLike} from 'react-icons/ai';
 import {FiEye} from 'react-icons/fi';
 import {LuDot} from 'react-icons/lu';
 
-export type PostItemProps = {
-  id: number;
-  categoryId: number;
-  subCategoryId: number | null;
-  isNotice: boolean;
-  title: string;
-  content: string;
-  thumbnailUrl: string | null;
-  views: number;
-  reports: any[];
-  updatedAt: Date | null;
-  createdAt: Date;
-  _count: {comments: number; dislikes: number; likes: number};
-  author: {
-    id: number;
-    nickName: string;
-    profileImageUrl: string | null;
-    role: string;
-  };
+export type PostItemProps = PostListType & {
   isNowPost?: boolean;
 };
 

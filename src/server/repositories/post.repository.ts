@@ -29,6 +29,32 @@ export class PostRepository {
       },
     },
   };
+  private readonly postListSelectFields = {
+    id: true,
+    categoryId: true,
+    subCategoryId: true,
+    isNotice: true,
+    title: true,
+    thumbnailUrl: true,
+    views: true,
+    updatedAt: true,
+    createdAt: true,
+    _count: {
+      select: {
+        comments: true,
+        dislikes: true,
+        likes: true,
+      },
+    },
+    author: {
+      select: {
+        id: true,
+        nickName: true,
+        profileImageUrl: true,
+        role: true,
+      },
+    },
+  };
   private readonly postSelectFieldsWithAnonym = {
     ...this.postSelectFields,
     isAnonymous: true,
@@ -120,7 +146,7 @@ export class PostRepository {
         isNotice: true,
         isAnonymous: false,
       },
-      select: this.postSelectFields,
+      select: this.postListSelectFields,
     });
   }
 
