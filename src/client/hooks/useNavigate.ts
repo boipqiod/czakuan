@@ -53,5 +53,5 @@ export const useQueryParams = () => {
     router.push(path);
   };
 
-  return {addQuery, removeQuery, toPathWithQuery, getQueryParams};
+  return {addQuery, removeQuery, toPathWithQuery, getQueryParams, navigate};
 };
