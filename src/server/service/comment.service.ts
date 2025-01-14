@@ -123,6 +123,27 @@ export class CommentService {
           },
         });
       }
+      if (parentId && comment.parent) {
+        const parentAnonymRecord = await prisma.anonymousUserInPost.findUnique({
+          where: {
+            userId_postId: {
+              userId: comment.parent?.author.id ?? -1,
+              postId,
+            },
+          },
+        });
+        comment.parent.author = {
+          id: 0,
+          nickName: parentAnonymRecord?.anonymId ?? '익명',
+        };
+      }
+
+      comment.author = {
+        id: 0,
+        nickName: anonymRecord.anonymId,
+        profileImageUrl: null,
+        role: 'USER',
+      };
     }
 
     return comment;
