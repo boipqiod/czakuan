@@ -32,7 +32,7 @@ export const CommentItems = ({
     if (page) fetchComments(page);
   }, [page]);
 
-  const fetchComments = async (page: number) => {
+  const fetchComments = async (page?: number) => {
     actionWrapper(() => getCommentList(postId, page), {
       success: response => {
         const {data} = response;
@@ -41,8 +41,8 @@ export const CommentItems = ({
     });
   };
 
-  const handleAddComment = (comment: CommentType) => {
-    setAddedComment([...addedComment, comment]);
+  const handleAddComment = (_comment: CommentType) => {
+    fetchComments();
   };
 
   return (
