@@ -1,6 +1,6 @@
 import {colors} from '@/assets/color';
 
-const Loading = () => {
+const Loading = ({isShow = true}: {isShow: boolean}) => {
   const overlayStyle: React.CSSProperties = {
     position: 'fixed',
     top: 0,
@@ -22,6 +22,10 @@ const Loading = () => {
     borderRadius: '50%',
     animation: 'spin 1s linear infinite',
   };
+
+  if (!isShow) {
+    return null;
+  }
 
   return (
     <div style={overlayStyle}>
