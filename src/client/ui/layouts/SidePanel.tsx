@@ -31,6 +31,11 @@ export const SidePanel = () => {
     toggleSidebar();
   };
 
+  const onClickGeneral = (to: '' | 'popular') => {
+    router.push(`/${to}`);
+    toggleSidebar();
+  };
+
   useEffect(() => {
     if (isSidebarOpen) {
       document.body.style.overflow = 'hidden';
@@ -60,6 +65,33 @@ export const SidePanel = () => {
         borderRight={'1px solid #333'} //TODO: 색 변경
         zIndex={2}>
         <Flex padding={10} gap={20} maxWidth={600}>
+          <div>
+            <HFlex flexWrap={'wrap'} gap={10}>
+              <ClearButton
+                border={'1px solid #333'} //TODO: 색 변경
+                fontSize={'1.3rem'}
+                padding={5}
+                width={'45%'}
+                textAlign={'left'}
+                onClick={() => {
+                  onClickGeneral('');
+                }}>
+                <Text>{'최근 게시글'}</Text>
+              </ClearButton>
+              <ClearButton
+                border={'1px solid #333'} //TODO: 색 변경
+                fontSize={'1.3rem'}
+                padding={5}
+                width={'45%'}
+                textAlign={'left'}
+                onClick={() => {
+                  onClickGeneral('popular');
+                }}>
+                <Text>{'인기 게시글'}</Text>
+              </ClearButton>
+            </HFlex>
+          </div>
+
           {categories.map(categoryGroup => (
             <div key={`categoryGroup-${categoryGroup.id}`}>
               <Text
