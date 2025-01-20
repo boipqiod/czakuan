@@ -1,43 +1,10 @@
-import prisma from '@/server/modules/prisma';
+import {CategoryRepository} from '@/server/repositories/category.repository';
 
 export class CategoryService {
-  constructor(private readonly prismaHelper = prisma) {}
+  constructor(private repository = new CategoryRepository()) {}
 
   async getCategoriesOnlyUse() {
-    const categoryGroups = await this.prismaHelper.categoryGroup.findMany({
-      orderBy: {
-        priority: 'asc',
-      },
-      select: {
-        id: true,
-        name: true,
-        categories: {
-          orderBy: {
-            priority: 'asc',
-          },
-          where: {
-            isUse: true,
-          },
-          select: {
-            id: true,
-            name: true,
-            subCategories: {
-              orderBy: {
-                priority: 'asc',
-              },
-              where: {
-                isUse: true,
-              },
-              select: {
-                id: true,
-                name: true,
-              },
-            },
-          },
-        },
-      },
-    });
-
+    const categoryGroups = await this.repository.getCategoriesOnlyUse();
     return {categoryGroups};
   }
 }

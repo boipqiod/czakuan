@@ -10,14 +10,21 @@ export class PostRepository {
     content: true,
     thumbnailUrl: true,
     views: true,
-    reports: true,
     updatedAt: true,
     createdAt: true,
-    _count: {
+    likes: {
       select: {
-        comments: true,
-        dislikes: true,
-        likes: true,
+        userId: true,
+      },
+    },
+    dislikes: {
+      select: {
+        userId: true,
+      },
+    },
+    reports: {
+      select: {
+        userId: true,
       },
     },
     author: {
@@ -54,6 +61,11 @@ export class PostRepository {
         role: true,
       },
     },
+  };
+  private readonly postListSelectFieldsWithAnonym = {
+    ...this.postListSelectFields,
+    isAnonymous: true,
+    AnonymousUserInPost: true,
   };
   private readonly postSelectFieldsWithAnonym = {
     ...this.postSelectFields,
@@ -93,7 +105,7 @@ export class PostRepository {
         subCategoryId,
         isAnonymous: !categoryId ? false : undefined, // 특정 카테고리가 아닌 경우 익명 글 제외, 익명 카테고리로 올라오는 경우만
       },
-      select: this.postSelectFieldsWithAnonym,
+      select: this.postListSelectFieldsWithAnonym,
     });
   }
 
@@ -118,7 +130,7 @@ export class PostRepository {
         },
         isAnonymous: false,
       },
-      select: this.postSelectFields,
+      select: this.postListSelectFields,
     });
   }
 
@@ -156,28 +168,7 @@ export class PostRepository {
         deletedAt: null,
         id: postId,
       },
-      select: {
-        id: true,
-        categoryId: true,
-        subCategoryId: true,
-        title: true,
-        content: true,
-        views: true,
-        likes: true,
-        dislikes: true,
-        reports: true,
-        updatedAt: true,
-        createdAt: true,
-        isAnonymous: true,
-        author: {
-          select: {
-            id: true,
-            nickName: true,
-            profileImageUrl: true,
-            role: true,
-          },
-        },
-      },
+      select: this.postSelectFieldsWithAnonym,
     });
   }
 
@@ -223,7 +214,7 @@ export class PostRepository {
     });
   }
 
-  async delete(postId: number, userId: number) {
+  delete(postId: number, userId: number) {
     // 소프트 딜리트
     return prisma.post.update({
       where: {id: postId, userId: userId},

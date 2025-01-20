@@ -54,7 +54,7 @@ export const Layout = ({children}: LayoutProps) => {
     };
 
     fetchUserInfo().finally(() => setIsLoading(false));
-    setFirebase();
+    if (process.env.NEXT_PUBLIC_FLAG === 'production') setFirebase();
   }, []);
 
   if (isLoading) return null;
