@@ -1,6 +1,6 @@
 import styles from '@/assets/styles/components/post/post.module.css';
-import {CategoryTitle} from '@/client/components/post/CategoryTitle';
 import {PostListContainer} from '@/client/components/post/list/PostListContainer';
+import {RecentPostListContainer} from '@/client/components/post/list/RecentPostListContainer';
 import {PageQeuryProps} from '@/types/common';
 
 const Home = async ({
@@ -20,11 +20,16 @@ const Home = async ({
   const categoryId = _categoryId ? Number(_categoryId) : undefined;
   const subCategoryId = _subCategoryId ? Number(_subCategoryId) : undefined;
 
+  if (categoryId === undefined) {
+    return (
+      <div className={styles.postListWrapper}>
+        <RecentPostListContainer />
+      </div>
+    );
+  }
+
   return (
     <div className={styles.postListWrapper}>
-      <section className={styles.title}>
-        <CategoryTitle categoryId={categoryId} subCategoryId={subCategoryId} />
-      </section>
       <PostListContainer
         page={page}
         categoryId={categoryId}
