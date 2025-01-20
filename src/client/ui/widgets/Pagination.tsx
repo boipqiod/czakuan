@@ -25,7 +25,7 @@ export const Pagination = ({
   };
 
   return (
-    <HFlex gap={10} width={'100%'} justifyContent={'center'}>
+    <HFlex gap={10} margin={'2rem 0'} width={'100%'} justifyContent={'center'}>
       <ClearButton
         onClick={() => onClickPage(currentPage - 1)}
         disabled={currentPage === 1}>

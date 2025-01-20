@@ -2,6 +2,7 @@ import {getUniqueString} from '@/lib/random';
 import {NotFoundError} from '@/server/Error';
 import prisma from '@/server/modules/prisma';
 import s3 from '@/server/modules/s3';
+import {CategoryRepository} from '@/server/repositories/category.repository';
 import {PostRepository} from '@/server/repositories/post.repository';
 import {ListType, PostDetailType, PostListType} from '@/types/post';
 import {User} from '@/types/user';
@@ -9,6 +10,7 @@ import {User} from '@/types/user';
 export class PostService {
   constructor(
     private readonly postRepository: PostRepository = new PostRepository(),
+    private readonly categoryRepository = new CategoryRepository(),
     private readonly prismaHelper = prisma,
     private readonly s3Helper = s3,
   ) {}
@@ -119,6 +121,24 @@ export class PostService {
     const list = await this.postRepository.getNoticeList(categoryId);
     return {list};
   }
+
+  getRecentPostList = async (limit: number) => {
+    const recentCategories =
+      await this.categoryRepository.getRecentCategories();
+
+    const lists = await Promise.all(
+      recentCategories.map(recent => {
+        return this.postRepository.getList(1, limit, recent.category.id);
+      }),
+    );
+
+    return recentCategories.map((recent, index) => {
+      return {
+        category: recent.category,
+        list: lists[index],
+      };
+    });
+  };
 
   /**
    * 게시글 상세 조회
