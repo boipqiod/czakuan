@@ -7,13 +7,21 @@ import {HFlex} from '@/client/ui/widgets';
 import {Button} from '@/client/ui/widgets/Button';
 
 type CategoryTitleProps = {
-  categoryId?: number;
-  subCategoryId?: number;
+  isSmall?: boolean;
+  title?: string;
 };
-export const CategoryTitle = ({
-  categoryId,
-  subCategoryId,
-}: CategoryTitleProps) => {
+export const CategoryTitle = ({isSmall, title}: CategoryTitleProps) => {
+  const {categoryId: _categoryId, subCategoryId: _subCategoryId} =
+    useQueryParams().getQueryParams<{
+      categoryId?: string;
+      subCategoryId?: string;
+    }>();
+
+  const categoryId = _categoryId ? Number(_categoryId) : undefined;
+  const subCategoryId = _subCategoryId ? Number(_subCategoryId) : undefined;
+
+  const isPopular = window.location.pathname === '/popular/';
+
   const {getCategory, getSubCategory} = useCategoryStore();
   const category = categoryId ? getCategory(categoryId) : undefined;
   const subCategory = subCategoryId ? getSubCategory(subCategoryId) : undefined;
@@ -30,9 +38,16 @@ export const CategoryTitle = ({
   };
 
   const getBoardName = () => {
-    if (!category) {
+    if (title) {
+      return title;
+    }
+    if (isPopular) {
       return '인기 게시글';
     }
+    if (!category) {
+      return '최근 게시글';
+    }
+
     if (category && subCategory) {
       return category.name + ' > ' + subCategory.name;
     }
@@ -42,8 +57,8 @@ export const CategoryTitle = ({
 
   return (
     <div>
-      {!category && <h2>인기 게시글</h2>}
-      {category && <h2>{getBoardName()}</h2>}
+      {isSmall ? <h4>{getBoardName()}</h4> : <h2>{getBoardName()}</h2>}
+
       <HFlex gap={10}>
         {category &&
           category.subCategories.map(subCategory => (

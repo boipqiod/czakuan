@@ -1,8 +1,8 @@
-import styles from '@/assets/styles/components/post/post.module.css';
 import {actionWrapper} from '@/client/action/actionWapper';
 import {CategoryTitle} from '@/client/components/post/CategoryTitle';
-import {PostItem} from '@/client/components/post/list/PostItem';
+import {PostList} from '@/client/components/post/list/PostList';
 import {Flex} from '@/client/ui/widgets';
+import {AlertAndRedirect} from '@/client/ui/widgets/Alert';
 import {Pagination} from '@/client/ui/widgets/Pagination';
 import {getNoticeList, getPostList} from '@/server/actions/post.actions';
 
@@ -10,15 +10,11 @@ type PostListProps = {
   page: number;
   categoryId?: number;
   subCategoryId?: number;
-  postId?: number;
-  isPagiNationShow?: boolean;
 };
 export const PostListContainer = async ({
   page,
   categoryId,
   subCategoryId,
-  postId,
-  isPagiNationShow = true,
 }: PostListProps) => {
   const [genelerNoticeResult, noticeResult, postListResult] = await Promise.all(
     [
@@ -30,30 +26,31 @@ export const PostListContainer = async ({
     ],
   );
 
-  const {list: notice} = noticeResult!;
-  const {page: currentPage, list, lastPage} = postListResult!;
-  const {list: allNotice} = genelerNoticeResult ?? {list: []};
+  if (postListResult === undefined) {
+    return (
+      <AlertAndRedirect
+        message={'게시글을 불러오는 중 오류가 발생했습니다.'}
+        to={'/'}
+      />
+    );
+  }
 
-  const posts = [...allNotice, ...notice, ...list];
+  const {list: notice} = noticeResult ?? {list: []};
+  const {list: allNotice} = genelerNoticeResult ?? {list: []};
+  const {list: postList, lastPage, page: currentPage} = postListResult;
+
+  const noticeList = [...allNotice, ...notice];
 
   return (
-    <Flex gap={30}>
-      <section className={styles.title}>
-        <CategoryTitle categoryId={categoryId} subCategoryId={subCategoryId} />
+    <Flex>
+      <section>
+        <CategoryTitle />
       </section>
-      <Flex>
-        {posts.map((post, index) => (
-          <PostItem
-            key={post.id + index.toString()}
-            {...post}
-            isNowPost={postId === post.id}
-          />
-        ))}
-        {list.length === 0 && <p>작성된 글이 없습니다.</p>}
-      </Flex>
-      {isPagiNationShow && (
+      <section>
+        <PostList posts={noticeList} isShowNoPost />
+        <PostList posts={postList} />
         <Pagination lastPage={lastPage} currentPage={currentPage} />
-      )}
+      </section>
     </Flex>
   );
 };

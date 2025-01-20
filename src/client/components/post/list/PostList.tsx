@@ -1,17 +1,19 @@
+'use client';
 import {PostItem} from '@/client/components/post/list/PostItem';
+import {Flex} from '@/client/ui/widgets';
 import {PostListType} from '@/types/post';
 import {useParams} from 'next/navigation';
 
 type PostListProps = {
   posts: PostListType[];
-  categoryId?: number;
-  categoryNmae?: string;
+  isShowNoPost?: boolean;
 };
 
-export const Postlist = ({posts}: PostListProps) => {
+export const PostList = ({posts, isShowNoPost = false}: PostListProps) => {
   const {id: postId} = useParams<{id?: string}>();
+
   return (
-    <>
+    <Flex>
       {posts.map((post, index) => (
         <PostItem
           key={post.id + index.toString()}
@@ -19,7 +21,7 @@ export const Postlist = ({posts}: PostListProps) => {
           isNowPost={Number(postId) === post.id}
         />
       ))}
-      {list.length === 0 && <p>작성된 글이 없습니다.</p>}
-    </>
+      {isShowNoPost && posts.length === 0 && <p>작성된 글이 없습니다.</p>}
+    </Flex>
   );
 };
