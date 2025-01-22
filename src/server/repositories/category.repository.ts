@@ -1,8 +1,8 @@
 import prisma from '@/server/modules/prisma';
 
 export class CategoryRepository {
-  async getCategoriesOnlyUse() {
-    const categoryGroups = await prisma.categoryGroup.findMany({
+  getCategoriesOnlyUse() {
+    return prisma.categoryGroup.findMany({
       orderBy: {
         priority: 'asc',
       },
@@ -35,8 +35,6 @@ export class CategoryRepository {
         },
       },
     });
-
-    return {categoryGroups};
   }
 
   getRecentCategories() {

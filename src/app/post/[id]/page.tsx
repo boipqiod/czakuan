@@ -32,7 +32,6 @@ const PostDetailPage = async ({
           page={Number(page ?? 1)}
           categoryId={categoryId ? Number(categoryId) : undefined}
           subCategoryId={subCategoryId ? Number(subCategoryId) : undefined}
-          postId={post.id}
         />
       </Flex>
     </Flex>
