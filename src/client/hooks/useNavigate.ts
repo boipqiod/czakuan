@@ -1,5 +1,5 @@
 import {getSearchParam} from '@/lib/url';
-import {useRouter} from 'next/navigation';
+import {useRouter, useSearchParams} from 'next/navigation';
 
 export const useAddQeryPrams = () => {
   const router = useRouter();
@@ -15,6 +15,7 @@ export const useAddQeryPrams = () => {
 };
 
 export const useQueryParams = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
   const router = useRouter();
 
   const addQuery = (query: Record<string, string>) => {
@@ -29,11 +30,7 @@ export const useQueryParams = () => {
 
   const removeQuery = (key: string) => {
     const originQuery = getSearchParam(window.location.search);
-    console.log(originQuery);
-
     delete originQuery[key];
-    console.log(originQuery);
-
     const path = window.location.pathname;
     const search = new URLSearchParams(originQuery).toString();
     router.push(path + '?' + search.toString());
