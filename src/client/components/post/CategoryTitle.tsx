@@ -3,33 +3,47 @@
 import {colors} from '@/assets/color';
 import {useQueryParams} from '@/client/hooks/useNavigate';
 import {useCategoryStore} from '@/client/store/CategoryStore';
-import {HFlex} from '@/client/ui/widgets';
+import {HFlex, Text} from '@/client/ui/widgets';
 import {Button} from '@/client/ui/widgets/Button';
+import {useEffect, useState} from 'react';
 
 type CategoryTitleProps = {
   isSmall?: boolean;
   title?: string;
 };
-export const CategoryTitle = ({isSmall, title}: CategoryTitleProps) => {
-  const {categoryId: _categoryId, subCategoryId: _subCategoryId} =
-    useQueryParams().getQueryParams<{
-      categoryId?: string;
-      subCategoryId?: string;
-    }>();
+export const CategoryTitle = ({
+  isSmall,
+  title: originTitle,
+}: CategoryTitleProps) => {
+  const {addQuery, removeQuery, getQueryParams} = useQueryParams();
+  const [categoryId, setCategoryId] = useState<number | undefined>(undefined);
+  const [subCategoryId, setSubCategoryId] = useState<number | undefined>(
+    undefined,
+  );
 
-  const categoryId = _categoryId ? Number(_categoryId) : undefined;
-  const subCategoryId = _subCategoryId ? Number(_subCategoryId) : undefined;
+  const [title, setTitle] = useState<string | undefined>(originTitle);
 
-  const isPopular = window.location.pathname === '/popular/';
+  useEffect(() => {
+    console.log('window.location.href', window.location.href);
+
+    const {categoryId: _categoryId, subCategoryId: _subCategoryId} =
+      getQueryParams<{
+        categoryId?: string;
+        subCategoryId?: string;
+      }>();
+    const isPopular = window.location.pathname === '/popular/';
+
+    setCategoryId(_categoryId ? Number(_categoryId) : undefined);
+    setSubCategoryId(_subCategoryId ? Number(_subCategoryId) : undefined);
+
+    setTitle(originTitle ?? getBoardName(isPopular));
+  }, [window.location.href]);
 
   const {getCategory, getSubCategory} = useCategoryStore();
   const category = categoryId ? getCategory(categoryId) : undefined;
   const subCategory = subCategoryId ? getSubCategory(subCategoryId) : undefined;
-  const {addQuery, removeQuery} = useQueryParams();
 
   const onClickSubCategory = (_subCategoryId: number) => {
-    console.log('onClickSubCategory', subCategoryId, _subCategoryId);
-
     if (subCategoryId === _subCategoryId) {
       removeQuery('subCategoryId');
     } else {
@@ -37,10 +51,7 @@ export const CategoryTitle = ({isSmall, title}: CategoryTitleProps) => {
     }
   };
 
-  const getBoardName = () => {
-    if (title) {
-      return title;
-    }
+  const getBoardName = (isPopular: boolean) => {
     if (isPopular) {
       return '인기 게시글';
     }
@@ -57,8 +68,7 @@ export const CategoryTitle = ({isSmall, title}: CategoryTitleProps) => {
 
   return (
     <div>
-      {isSmall ? <h4>{getBoardName()}</h4> : <h2>{getBoardName()}</h2>}
-
+      {isSmall ? <Text fontSize={'1.1rem'}>{title}</Text> : <h2>{title}</h2>}
       <HFlex gap={10}>
         {category &&
           category.subCategories.map(subCategory => (

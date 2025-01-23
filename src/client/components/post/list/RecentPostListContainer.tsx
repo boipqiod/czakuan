@@ -14,16 +14,18 @@ export const RecentPostListContainer = async () => {
     );
 
   return (
-    <Flex margin={'2rem 0'}>
+    <Flex marginBottom={'2rem'}>
       <CategoryTitle />
-      {lists.map(data => {
-        return (
-          <div key={data.category.id}>
-            <CategoryTitle title={data.category.name} isSmall />
-            <PostList posts={data.list} />
-          </div>
-        );
-      })}
+      <Flex gap={'1rem'} flexDirection={'column'}>
+        {lists.map(data => {
+          return (
+            <div key={data.category.id}>
+              <CategoryTitle title={data.category.name} isSmall />
+              <PostList posts={data.list} />
+            </div>
+          );
+        })}
+      </Flex>
     </Flex>
   );
 };
