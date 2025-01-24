@@ -54,3 +54,29 @@ export type PostDetailType = {
     // createdAt: Date; // 신고 날짜
   }[]; // 신고 정보 배열
 };
+
+export type PostListType = {
+  id: number;
+  categoryId: number;
+  subCategoryId: number | null;
+  isNotice: boolean;
+  title: string;
+  thumbnailUrl: string | null;
+  views: number;
+  updatedAt: Date | null;
+  createdAt: Date;
+  _count: {comments: number; dislikes: number; likes: number};
+  author: {
+    id: number;
+    nickName: string;
+    profileImageUrl: string | null;
+    role: string;
+  };
+};
+
+export type ListType<T> = {
+  list: T[];
+  total: number;
+  page: number;
+  lastPage: number;
+};

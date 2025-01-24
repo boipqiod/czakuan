@@ -1,9 +1,8 @@
 import styles from '@/assets/styles/components/post/post.module.css';
 import {PostListContainer} from '@/client/components/post/list/PostListContainer';
-import {RecentPostListContainer} from '@/client/components/post/list/RecentPostListContainer';
 import {PageQeuryProps} from '@/types/common';
 
-const Home = async ({
+const PoppularPostsPage = async ({
   searchParams,
 }: PageQeuryProps<{
   page?: string;
@@ -20,23 +19,15 @@ const Home = async ({
   const categoryId = _categoryId ? Number(_categoryId) : undefined;
   const subCategoryId = _subCategoryId ? Number(_subCategoryId) : undefined;
 
-  if (categoryId === undefined) {
-    return (
-      <div className={styles.postListWrapper}>
-        <RecentPostListContainer />
-      </div>
-    );
-  }
-
   return (
     <div className={styles.postListWrapper}>
       <PostListContainer
         page={page}
-        categoryId={categoryId}
-        subCategoryId={subCategoryId}
+        categoryId={undefined}
+        subCategoryId={undefined}
       />
     </div>
   );
 };
 
-export default Home;
+export default PoppularPostsPage;

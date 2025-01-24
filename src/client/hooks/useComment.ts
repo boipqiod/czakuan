@@ -8,7 +8,7 @@ import {
 import {CommentType} from '@/types/post';
 import {useEffect, useState} from 'react';
 
-export const useComment = (ownerId: number, comment: CommentType) => {
+export const useComment = (ownerNickName: string, comment: CommentType) => {
   const {isLogin, user} = useAuthStore();
 
   const [isLike, setIsLike] = useState(
@@ -20,14 +20,12 @@ export const useComment = (ownerId: number, comment: CommentType) => {
   );
   const [dislikeCount, setDislikeCount] = useState(comment.dislikes.length);
 
-  const isPostOwner = ownerId === comment.author.id;
+  const isPostOwner = ownerNickName === comment.author.nickName;
   const isHasParent = comment.parentId !== null;
   const isDeleted = !!comment.deletedAt;
   const isCommentOwner = user?.id === comment.author.id;
 
   useEffect(() => {
-    console.log('useEffect', isCommentOwner);
-
     setIsLike(comment.likes.some(like => like.userId === user?.id));
     setLikeCount(comment.likes.length);
     setIsDislike(comment.dislikes.some(dislike => dislike.userId === user?.id));
