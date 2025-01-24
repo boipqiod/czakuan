@@ -1,6 +1,6 @@
 import {actionWrapper} from '@/client/action/actionWapper';
 import {PostDetail} from '@/client/components/post/detail/PostDetail';
-import {PostList} from '@/client/components/post/list/PostList';
+import {PostListContainer} from '@/client/components/post/list/PostListContainer';
 import {Flex} from '@/client/ui/widgets';
 import {getPostDetail} from '@/server/actions/post.actions';
 import {getCommentList} from '@/server/actions/post.comment.actions';
@@ -28,11 +28,10 @@ const PostDetailPage = async ({
     <Flex gap={30} width={'100%'}>
       <PostDetail post={post} commentResult={commentResult} />
       <Flex marginBottom={30}>
-        <PostList
+        <PostListContainer
           page={Number(page ?? 1)}
           categoryId={categoryId ? Number(categoryId) : undefined}
           subCategoryId={subCategoryId ? Number(subCategoryId) : undefined}
-          postId={post.id}
         />
       </Flex>
     </Flex>

@@ -2,12 +2,15 @@ import {getUniqueString} from '@/lib/random';
 import {NotFoundError} from '@/server/Error';
 import prisma from '@/server/modules/prisma';
 import s3 from '@/server/modules/s3';
+import {CategoryRepository} from '@/server/repositories/category.repository';
 import {PostRepository} from '@/server/repositories/post.repository';
+import {ListType, PostDetailType, PostListType} from '@/types/post';
 import {User} from '@/types/user';
 
 export class PostService {
   constructor(
     private readonly postRepository: PostRepository = new PostRepository(),
+    private readonly categoryRepository = new CategoryRepository(),
     private readonly prismaHelper = prisma,
     private readonly s3Helper = s3,
   ) {}
@@ -20,7 +23,11 @@ export class PostService {
     limit: number,
     categoryId?: number,
     subCategoryId?: number,
-  ) {
+  ): Promise<ListType<PostListType>> {
+    const category = await this.prismaHelper.category.findUnique({
+      where: {id: categoryId},
+    });
+    const isAnonymous = category?.isAnonymous ?? false;
     const list = await this.postRepository.getList(
       page,
       limit,
@@ -29,6 +36,49 @@ export class PostService {
     );
     const total = await this.postRepository.getCount(categoryId, subCategoryId);
     const lastPage = Math.ceil(total / limit);
+
+    if (isAnonymous) {
+      const anonymMap = new Map<string, string>();
+
+      // 익명 유저 레코드 일괄 조회
+      const anonymUsers = await this.prismaHelper.anonymousUserInPost.findMany({
+        where: {postId: {in: list.map(post => post.id)}},
+      });
+
+      // (postId, userId)로 맵핑
+      anonymUsers.forEach(user => {
+        const key = `${user.postId}-${user.userId}`;
+        anonymMap.set(key, user.anonymId);
+      });
+
+      // 이제 게시글 리스트 순회
+      const anonymList = list.map(post => {
+        const key = `${post.id}-${post.author.id}`;
+        const anonymId = anonymMap.get(key);
+        if (anonymId) {
+          post.author = {
+            id: 0,
+            nickName: anonymId,
+            role: 'USER',
+            profileImageUrl: null,
+          };
+
+          delete (post as any).isAnonymous;
+          delete (post as any).AnonymousUserInPost;
+
+          return post;
+        } else {
+          return post;
+        }
+      });
+
+      return {
+        page,
+        lastPage,
+        total,
+        list: anonymList,
+      };
+    }
 
     return {
       page,
@@ -41,7 +91,13 @@ export class PostService {
   /**
    * 인기 게시글 목록 조회
    */
-  async getPopularPostList({page, limit}: {page: number; limit: number}) {
+  async getPopularPostList({
+    page,
+    limit,
+  }: {
+    page: number;
+    limit: number;
+  }): Promise<ListType<PostListType>> {
     const posts = await this.postRepository.getPopularList(page, limit);
     const total = await this.postRepository.getPopularCount();
     const lastPage = Math.ceil(total / limit);
@@ -57,17 +113,59 @@ export class PostService {
   /**
    * 공지사항 목록 조회
    */
-  async getNoticePostList({categoryId}: {categoryId: number}) {
+  async getNoticePostList({
+    categoryId,
+  }: {
+    categoryId: number;
+  }): Promise<{list: PostListType[]}> {
     const list = await this.postRepository.getNoticeList(categoryId);
     return {list};
   }
 
+  getRecentPostList = async (limit: number) => {
+    const recentCategories =
+      await this.categoryRepository.getRecentCategories();
+
+    const lists = await Promise.all(
+      recentCategories.map(recent => {
+        return this.postRepository.getList(1, limit, recent.category.id);
+      }),
+    );
+
+    return recentCategories.map((recent, index) => {
+      return {
+        category: recent.category,
+        list: lists[index],
+      };
+    });
+  };
+
   /**
    * 게시글 상세 조회
    */
-  async getPostDetail(id: number) {
+  async getPostDetail(id: number): Promise<PostDetailType> {
     const post = await this.postRepository.getDetail(id);
     if (!post) throw NotFoundError();
+
+    if (post.isAnonymous) {
+      const anonymousUser =
+        await this.prismaHelper.anonymousUserInPost.findFirst({
+          where: {postId: id},
+        });
+      if (!anonymousUser) {
+        throw NotFoundError('익명 사용자를 찾을 수 없습니다.');
+      }
+
+      post.author = {
+        id: 0,
+        nickName: anonymousUser.anonymId,
+        role: 'USER',
+        profileImageUrl: null,
+      };
+
+      delete (post as any).isAnonymous;
+      delete (post as any).AnonymousUserInPost;
+    }
 
     return post;
   }
@@ -84,11 +182,19 @@ export class PostService {
     subCategoryId?: number,
     isNotice?: boolean,
   ) {
+    const category = await this.prismaHelper.category.findUnique({
+      where: {id: categoryId},
+    });
+    if (!category) {
+      throw NotFoundError('카테고리를 찾을 수 없습니다.');
+    }
+
     const newPost = await this.postRepository.create(
       user.id,
       title,
       content,
       categoryId,
+      category.isAnonymous,
       subCategoryId,
       isNotice,
     );
@@ -114,6 +220,16 @@ export class PostService {
       images: movedImageUrls,
       thumbnailUrl: movedImageUrls.length > 0 ? movedImageUrls[0] : undefined,
     });
+
+    if (category.isAnonymous && isNotice !== true) {
+      await this.prismaHelper.anonymousUserInPost.create({
+        data: {
+          userId: user.id,
+          postId: updatedPost.id,
+          anonymId: getUniqueString(),
+        },
+      });
+    }
     return {id: updatedPost.id};
   }
 

@@ -23,6 +23,7 @@ interface CategoryStore {
   isFetched: boolean;
   categories: CategoryGroup[];
 
+  getCategoryGroupByCategoryId: (id: number) => CategoryGroup | undefined;
   getCategory: (id: number) => CategoryItem | undefined;
   getSubCategory: (id: number) => SubCategoryItem | undefined;
 
@@ -68,6 +69,12 @@ export const useCategoryStore = create<CategoryStore>((set, get) => ({
     },
   ],
 
+  getCategoryGroupByCategoryId: id => {
+    const {categories} = get();
+    return categories.find(categoryGroup =>
+      categoryGroup.categories.find(category => category.id === id),
+    );
+  },
   getCategory: id => {
     const {categories} = get();
     const category = categories.find(category =>

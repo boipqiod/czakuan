@@ -28,6 +28,8 @@ model User {
   Post            Post[]
   reportComment   ReportToComment[]
   reportPost      ReportToPost[]
+
+  AnonymousUserInPost AnonymousUserInPost[]
 }
 
 model CategoryGroup {
@@ -44,6 +46,8 @@ model Category {
   isUse         Boolean       @default(false)
   groupId       Int
   priority      Int           @default(0)
+  isAnonymous  Boolean       @default(false)
+
   group         CategoryGroup @relation(fields: [groupId], references: [id])
   posts         Post[]
   subCategories SubCategory[]
@@ -73,6 +77,8 @@ model Post {
   images        String[]
   categoryId    Int
   isNotice      Boolean         @default(false)
+  isAnonymous   Boolean         @default(false)
+
   comments      Comment[]
   dislikes      DislikeToPost[]
   likes         LikeToPost[]
@@ -80,6 +86,20 @@ model Post {
   subCategory   SubCategory?    @relation(fields: [subCategoryId], references: [id])
   author        User            @relation(fields: [userId], references: [id])
   reports       ReportToPost[]
+
+  AnonymousUserInPost AnonymousUserInPost[]
+}
+
+model AnonymousUserInPost {
+  id        Int     @id @default(autoincrement())
+  userId    Int
+  postId    Int
+  anonymId  String
+
+  user      User    @relation(fields: [userId], references: [id])
+  post      Post    @relation(fields: [postId], references: [id])
+
+  @@unique([userId, postId]) // 한 게시글 내 한 유저는 1개의 익명아이디만 갖도록
 }
 
 model LikeToPost {
@@ -121,6 +141,7 @@ model Comment {
   userId    Int
   deletedAt DateTime?
   rootId    Int
+  
   post      Post               @relation(fields: [postId], references: [id])
   author    User               @relation(fields: [userId], references: [id])
   parent    Comment?           @relation("CommentToParent", fields: [parentId], references: [id]) // 부모 관계

@@ -10,7 +10,40 @@ export class PostRepository {
     content: true,
     thumbnailUrl: true,
     views: true,
-    reports: true,
+    updatedAt: true,
+    createdAt: true,
+    likes: {
+      select: {
+        userId: true,
+      },
+    },
+    dislikes: {
+      select: {
+        userId: true,
+      },
+    },
+    reports: {
+      select: {
+        userId: true,
+      },
+    },
+    author: {
+      select: {
+        id: true,
+        nickName: true,
+        profileImageUrl: true,
+        role: true,
+      },
+    },
+  };
+  private readonly postListSelectFields = {
+    id: true,
+    categoryId: true,
+    subCategoryId: true,
+    isNotice: true,
+    title: true,
+    thumbnailUrl: true,
+    views: true,
     updatedAt: true,
     createdAt: true,
     _count: {
@@ -28,6 +61,16 @@ export class PostRepository {
         role: true,
       },
     },
+  };
+  private readonly postListSelectFieldsWithAnonym = {
+    ...this.postListSelectFields,
+    isAnonymous: true,
+    AnonymousUserInPost: true,
+  };
+  private readonly postSelectFieldsWithAnonym = {
+    ...this.postSelectFields,
+    isAnonymous: true,
+    AnonymousUserInPost: true,
   };
 
   getCount(categoryId?: number, subCategoryId?: number) {
@@ -60,8 +103,9 @@ export class PostRepository {
         deletedAt: null,
         categoryId,
         subCategoryId,
+        isAnonymous: !categoryId ? false : undefined, // 특정 카테고리가 아닌 경우 익명 글 제외, 익명 카테고리로 올라오는 경우만
       },
-      select: this.postSelectFields,
+      select: this.postListSelectFieldsWithAnonym,
     });
   }
 
@@ -84,8 +128,9 @@ export class PostRepository {
         createdAt: {
           gte: oneMonthAgo,
         },
+        isAnonymous: false,
       },
-      select: this.postSelectFields,
+      select: this.postListSelectFields,
     });
   }
 
@@ -100,6 +145,7 @@ export class PostRepository {
         createdAt: {
           gte: oneMonthAgo,
         },
+        isAnonymous: false,
       },
     });
   }
@@ -110,8 +156,9 @@ export class PostRepository {
         deletedAt: null,
         categoryId: categoryId ?? 1,
         isNotice: true,
+        isAnonymous: false,
       },
-      select: this.postSelectFields,
+      select: this.postListSelectFields,
     });
   }
 
@@ -121,27 +168,7 @@ export class PostRepository {
         deletedAt: null,
         id: postId,
       },
-      select: {
-        id: true,
-        categoryId: true,
-        subCategoryId: true,
-        title: true,
-        content: true,
-        views: true,
-        likes: true,
-        dislikes: true,
-        reports: true,
-        updatedAt: true,
-        createdAt: true,
-        author: {
-          select: {
-            id: true,
-            nickName: true,
-            profileImageUrl: true,
-            role: true,
-          },
-        },
-      },
+      select: this.postSelectFieldsWithAnonym,
     });
   }
 
@@ -150,6 +177,7 @@ export class PostRepository {
     title: string,
     content: string,
     categoryId: number,
+    isAnonymous: boolean,
     subCategoryId?: number,
     isNotice?: boolean,
   ) {
@@ -161,6 +189,7 @@ export class PostRepository {
         isNotice,
         categoryId,
         subCategoryId,
+        isAnonymous,
       },
       select: {id: true},
     });
@@ -185,7 +214,7 @@ export class PostRepository {
     });
   }
 
-  async delete(postId: number, userId: number) {
+  delete(postId: number, userId: number) {
     // 소프트 딜리트
     return prisma.post.update({
       where: {id: postId, userId: userId},

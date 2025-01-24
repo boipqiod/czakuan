@@ -1,11 +1,28 @@
+import {getUniqueString} from '@/lib/random';
+import {NotFoundError} from '@/server/Error';
+import prisma from '@/server/modules/prisma';
 import {CommentRepository} from '@/server/repositories/comment.repository';
+import {PostRepository} from '@/server/repositories/post.repository';
 
 export class CommentService {
   constructor(
     private readonly commentRepository: CommentRepository = new CommentRepository(),
+    private readonly postRepository: PostRepository = new PostRepository(),
   ) {}
 
   async getCommentList(postId: number, limit: number, page?: number) {
+    const post = await prisma.post.findUnique({
+      where: {id: postId},
+      select: {
+        isAnonymous: true,
+        AnonymousUserInPost: true,
+      },
+    });
+
+    if (!post) {
+      throw NotFoundError('게시글을 찾을 수 없습니다.');
+    }
+
     const _page =
       page ?? (await this.commentRepository.getLastPage(postId, limit));
 
@@ -15,6 +32,43 @@ export class CommentService {
     ]);
 
     const lastPage = Math.ceil(total / limit);
+
+    if (post.isAnonymous) {
+      // 1) userId -> anonymId 매핑 생성 (한 번의 루프)
+      const anonymMap = new Map<number, string>();
+      post.AnonymousUserInPost.forEach(user => {
+        anonymMap.set(user.userId, user.anonymId);
+      });
+
+      // 2) 댓글 배열 순회 (한 번의 루프)
+      list.forEach(comment => {
+        const anonymId = anonymMap.get(comment.author.id);
+        const parentAnonymId = anonymMap.get(comment.parent?.author.id ?? -1);
+        if (anonymId) {
+          // 익명으로 교체
+          comment.author = {
+            id: 0,
+            nickName: anonymId,
+            profileImageUrl: null,
+            role: 'USER',
+          };
+        } else {
+          comment.author = {
+            id: 0,
+            nickName: '익명',
+            profileImageUrl: null,
+            role: 'USER',
+          };
+        }
+        if (parentAnonymId && comment.parent) {
+          // 부모 댓글의 익명 ID로 교체
+          comment.parent.author = {
+            id: 0,
+            nickName: parentAnonymId,
+          };
+        }
+      });
+    }
 
     return {
       page: _page,
@@ -31,6 +85,11 @@ export class CommentService {
     parentId?: number,
     rootId?: number,
   ) {
+    const post = await this.postRepository.getDetail(postId);
+    if (!post) {
+      throw NotFoundError('게시글을 찾을 수 없습니다.');
+    }
+
     const comment = await this.commentRepository.create(
       postId,
       userId,
@@ -43,6 +102,50 @@ export class CommentService {
     if (!rootId) {
       await this.commentRepository.updateRootId(comment.id, comment.id);
     }
+
+    if (post.isAnonymous) {
+      let anonymRecord = await prisma.anonymousUserInPost.findUnique({
+        where: {
+          userId_postId: {
+            userId,
+            postId,
+          },
+        },
+      });
+
+      // 아직 익명 ID가 없다면 생성
+      if (!anonymRecord) {
+        anonymRecord = await prisma.anonymousUserInPost.create({
+          data: {
+            userId,
+            postId,
+            anonymId: getUniqueString(),
+          },
+        });
+      }
+      if (parentId && comment.parent) {
+        const parentAnonymRecord = await prisma.anonymousUserInPost.findUnique({
+          where: {
+            userId_postId: {
+              userId: comment.parent?.author.id ?? -1,
+              postId,
+            },
+          },
+        });
+        comment.parent.author = {
+          id: 0,
+          nickName: parentAnonymRecord?.anonymId ?? '익명',
+        };
+      }
+
+      comment.author = {
+        id: 0,
+        nickName: anonymRecord.anonymId,
+        profileImageUrl: null,
+        role: 'USER',
+      };
+    }
+
     return comment;
   }
 

@@ -32,6 +32,18 @@ export const getPostList = async ({
     }
   });
 
+export const getNoticeList = async (categoryId?: number) =>
+  serverAction(() => {
+    const service = new PostService();
+    return service.getNoticePostList({categoryId: categoryId ?? 1});
+  });
+
+export const getRecentPostList = async () =>
+  serverAction(async () => {
+    const service = new PostService();
+    return service.getRecentPostList(5);
+  });
+
 //###################
 //### Post Detail ###
 //###################
@@ -40,12 +52,6 @@ export const getPostDetail = async (id: number) =>
   serverAction(() => {
     const service = new PostService();
     return service.getPostDetail(id);
-  });
-
-export const getNoticeList = async (categoryId?: number) =>
-  serverAction(() => {
-    const service = new PostService();
-    return service.getNoticePostList({categoryId: categoryId ?? 1});
   });
 
 export const likePost = async (postId: number, userId: number) =>

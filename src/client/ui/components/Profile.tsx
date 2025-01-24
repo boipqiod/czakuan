@@ -30,12 +30,14 @@ export const Profile = ({author}: ProfileProps) => {
           <MarkOfRole role={author.role} />
         </HFlex>
       </DropdownMenuButton>
-      <DropdownMenuItem
-        onClick={() => {
-          router.push(`/user/${author.id}`);
-        }}>
-        프로필
-      </DropdownMenuItem>
+      {author.id !== 0 && (
+        <DropdownMenuItem
+          onClick={() => {
+            router.push(`/user/${author.id}`);
+          }}>
+          프로필
+        </DropdownMenuItem>
+      )}
     </DropdownMenu>
   );
 };
