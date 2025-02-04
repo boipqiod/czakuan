@@ -198,22 +198,24 @@ export class PostService {
       subCategoryId,
       isNotice,
     );
-    // 이미지 파일 이동
-    const movedImageUrls = await Promise.all(
-      images.map((imageUrl, index) =>
-        this.s3Helper.moveObject(
-          imageUrl,
-          `post/${getUniqueString()}`,
-          index.toString(),
-        ),
-      ),
-    );
+
+    let updatedContent = content;
 
     // 게시글에 이미지 URL 변경
-    let updatedContent = content;
-    images.forEach((imageUrl, index) => {
-      updatedContent = updatedContent.replace(imageUrl, movedImageUrls[index]);
-    });
+    // 이미지 파일 이동
+    const movedImageUrls = await Promise.all(
+      images.map((imageUrl, index) => {
+        updatedContent = updatedContent.replace(
+          imageUrl,
+          movedImageUrls[index],
+        );
+        return this.s3Helper.moveObject(
+          imageUrl,
+          `post/${newPost.id}`,
+          getUniqueString(),
+        );
+      }),
+    );
 
     const updatedPost = await this.postRepository.update(newPost.id, {
       content: updatedContent,
@@ -221,6 +223,7 @@ export class PostService {
       thumbnailUrl: movedImageUrls.length > 0 ? movedImageUrls[0] : undefined,
     });
 
+    // 익명 게시글 처리
     if (category.isAnonymous && isNotice !== true) {
       await this.prismaHelper.anonymousUserInPost.create({
         data: {
@@ -231,6 +234,16 @@ export class PostService {
       });
     }
     return {id: updatedPost.id};
+  }
+
+  async update(
+    userId: number,
+    id: number,
+    title: string,
+    content: string,
+    images: string[],
+  ) {
+    const post = await this.postRepository.getDetail(id);
   }
 
   /**

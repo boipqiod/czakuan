@@ -172,6 +172,17 @@ export class PostRepository {
     });
   }
 
+  getPostWithUser(userId: number, id: number) {
+    return prisma.post.findUnique({
+      where: {
+        deletedAt: null,
+        id,
+        userId,
+      },
+      select: this.postSelectFields,
+    });
+  }
+
   create(
     userId: number,
     title: string,
