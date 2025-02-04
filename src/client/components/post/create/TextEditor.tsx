@@ -2,7 +2,7 @@
 import {actionWrapper} from '@/client/action/actionWapper';
 import {convertToJpeg, imageSelector} from '@/lib/image';
 import {uploadTempPostImage} from '@/server/actions/post.actions';
-import {useRef} from 'react';
+import {useEffect, useRef} from 'react';
 import ReactQuill from 'react-quill-new';
 import 'react-quill-new/dist/quill.snow.css';
 
@@ -24,9 +24,14 @@ const formats = [
 type TextEditorProps = {
   onChange: (content: string) => void;
   onAddImage: (imageUrl: string) => void;
+  originalContent?: string;
 };
 
-const TextEditor = ({onChange, onAddImage}: TextEditorProps) => {
+const TextEditor = ({
+  onChange,
+  onAddImage,
+  originalContent,
+}: TextEditorProps) => {
   const quillRef = useRef<ReactQuill>(null);
 
   const modules = {
@@ -50,6 +55,12 @@ const TextEditor = ({onChange, onAddImage}: TextEditorProps) => {
       matchVisual: false,
     },
   };
+
+  useEffect(() => {
+    if (originalContent) {
+      quillRef.current?.getEditor().setContents(JSON.parse(originalContent));
+    }
+  }, []);
 
   return (
     <ReactQuill
