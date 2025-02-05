@@ -240,10 +240,50 @@ export class PostService {
     userId: number,
     id: number,
     title: string,
-    content: string,
-    images: string[],
+    newContent: string,
+    newImages: string[],
   ) {
-    const post = await this.postRepository.getDetail(id);
+    const post = await this.postRepository.getPostWithUser(userId, id);
+
+    if (!post) {
+      throw NotFoundError('게시글을 찾을 수 없습니다.');
+    }
+
+    const originContent = post.content;
+    const originImages = post.images; // 기존 이미지
+    const notDeletedImages = originImages.filter(imageUrl =>
+      newContent.includes(imageUrl),
+    ); // 삭제되지 않은 이미지
+
+    const deletedImages = originImages.filter(
+      imageUrl => !newContent.includes(imageUrl),
+    ); // 삭제된 이미지
+    const addedImages = newImages;
+    let toUpdateContent = newContent;
+    let thumbnailUrl = post.thumbnailUrl;
+
+    const movedImageUrls = await Promise.all(
+      addedImages.map((imageUrl, index) => {
+        toUpdateContent = toUpdateContent.replace(
+          imageUrl,
+          movedImageUrls[index],
+        );
+        return this.s3Helper.moveObject(
+          imageUrl,
+          `post/${post.id}`,
+          getUniqueString(),
+        );
+      }),
+    );
+
+    await Promise.all(
+      deletedImages.map(imageUrl => this.s3Helper.deleteObject(imageUrl)),
+    );
+
+    const toUpdateImages = [...notDeletedImages, ...movedImageUrls];
+
+    if (thumbnailUrl !== null && deletedImages.includes(thumbnailUrl)) {
+    }
   }
 
   /**

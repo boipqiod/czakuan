@@ -12,6 +12,7 @@ export class PostRepository {
     views: true,
     updatedAt: true,
     createdAt: true,
+    images: true,
     likes: {
       select: {
         userId: true,
@@ -220,6 +221,24 @@ export class PostRepository {
         thumbnailUrl: updateData.thumbnailUrl,
         content: updateData.content,
         images: updateData.images,
+      },
+      select: {id: true},
+    });
+  }
+
+  updateWithUser(
+    userId: number,
+    id: number,
+    title: string,
+    content: string,
+    images: string[],
+  ) {
+    return prisma.post.update({
+      where: {id, userId},
+      data: {
+        title,
+        content,
+        images,
       },
       select: {id: true},
     });

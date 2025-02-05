@@ -102,6 +102,25 @@ export class S3 {
     }
   }
 
+  async deleteObject(originSource: string): Promise<void> {
+    const key = originSource.replace(
+      `https://${this.bucketName}.s3.${this.bucketRegion}.amazonaws.com/`,
+      '',
+    );
+
+    const deleteCommand = new DeleteObjectCommand({
+      Bucket: this.bucketName,
+      Key: key,
+    });
+
+    try {
+      await this.s3Client.send(deleteCommand);
+    } catch (error) {
+      console.error('Error deleting file:', error);
+      throw error;
+    }
+  }
+
   protected getFileUrl(bucketName: string, key: string): string {
     console.log('### getFileUrl', {
       bucketName,
