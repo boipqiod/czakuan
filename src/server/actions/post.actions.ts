@@ -126,6 +126,29 @@ export const createPost = async (
     );
   });
 
+/**
+ *
+ * @param postId
+ * @param title
+ * @param content
+ * @param images 새로운 이미지만
+ * @returns
+ */
+export const updatePost = async (
+  postId: number,
+  title: string,
+  content: string,
+  images: string[],
+) =>
+  serverAction(async () => {
+    const user = await verifyUser();
+
+    if (!user) throw UnauthorizedError();
+
+    const service = new PostService();
+    return service.update(user.id, postId, title, content, images);
+  });
+
 //###################
 //### Admin Post ###
 //###################

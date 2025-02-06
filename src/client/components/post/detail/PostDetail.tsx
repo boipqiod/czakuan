@@ -28,6 +28,12 @@ export const PostDetail = ({post, commentResult}: PostDetailProps) => {
   const router = useRouter();
   usePostViewIncrease(post.id || 0);
 
+  const isPostOwner = user?.id === post.author.id;
+
+  const handleEdit = () => {
+    router.push(`/post/${post.id}/edit`);
+  };
+
   const handleDelete = () => {
     const isDelete = confirm('정말 삭제하시겠습니까?');
     if (!isDelete) return;
@@ -82,7 +88,10 @@ export const PostDetail = ({post, commentResult}: PostDetailProps) => {
             <DropdownMenuButton>
               <IoIosMore color={'white'} size={'1.5rem'} />
             </DropdownMenuButton>
-            {user?.id === post.author.id && (
+            {isPostOwner && (
+              <DropdownMenuItem onClick={handleEdit}>수정</DropdownMenuItem>
+            )}
+            {isPostOwner && (
               <DropdownMenuItem onClick={handleDelete}>삭제</DropdownMenuItem>
             )}
             <DropdownMenuItem onClick={handleReport}>신고</DropdownMenuItem>

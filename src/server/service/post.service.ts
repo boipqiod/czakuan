@@ -204,16 +204,15 @@ export class PostService {
     // 게시글에 이미지 URL 변경
     // 이미지 파일 이동
     const movedImageUrls = await Promise.all(
-      images.map((imageUrl, index) => {
-        updatedContent = updatedContent.replace(
-          imageUrl,
-          movedImageUrls[index],
-        );
-        return this.s3Helper.moveObject(
+      images.map(async (imageUrl, index) => {
+        const url = await this.s3Helper.moveObject(
           imageUrl,
           `post/${newPost.id}`,
           getUniqueString(),
         );
+
+        updatedContent = updatedContent.replace(imageUrl, url);
+        return url;
       }),
     );
 
@@ -249,7 +248,6 @@ export class PostService {
       throw NotFoundError('게시글을 찾을 수 없습니다.');
     }
 
-    const originContent = post.content;
     const originImages = post.images; // 기존 이미지
     const notDeletedImages = originImages.filter(imageUrl =>
       newContent.includes(imageUrl),
@@ -260,19 +258,17 @@ export class PostService {
     ); // 삭제된 이미지
     const addedImages = newImages;
     let toUpdateContent = newContent;
-    let thumbnailUrl = post.thumbnailUrl;
+    let thumbnailUrl = post.thumbnailUrl || undefined;
 
     const movedImageUrls = await Promise.all(
-      addedImages.map((imageUrl, index) => {
-        toUpdateContent = toUpdateContent.replace(
-          imageUrl,
-          movedImageUrls[index],
-        );
-        return this.s3Helper.moveObject(
+      addedImages.map(async (imageUrl, index) => {
+        const url = await this.s3Helper.moveObject(
           imageUrl,
           `post/${post.id}`,
           getUniqueString(),
         );
+        toUpdateContent = toUpdateContent.replace(imageUrl, url);
+        return url;
       }),
     );
 
@@ -282,8 +278,27 @@ export class PostService {
 
     const toUpdateImages = [...notDeletedImages, ...movedImageUrls];
 
-    if (thumbnailUrl !== null && deletedImages.includes(thumbnailUrl)) {
+    // 이미지가 아예 없는 경우
+    if (toUpdateImages.length === 0) {
+      thumbnailUrl = undefined;
     }
+    // 썸네일 이미지가 애초에 없거나 삭제된 경우
+    // 이미지 제일 앞에 있는 것을 썸네일로 설정
+    else if (
+      thumbnailUrl !== undefined &&
+      deletedImages.includes(thumbnailUrl)
+    ) {
+      thumbnailUrl = toUpdateImages[0];
+    }
+
+    this.postRepository.update(id, {
+      title,
+      content: toUpdateContent,
+      images: toUpdateImages,
+      thumbnailUrl,
+    });
+
+    return {id};
   }
 
   /**
