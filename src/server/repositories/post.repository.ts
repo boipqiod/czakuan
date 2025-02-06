@@ -210,6 +210,7 @@ export class PostRepository {
   update(
     postId: number,
     updateData: {
+      title?: string;
       thumbnailUrl?: string;
       content?: string;
       images?: string[];
@@ -218,6 +219,7 @@ export class PostRepository {
     return prisma.post.update({
       where: {id: postId},
       data: {
+        title: updateData.title,
         thumbnailUrl: updateData.thumbnailUrl,
         content: updateData.content,
         images: updateData.images,

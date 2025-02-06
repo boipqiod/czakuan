@@ -7,6 +7,7 @@ type InputProps = {
   placeholder?: string;
   disabled?: boolean;
   autoFocus?: boolean;
+  defaultValue?: string | number;
 } & CSSProperties;
 export const Input = ({
   value,
@@ -14,6 +15,7 @@ export const Input = ({
   placeholder,
   disabled,
   autoFocus,
+  defaultValue,
   ...sytle
 }: InputProps) => {
   return (
@@ -23,6 +25,7 @@ export const Input = ({
       placeholder={placeholder}
       type={'text'}
       value={value}
+      defaultValue={defaultValue}
       onChange={e => onChange && onChange(e.target.value)}
       style={{
         border: '1px solid #979797',
