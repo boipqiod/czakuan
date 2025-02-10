@@ -63,7 +63,7 @@ const CreatePostPage = () => {
   const [isNotice, setIsNotice] = useState<boolean>(false);
 
   const uploadImage = async (imageUrl: string) => {
-    setImages([...images, imageUrl]);
+    setImages(prev => [...prev, imageUrl]);
   };
 
   useEffect(() => {
