@@ -222,16 +222,6 @@ export class PostService {
       thumbnailUrl: movedImageUrls.length > 0 ? movedImageUrls[0] : undefined,
     });
 
-    // 익명 게시글 처리
-    if (category.isAnonymous && isNotice !== true) {
-      await this.prismaHelper.anonymousUserInPost.create({
-        data: {
-          userId: user.id,
-          postId: updatedPost.id,
-          anonymId: getUniqueString(),
-        },
-      });
-    }
     return {id: updatedPost.id};
   }
 
@@ -259,6 +249,12 @@ export class PostService {
     const addedImages = newImages;
     let toUpdateContent = newContent;
     let thumbnailUrl = post.thumbnailUrl || undefined;
+    console.log('edit', {
+      originImages,
+      notDeletedImages,
+      deletedImages,
+      addedImages,
+    });
 
     const movedImageUrls = await Promise.all(
       addedImages.map(async (imageUrl, index) => {
@@ -291,7 +287,13 @@ export class PostService {
       thumbnailUrl = toUpdateImages[0];
     }
 
-    this.postRepository.update(id, {
+    console.log('update', {
+      toUpdateContent,
+      toUpdateImages,
+      thumbnailUrl,
+    });
+
+    await this.postRepository.update(id, {
       title,
       content: toUpdateContent,
       images: toUpdateImages,
