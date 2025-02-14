@@ -24,9 +24,10 @@ const formats = [
 type TextEditorProps = {
   onChange: (content: string) => void;
   onAddImage: (imageUrl: string) => void;
+  defaultValue?: string;
 };
 
-const TextEditor = ({onChange, onAddImage}: TextEditorProps) => {
+const TextEditor = ({onChange, onAddImage, defaultValue}: TextEditorProps) => {
   const quillRef = useRef<ReactQuill>(null);
 
   const modules = {
@@ -51,12 +52,19 @@ const TextEditor = ({onChange, onAddImage}: TextEditorProps) => {
     },
   };
 
+  // useEffect(() => {
+  //   if (defaultValue) {
+  //     quillRef.current?.getEditor().setContents(defaultValue);
+  //   }
+  // }, []);
+
   return (
     <ReactQuill
       style={{
         height: '45svh',
         marginBottom: '70px',
       }}
+      defaultValue={defaultValue}
       ref={quillRef}
       modules={modules}
       formats={formats}

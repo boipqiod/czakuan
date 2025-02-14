@@ -198,22 +198,23 @@ export class PostService {
       subCategoryId,
       isNotice,
     );
-    // 이미지 파일 이동
-    const movedImageUrls = await Promise.all(
-      images.map((imageUrl, index) =>
-        this.s3Helper.moveObject(
-          imageUrl,
-          `post/${getUniqueString()}`,
-          index.toString(),
-        ),
-      ),
-    );
+
+    let updatedContent = content;
 
     // 게시글에 이미지 URL 변경
-    let updatedContent = content;
-    images.forEach((imageUrl, index) => {
-      updatedContent = updatedContent.replace(imageUrl, movedImageUrls[index]);
-    });
+    // 이미지 파일 이동
+    const movedImageUrls = await Promise.all(
+      images.map(async (imageUrl, index) => {
+        const url = await this.s3Helper.moveObject(
+          imageUrl,
+          `post/${newPost.id}`,
+          getUniqueString(),
+        );
+
+        updatedContent = updatedContent.replace(imageUrl, url);
+        return url;
+      }),
+    );
 
     const updatedPost = await this.postRepository.update(newPost.id, {
       content: updatedContent,
@@ -221,16 +222,85 @@ export class PostService {
       thumbnailUrl: movedImageUrls.length > 0 ? movedImageUrls[0] : undefined,
     });
 
-    if (category.isAnonymous && isNotice !== true) {
-      await this.prismaHelper.anonymousUserInPost.create({
-        data: {
-          userId: user.id,
-          postId: updatedPost.id,
-          anonymId: getUniqueString(),
-        },
-      });
-    }
     return {id: updatedPost.id};
+  }
+
+  async update(
+    userId: number,
+    id: number,
+    title: string,
+    newContent: string,
+    newImages: string[],
+  ) {
+    const post = await this.postRepository.getPostWithUser(userId, id);
+
+    if (!post) {
+      throw NotFoundError('게시글을 찾을 수 없습니다.');
+    }
+
+    const originImages = post.images; // 기존 이미지
+    const notDeletedImages = originImages.filter(imageUrl =>
+      newContent.includes(imageUrl),
+    ); // 삭제되지 않은 이미지
+
+    const deletedImages = originImages.filter(
+      imageUrl => !newContent.includes(imageUrl),
+    ); // 삭제된 이미지
+    const addedImages = newImages;
+    let toUpdateContent = newContent;
+    let thumbnailUrl = post.thumbnailUrl || undefined;
+    console.log('edit', {
+      originImages,
+      notDeletedImages,
+      deletedImages,
+      addedImages,
+    });
+
+    const movedImageUrls = await Promise.all(
+      addedImages.map(async (imageUrl, index) => {
+        const url = await this.s3Helper.moveObject(
+          imageUrl,
+          `post/${post.id}`,
+          getUniqueString(),
+        );
+        toUpdateContent = toUpdateContent.replace(imageUrl, url);
+        return url;
+      }),
+    );
+
+    await Promise.all(
+      deletedImages.map(imageUrl => this.s3Helper.deleteObject(imageUrl)),
+    );
+
+    const toUpdateImages = [...notDeletedImages, ...movedImageUrls];
+
+    // 이미지가 아예 없는 경우
+    if (toUpdateImages.length === 0) {
+      thumbnailUrl = undefined;
+    }
+    // 썸네일 이미지가 애초에 없거나 삭제된 경우
+    // 이미지 제일 앞에 있는 것을 썸네일로 설정
+    else if (
+      thumbnailUrl !== undefined &&
+      deletedImages.includes(thumbnailUrl)
+    ) {
+      thumbnailUrl = toUpdateImages[0];
+    }
+
+    console.log('update', {
+      toUpdateContent,
+      toUpdateImages,
+      thumbnailUrl,
+    });
+
+    await this.postRepository.update(id, {
+      title,
+      content: toUpdateContent,
+      images: toUpdateImages,
+      thumbnailUrl,
+    });
+
+    return {id};
   }
 
   /**
