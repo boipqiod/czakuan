@@ -1,6 +1,6 @@
 'use client';
 import {actionWrapper} from '@/client/action/actionWapper';
-import TextEditor from '@/client/components/post/creat/TextEditor';
+import TextEditor from '@/client/components/post/create/TextEditor';
 import {useQueryParams} from '@/client/hooks/useNavigate';
 import {useAuthStore} from '@/client/store/AuthStore';
 import {
@@ -63,7 +63,7 @@ const CreatePostPage = () => {
   const [isNotice, setIsNotice] = useState<boolean>(false);
 
   const uploadImage = async (imageUrl: string) => {
-    setImages([...images, imageUrl]);
+    setImages(prev => [...prev, imageUrl]);
   };
 
   useEffect(() => {

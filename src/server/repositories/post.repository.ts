@@ -12,6 +12,7 @@ export class PostRepository {
     views: true,
     updatedAt: true,
     createdAt: true,
+    images: true,
     likes: {
       select: {
         userId: true,
@@ -172,6 +173,17 @@ export class PostRepository {
     });
   }
 
+  getPostWithUser(userId: number, id: number) {
+    return prisma.post.findUnique({
+      where: {
+        deletedAt: null,
+        id,
+        userId,
+      },
+      select: this.postSelectFields,
+    });
+  }
+
   create(
     userId: number,
     title: string,
@@ -198,6 +210,7 @@ export class PostRepository {
   update(
     postId: number,
     updateData: {
+      title?: string;
       thumbnailUrl?: string;
       content?: string;
       images?: string[];
@@ -206,9 +219,28 @@ export class PostRepository {
     return prisma.post.update({
       where: {id: postId},
       data: {
+        title: updateData.title,
         thumbnailUrl: updateData.thumbnailUrl,
         content: updateData.content,
         images: updateData.images,
+      },
+      select: {id: true},
+    });
+  }
+
+  updateWithUser(
+    userId: number,
+    id: number,
+    title: string,
+    content: string,
+    images: string[],
+  ) {
+    return prisma.post.update({
+      where: {id, userId},
+      data: {
+        title,
+        content,
+        images,
       },
       select: {id: true},
     });
