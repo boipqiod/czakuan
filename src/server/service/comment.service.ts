@@ -1,4 +1,5 @@
 import {getUniqueString} from '@/lib/random';
+import {userInfo} from '@/server/actions/auth.actions';
 import {NotFoundError} from '@/server/Error';
 import prisma from '@/server/modules/prisma';
 import {CommentRepository} from '@/server/repositories/comment.repository';
@@ -10,12 +11,22 @@ export class CommentService {
     private readonly postRepository: PostRepository = new PostRepository(),
   ) {}
 
-  async getCommentList(postId: number, limit: number, page?: number) {
+  async getCommentList(
+    postId: number,
+    limit: number,
+    page?: number,
+    userId?: number,
+  ) {
     const post = await prisma.post.findUnique({
       where: {id: postId},
       select: {
         isAnonymous: true,
         AnonymousUserInPost: true,
+        category: {
+          select: {
+            isPrivateComment: true,
+          },
+        },
       },
     });
 
@@ -66,6 +77,19 @@ export class CommentService {
             id: 0,
             nickName: parentAnonymId,
           };
+        }
+      });
+    }
+
+    if (post.category.isPrivateComment) {
+      const user = await userInfo();
+
+      list.forEach(comment => {
+        if (
+          comment.author.id !== user.data?.id &&
+          user.data?.role !== 'SUPER_ADMIN'
+        ) {
+          comment.content = '비공개 댓글입니다.';
         }
       });
     }
