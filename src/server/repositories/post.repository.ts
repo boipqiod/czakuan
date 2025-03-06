@@ -104,7 +104,7 @@ export class PostRepository {
         deletedAt: null,
         categoryId,
         subCategoryId,
-        isAnonymous: !categoryId ? false : undefined, // 특정 카테고리가 아닌 경우 익명 글 제외, 익명 카테고리로 올라오는 경우만
+        // isAnonymous: !categoryId ? false : undefined, // 특정 카테고리가 아닌 경우 익명 글 제외, 익명 카테고리로 올라오는 경우만
       },
       select: this.postListSelectFieldsWithAnonym,
     });

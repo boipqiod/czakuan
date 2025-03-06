@@ -48,6 +48,8 @@ model Category {
   priority      Int           @default(0)
   isAnonymous  Boolean       @default(false)
 
+  isPrivateComment Boolean @default(false)
+
   group         CategoryGroup @relation(fields: [groupId], references: [id])
   posts         Post[]
   subCategories SubCategory[]
@@ -150,7 +152,6 @@ model Comment {
   dislikes  DislikeToComment[]
   likes     LikeToComment[]
   reports   ReportToComment[]
-
 }
 
 model LikeToComment {
