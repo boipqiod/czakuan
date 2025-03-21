@@ -27,6 +27,11 @@ export class CommentService {
             isPrivateComment: true,
           },
         },
+        author: {
+          select: {
+            id: true,
+          },
+        },
       },
     });
 
@@ -86,6 +91,7 @@ export class CommentService {
 
       list.forEach(comment => {
         if (
+          comment.author.id !== post.author.id &&
           comment.author.id !== user.data?.id &&
           user.data?.role !== 'SUPER_ADMIN'
         ) {
