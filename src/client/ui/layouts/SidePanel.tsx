@@ -65,6 +65,19 @@ export const SidePanel = () => {
         borderRight={'1px solid #333'} //TODO: 색 변경
         zIndex={2}>
         <Flex padding={10} gap={20} maxWidth={600}>
+          <HFlex flexWrap={'wrap'} gap={10}>
+            <ClearButton
+              border={'1px solid #333'} //TODO: 색 변경
+              fontSize={'1.3rem'}
+              padding={5}
+              width={'100%'}
+              textAlign={'center'}
+              onClick={() => {
+                onClick(22);
+              }}>
+              <Text>{'시작관 야간 예약'}</Text>
+            </ClearButton>
+          </HFlex>
           <div>
             <HFlex flexWrap={'wrap'} gap={10}>
               <ClearButton
@@ -104,18 +117,23 @@ export const SidePanel = () => {
                 {categoryGroup.name}
               </Text>
               <HFlex flexWrap={'wrap'} gap={10}>
-                {categoryGroup.categories.map(category => (
-                  <ClearButton
-                    key={`category-${category.id}`}
-                    border={'1px solid #333'} //TODO: 색 변경
-                    fontSize={'1.3rem'}
-                    padding={5}
-                    width={'45%'}
-                    textAlign={'left'}
-                    onClick={() => onClick(category.id)}>
-                    <Text>{category.name}</Text>
-                  </ClearButton>
-                ))}
+                {categoryGroup.categories.map(category => {
+                  // TODO: "시작관 야간 예약" 표시하지 않음
+                  if (category.id === 22) return null;
+
+                  return (
+                    <ClearButton
+                      key={`category-${category.id}`}
+                      border={'1px solid #333'} //TODO: 색 변경
+                      fontSize={'1.3rem'}
+                      padding={5}
+                      width={'45%'}
+                      textAlign={'left'}
+                      onClick={() => onClick(category.id)}>
+                      <Text>{category.name}</Text>
+                    </ClearButton>
+                  );
+                })}
               </HFlex>
             </div>
           ))}
