@@ -1,48 +1,26 @@
 {
-  "name": "czakuan",
+  "name": "czakuan-monorepo",
   "version": "0.1.0",
   "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
   "scripts": {
-    "dev": "next dev -p 2953 --turbopack -H 0.0.0.0",
-    "build": "next build",
-    "start": "next start -p 2953",
-    "lint": "next lint",
-    "migrate": "prisma migrate dev",
-    "generate": "prisma generate",
-    "migrate-and-generate": "npm run generate && npm run migrate",
-    "migrate:prod": "dotenv -e .env.production -- yarn migrate",
-    "postinstall": "prisma generate"
-  },
-  "dependencies": {
-    "@aws-sdk/client-s3": "^3.685.0",
-    "@aws-sdk/lib-storage": "^3.712.0",
-    "@prisma/client": "^5.21.1",
-    "axios": "^1.7.7",
-    "dayjs": "^1.11.13",
-    "firebase": "^11.1.0",
-    "jsonwebtoken": "^9.0.2",
-    "next": "15.0.2",
-    "next-pwa": "^5.6.0",
-    "prisma": "6.4.1",
-    "react": "19.0.0-rc-02c0e824-20241028",
-    "react-dom": "19.0.0-rc-02c0e824-20241028",
-    "react-icons": "^5.3.0",
-    "react-quill-new": "^3.3.3",
-    "zustand": "^5.0.1"
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "dev:frontend": "npm run dev --workspace=apps/frontend",
+    "dev:backend": "npm run start:dev --workspace=apps/backend",
+    "build": "npm run build --workspaces",
+    "build:frontend": "npm run build --workspace=apps/frontend",
+    "build:backend": "npm run build --workspace=apps/backend",
+    "start": "npm run start --workspace=apps/backend",
+    "lint": "npm run lint --workspaces",
+    "migrate": "npm run migrate --workspace=apps/backend",
+    "generate": "npm run generate --workspace=apps/backend",
+    "migrate-and-generate": "npm run generate --workspace=apps/backend && npm run migrate --workspace=apps/backend"
   },
   "devDependencies": {
-    "@types/jsonwebtoken": "^9.0.7",
-    "@types/next-pwa": "^5.6.9",
-    "@types/node": "^20",
-    "@types/react": "^18",
-    "@types/react-dom": "^18",
-    "@typescript-eslint/parser": "^8.12.2",
-    "dotenv-cli": "^8.0.0",
-    "eslint": "^9.14.0",
-    "eslint-config-next": "15.0.2",
-    "eslint-config-prettier": "^9.1.0",
-    "eslint-plugin-prettier": "^5.2.1",
-    "prettier": "^3.3.3",
-    "typescript": "^5"
+    "concurrently": "^8.2.2",
+    "typescript": "^5.3.3"
   }
 }
