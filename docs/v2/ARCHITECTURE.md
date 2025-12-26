@@ -158,32 +158,36 @@ erDiagram
 
 ## 5. API 설계
 
-> TODO: 확정 필요
+> 상세 스펙: [API.md](./API.md)
 
 ### 5.1 스타일
-- [ ] RESTful
-- [ ] RPC 스타일 (Hono RPC)
+- **RESTful** (언어/프레임워크 독립적)
 
-### 5.2 응답 형식
+### 5.2 HTTP 상태 코드 정책
+| 상황 | 상태 코드 |
+|------|----------|
+| 비즈니스 로직 (성공/실패) | **200** |
+| 인증 안 됨 | 401 |
+| 서버 에러 | 500 |
+
+### 5.3 응답 형식
 ```typescript
 // 성공
-{
-  success: true,
-  data: T
-}
+{ success: true, data: T }
 
 // 실패
-{
-  success: false,
-  error: {
-    code: string,
-    message: string
-  }
-}
+{ success: false, error: { code: string, message: string } }
 ```
 
-### 5.3 엔드포인트 목록
-> TODO: 정의 필요
+### 5.4 엔드포인트 요약
+| 영역 | 개수 |
+|------|------|
+| 인증 (Auth) | 3개 |
+| 사용자 (User) | 4개 |
+| 카테고리 (Category) | 1개 |
+| 게시글 (Post) | 7개 |
+| 댓글 (Comment) | 5개 |
+| **총** | **20개** |
 
 ---
 
