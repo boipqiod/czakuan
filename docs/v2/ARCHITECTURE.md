@@ -193,21 +193,54 @@ erDiagram
 
 ## 6. 인증 플로우
 
-> TODO: 확정 필요
-
 ### 6.1 OAuth 플로우
 ```
-1. Expo에서 카카오 로그인
+1. Expo에서 카카오 로그인 (expo-auth-session)
 2. 카카오 access token 획득
-3. BE에 카카오 토큰 전달
+3. BE에 카카오 토큰 전달 (POST /auth/kakao)
 4. BE에서 카카오 API로 사용자 정보 조회
 5. JWT 발급 (access + refresh)
 6. Expo에서 SecureStore에 저장
 ```
 
 ### 6.2 토큰 설정
-- Access Token: ??? 분
-- Refresh Token: ??? 일
+| 토큰 | 만료 시간 |
+|------|----------|
+| Access Token | 1시간 |
+| Refresh Token | 14일 |
+
+### 6.3 토큰 갱신
+- **방식**: 401 응답 시 자동 갱신
+- **구현**: API interceptor에서 처리
+
+```typescript
+// Expo API client
+api.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    if (error.response?.status === 401) {
+      const newToken = await refreshToken();
+      if (newToken) {
+        error.config.headers.Authorization = `Bearer ${newToken}`;
+        return api.request(error.config);
+      }
+    }
+    return Promise.reject(error);
+  }
+);
+```
+
+### 6.4 토큰 저장 (Expo)
+```typescript
+import * as SecureStore from 'expo-secure-store';
+
+// 저장
+await SecureStore.setItemAsync('accessToken', accessToken);
+await SecureStore.setItemAsync('refreshToken', refreshToken);
+
+// 조회
+const accessToken = await SecureStore.getItemAsync('accessToken');
+```
 
 ---
 
