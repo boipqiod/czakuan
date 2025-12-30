@@ -12,11 +12,15 @@
 ### 1.2 기술 스택
 | 영역 | 기술 |
 |------|------|
-| **Mobile** | Expo (React Native) |
+| **Frontend** | React + Vite |
 | **Backend** | Hono |
 | **Database** | PostgreSQL + Prisma |
 | **Auth** | 카카오 OAuth + JWT |
+| **State** | Zustand |
+| **Routing** | React Router |
+| **HTTP Client** | Axios |
 | **Storage** | 추후 결정 (S3 호환) |
+| **Mobile** | 추후 결정 (React Native) |
 
 ---
 
@@ -40,18 +44,51 @@
 
 ## 3. 프로젝트 구조
 
-> TODO: 모노레포 구조 확정 필요
+### 3.1 모노레포 (pnpm workspace)
 
 ```
 czakuan-v2/
 ├── apps/
-│   ├── mobile/          # Expo 앱
-│   └── server/          # Hono API 서버
+│   ├── web/                     # React + Vite
+│   │   ├── src/
+│   │   │   ├── pages/           # 페이지 컴포넌트
+│   │   │   ├── components/      # 공통 컴포넌트
+│   │   │   ├── hooks/           # 커스텀 훅
+│   │   │   ├── stores/          # Zustand 스토어
+│   │   │   ├── api/             # API 클라이언트
+│   │   │   ├── utils/           # 유틸리티
+│   │   │   └── App.tsx
+│   │   ├── index.html
+│   │   ├── vite.config.ts
+│   │   └── package.json
+│   │
+│   └── server/                  # Hono API 서버
+│       ├── src/
+│       │   ├── routes/          # API 라우트
+│       │   ├── services/        # 비즈니스 로직
+│       │   ├── repositories/    # DB 접근 계층
+│       │   ├── middlewares/     # 미들웨어 (인증 등)
+│       │   ├── utils/           # 유틸리티
+│       │   └── index.ts
+│       ├── prisma/
+│       │   └── schema.prisma
+│       └── package.json
+│
 ├── packages/
-│   └── shared/          # 공통 타입, 유틸
-├── package.json         # 워크스페이스 루트
-└── pnpm-workspace.yaml
+│   └── shared/                  # 공통 타입, 유틸
+│       ├── src/
+│       │   ├── types/           # API 타입 정의
+│       │   └── utils/           # 공통 유틸리티
+│       └── package.json
+│
+├── package.json                 # 워크스페이스 루트
+├── pnpm-workspace.yaml
+└── README.md
 ```
+
+### 3.2 패키지 매니저
+- **pnpm** 사용
+- 워크스페이스로 모노레포 관리
 
 ---
 
@@ -195,12 +232,13 @@ erDiagram
 
 ### 6.1 OAuth 플로우
 ```
-1. Expo에서 카카오 로그인 (expo-auth-session)
-2. 카카오 access token 획득
-3. BE에 카카오 토큰 전달 (POST /auth/kakao)
-4. BE에서 카카오 API로 사용자 정보 조회
-5. JWT 발급 (access + refresh)
-6. Expo에서 SecureStore에 저장
+1. 웹에서 카카오 로그인 버튼 클릭
+2. 카카오 OAuth 페이지로 리다이렉트
+3. 인증 후 콜백 URL로 인가 코드(code) 전달
+4. BE에 인가 코드 전달 (POST /auth/kakao)
+5. BE에서 카카오 API로 토큰 교환 및 사용자 정보 조회
+6. JWT 발급 (access + refresh)
+7. 웹에서 localStorage에 저장
 ```
 
 ### 6.2 토큰 설정
@@ -211,10 +249,10 @@ erDiagram
 
 ### 6.3 토큰 갱신
 - **방식**: 401 응답 시 자동 갱신
-- **구현**: API interceptor에서 처리
+- **구현**: Axios interceptor에서 처리
 
 ```typescript
-// Expo API client
+// API interceptor
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
@@ -224,29 +262,71 @@ api.interceptors.response.use(
         error.config.headers.Authorization = `Bearer ${newToken}`;
         return api.request(error.config);
       }
+      // refresh 실패 시 로그아웃 처리
+      logout();
     }
     return Promise.reject(error);
   }
 );
 ```
 
-### 6.4 토큰 저장 (Expo)
+### 6.4 토큰 저장 (Web)
 ```typescript
-import * as SecureStore from 'expo-secure-store';
-
 // 저장
-await SecureStore.setItemAsync('accessToken', accessToken);
-await SecureStore.setItemAsync('refreshToken', refreshToken);
+localStorage.setItem('accessToken', accessToken);
+localStorage.setItem('refreshToken', refreshToken);
 
 // 조회
-const accessToken = await SecureStore.getItemAsync('accessToken');
+const accessToken = localStorage.getItem('accessToken');
+
+// 삭제 (로그아웃)
+localStorage.removeItem('accessToken');
+localStorage.removeItem('refreshToken');
+```
+
+### 6.5 카카오 OAuth 설정
+```
+# 카카오 개발자 콘솔에서 설정
+Redirect URI: {FRONTEND_URL}/auth/kakao/callback
 ```
 
 ---
 
 ## 7. 타입 공유
 
-> TODO: 확정 필요
+### 7.1 공유 패키지 구조
+```
+packages/shared/
+├── src/
+│   ├── types/
+│   │   ├── api.ts          # API 응답 타입
+│   │   ├── user.ts         # 사용자 관련 타입
+│   │   ├── post.ts         # 게시글 관련 타입
+│   │   ├── comment.ts      # 댓글 관련 타입
+│   │   ├── category.ts     # 카테고리 관련 타입
+│   │   └── index.ts        # 타입 export
+│   └── utils/
+│       └── index.ts        # 공통 유틸리티
+├── package.json
+└── tsconfig.json
+```
+
+### 7.2 사용 방법
+```typescript
+// apps/web 또는 apps/server에서
+import { Post, ApiResponse, User } from '@czakuan/shared';
+```
+
+### 7.3 패키지 설정
+```json
+// packages/shared/package.json
+{
+  "name": "@czakuan/shared",
+  "version": "0.0.1",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts"
+}
+```
 
 ---
 
