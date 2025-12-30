@@ -39,73 +39,55 @@ apps/server/src/
 │   │   ├── PostRoute.ts
 │   │   ├── CommentRoute.ts
 │   │   ├── CategoryRoute.ts
-│   │   ├── UserRoute.ts
-│   │   └── index.ts
+│   │   └── UserRoute.ts
 │   ├── middlewares/
 │   │   ├── AuthMiddleware.ts
 │   │   ├── ErrorMiddleware.ts
-│   │   ├── LogMiddleware.ts
-│   │   └── index.ts
+│   │   └── LogMiddleware.ts
 │   └── dto/
 │       ├── post/
 │       │   ├── CreatePostRequest.ts
 │       │   ├── UpdatePostRequest.ts
 │       │   ├── PostResponse.ts
-│       │   ├── PostListResponse.ts
-│       │   └── index.ts
+│       │   └── PostListResponse.ts
 │       ├── comment/
 │       │   ├── CreateCommentRequest.ts
 │       │   ├── CommentResponse.ts
-│       │   ├── CommentListResponse.ts
-│       │   └── index.ts
+│       │   └── CommentListResponse.ts
 │       ├── auth/
 │       │   ├── KakaoLoginRequest.ts
-│       │   ├── TokenResponse.ts
-│       │   └── index.ts
+│       │   └── TokenResponse.ts
 │       ├── user/
 │       │   ├── UpdateUserRequest.ts
-│       │   ├── UserResponse.ts
-│       │   └── index.ts
+│       │   └── UserResponse.ts
 │       ├── category/
-│       │   ├── CategoryResponse.ts
-│       │   └── index.ts
+│       │   └── CategoryResponse.ts
 │       └── common/
 │           ├── ApiResponse.ts
 │           └── PaginationResponse.ts
 │
 ├── application/                      # ⚙️ Application Layer
-│   ├── usecases/
-│   │   ├── post/
-│   │   │   ├── GetPostListUseCase.ts
-│   │   │   ├── GetPostDetailUseCase.ts
-│   │   │   ├── CreatePostUseCase.ts
-│   │   │   ├── UpdatePostUseCase.ts
-│   │   │   ├── DeletePostUseCase.ts
-│   │   │   ├── ReactToPostUseCase.ts
-│   │   │   └── index.ts
-│   │   ├── comment/
-│   │   │   ├── GetCommentListUseCase.ts
-│   │   │   ├── CreateCommentUseCase.ts
-│   │   │   ├── DeleteCommentUseCase.ts
-│   │   │   ├── ReactToCommentUseCase.ts
-│   │   │   └── index.ts
-│   │   ├── auth/
-│   │   │   ├── KakaoLoginUseCase.ts
-│   │   │   ├── RefreshTokenUseCase.ts
-│   │   │   ├── LogoutUseCase.ts
-│   │   │   └── index.ts
-│   │   ├── category/
-│   │   │   ├── GetCategoryListUseCase.ts
-│   │   │   └── index.ts
-│   │   └── user/
-│   │       ├── GetMyInfoUseCase.ts
-│   │       ├── UpdateMyInfoUseCase.ts
-│   │       ├── GetMyPostsUseCase.ts
-│   │       ├── GetMyCommentsUseCase.ts
-│   │       └── index.ts
-│   └── services/
-│       ├── AnonymousService.ts
-│       └── index.ts
+│   ├── post/
+│   │   ├── PostService.ts
+│   │   └── dto/
+│   │       ├── CreatePostDto.ts
+│   │       └── UpdatePostDto.ts
+│   ├── comment/
+│   │   ├── CommentService.ts
+│   │   └── dto/
+│   │       └── CreateCommentDto.ts
+│   ├── auth/
+│   │   ├── AuthService.ts
+│   │   └── dto/
+│   │       └── KakaoLoginDto.ts
+│   ├── category/
+│   │   └── CategoryService.ts
+│   ├── user/
+│   │   ├── UserService.ts
+│   │   └── dto/
+│   │       └── UpdateUserDto.ts
+│   └── common/
+│       └── AnonymousService.ts
 │
 ├── domain/                           # 📦 Domain Layer
 │   ├── entities/
@@ -113,50 +95,43 @@ apps/server/src/
 │   │   ├── Comment.ts
 │   │   ├── User.ts
 │   │   ├── Category.ts
-│   │   ├── Reaction.ts
-│   │   └── index.ts
+│   │   └── Reaction.ts
 │   ├── rules/
 │   │   ├── postRules.ts
 │   │   ├── commentRules.ts
-│   │   ├── userRules.ts
-│   │   └── index.ts
-│   ├── repositories/
-│   │   ├── IPostRepository.ts
-│   │   ├── ICommentRepository.ts
-│   │   ├── IUserRepository.ts
-│   │   ├── ICategoryRepository.ts
-│   │   ├── IReactionRepository.ts
-│   │   └── index.ts
-│   └── errors/
-│       ├── DomainError.ts
-│       ├── ErrorCodes.ts
-│       └── index.ts
-│
-├── infrastructure/                   # 🔌 Infrastructure Layer
+│   │   └── userRules.ts
 │   ├── repositories/
 │   │   ├── PostRepository.ts
 │   │   ├── CommentRepository.ts
 │   │   ├── UserRepository.ts
 │   │   ├── CategoryRepository.ts
-│   │   ├── ReactionRepository.ts
-│   │   └── index.ts
+│   │   └── ReactionRepository.ts
+│   └── errors/
+│       ├── DomainError.ts
+│       └── ErrorCodes.ts
+│
+├── infrastructure/                   # 🔌 Infrastructure Layer
+│   ├── repositories/
+│   │   ├── PostRepositoryImpl.ts
+│   │   ├── CommentRepositoryImpl.ts
+│   │   ├── UserRepositoryImpl.ts
+│   │   ├── CategoryRepositoryImpl.ts
+│   │   └── ReactionRepositoryImpl.ts
 │   ├── db/
 │   │   └── prisma.ts
 │   ├── auth/
 │   │   └── JwtProvider.ts
-│   ├── kakao/
-│   │   └── KakaoClient.ts
-│   └── index.ts
+│   └── kakao/
+│       └── KakaoClient.ts
 │
 └── common/                           # 🧩 Common
     ├── utils/
     │   ├── hashUtils.ts
-    │   ├── dateUtils.ts
-    │   └── index.ts
+    │   └── dateUtils.ts
     ├── helpers/
     │   └── responseHelper.ts
     └── constants/
-        └── index.ts
+        └── constants.ts
 ```
 
 ---
@@ -169,20 +144,21 @@ HTTP 요청/응답 처리. Route, Middleware, DTO 포함.
 
 | 폴더 | 역할 |
 |------|------|
-| `routes/` | HTTP 엔드포인트 정의, UseCase 호출 |
+| `routes/` | HTTP 엔드포인트 정의, Service 호출 |
 | `middlewares/` | 인증, 에러 핸들링, 로깅 |
 | `dto/` | Request/Response 타입 정의 |
 
 ```typescript
 // presentation/routes/PostRoute.ts
 import { Hono } from "hono";
-import { authMiddleware } from "../middlewares/AuthMiddleware";
-import { CreatePostUseCase, GetPostListUseCase } from "@/application/usecases/post";
+import { authMiddleware } from "@/presentation/middlewares/AuthMiddleware";
+import { PostService } from "@/application/post/PostService";
 import { successResponse } from "@/common/helpers/responseHelper";
-import type { CreatePostRequest } from "../dto/post";
+import type { CreatePostRequest } from "@/presentation/dto/post/CreatePostRequest";
 
 export function createPostRoute() {
   const route = new Hono();
+  const postService = new PostService();
 
   // GET /posts
   route.get("/", async (c) => {
@@ -190,8 +166,7 @@ export function createPostRoute() {
     const page = Number(c.req.query("page")) || 1;
     const limit = Number(c.req.query("limit")) || 20;
 
-    const usecase = new GetPostListUseCase();
-    const result = await usecase.execute({ categoryId, page, limit });
+    const result = await postService.getPostList({ categoryId, page, limit });
 
     return c.json(successResponse(result));
   });
@@ -201,8 +176,7 @@ export function createPostRoute() {
     const userId = c.get("userId");
     const body = await c.req.json<CreatePostRequest>();
 
-    const usecase = new CreatePostUseCase();
-    const result = await usecase.execute({ userId, ...body });
+    const result = await postService.createPost({ userId, ...body });
 
     return c.json(successResponse(result));
   });
@@ -213,23 +187,25 @@ export function createPostRoute() {
 
 ### 3.2 Application Layer
 
-유즈케이스 실행, 비즈니스 오케스트레이션.
+비즈니스 로직 오케스트레이션. 도메인별 Service 클래스.
 
 | 폴더 | 역할 |
 |------|------|
-| `usecases/` | 단일 유즈케이스 클래스 |
-| `services/` | 여러 UseCase에서 공유하는 로직 |
+| `{domain}/` | 도메인별 서비스 및 DTO |
+| `{domain}/dto/` | Application 레이어 DTO (선택) |
+| `common/` | 여러 Service에서 공유하는 로직 |
 
 ```typescript
-// application/usecases/post/CreatePostUseCase.ts
-import type { IPostRepository } from "@/domain/repositories/IPostRepository";
-import type { ICategoryRepository } from "@/domain/repositories/ICategoryRepository";
-import { PostRepository } from "@/infrastructure/repositories/PostRepository";
-import { CategoryRepository } from "@/infrastructure/repositories/CategoryRepository";
+// application/post/PostService.ts
+import type { PostRepository } from "@/domain/repositories/PostRepository";
+import type { CategoryRepository } from "@/domain/repositories/CategoryRepository";
+import { PostRepositoryImpl } from "@/infrastructure/repositories/PostRepositoryImpl";
+import { CategoryRepositoryImpl } from "@/infrastructure/repositories/CategoryRepositoryImpl";
 import { validatePost } from "@/domain/rules/postRules";
-import { DomainError, ErrorCodes } from "@/domain/errors";
+import { DomainError } from "@/domain/errors/DomainError";
+import { ErrorCodes } from "@/domain/errors/ErrorCodes";
 
-interface Input {
+interface CreatePostInput {
   userId: number;
   title: string;
   content: string;
@@ -237,20 +213,20 @@ interface Input {
   subCategoryId?: number;
 }
 
-interface Output {
+interface CreatePostOutput {
   id: number;
 }
 
-export class CreatePostUseCase {
-  private postRepository: IPostRepository;
-  private categoryRepository: ICategoryRepository;
+export class PostService {
+  private postRepository: PostRepository;
+  private categoryRepository: CategoryRepository;
 
   constructor() {
-    this.postRepository = new PostRepository();
-    this.categoryRepository = new CategoryRepository();
+    this.postRepository = new PostRepositoryImpl();
+    this.categoryRepository = new CategoryRepositoryImpl();
   }
 
-  async execute(input: Input): Promise<Output> {
+  async createPost(input: CreatePostInput): Promise<CreatePostOutput> {
     // 1. 유효성 검사
     const validation = validatePost({ title: input.title, content: input.content });
     if (!validation.valid) {
@@ -273,6 +249,25 @@ export class CreatePostUseCase {
     });
 
     return { id: post.id };
+  }
+
+  async getPostList(params: { categoryId: number; page: number; limit: number }) {
+    const [posts, total] = await Promise.all([
+      this.postRepository.findMany(params),
+      this.postRepository.count({ categoryId: params.categoryId }),
+    ]);
+
+    return { posts, total, page: params.page, limit: params.limit };
+  }
+
+  async getPostDetail(id: number) {
+    const post = await this.postRepository.findById(id);
+    if (!post) {
+      throw new DomainError(ErrorCodes.POST_NOT_FOUND);
+    }
+
+    await this.postRepository.incrementViews(id);
+    return post;
   }
 }
 ```
@@ -345,8 +340,8 @@ export function isDeletable(postUserId: number, currentUserId: number, isAdmin: 
 ```
 
 ```typescript
-// domain/repositories/IPostRepository.ts
-import type { Post } from "../entities/Post";
+// domain/repositories/PostRepository.ts
+import type { Post } from "@/domain/entities/Post";
 
 export interface CreatePostData {
   title: string;
@@ -356,7 +351,7 @@ export interface CreatePostData {
   userId: number;
 }
 
-export interface IPostRepository {
+export interface PostRepository {
   findById(id: number): Promise<Post | null>;
   findMany(params: { categoryId: number; page: number; limit: number }): Promise<Post[]>;
   count(params: { categoryId: number }): Promise<number>;
@@ -369,22 +364,22 @@ export interface IPostRepository {
 
 ### 3.4 Infrastructure Layer
 
-외부 시스템 연동. Domain의 인터페이스 구현.
+외부 시스템 연동. Domain 인터페이스의 구현체.
 
 | 폴더 | 역할 |
 |------|------|
-| `repositories/` | Repository 인터페이스 구현체 |
+| `repositories/` | Repository 구현체 (`~Impl.ts`) |
 | `db/` | Prisma 클라이언트 |
 | `auth/` | JWT 처리 |
 | `kakao/` | 카카오 API 클라이언트 |
 
 ```typescript
-// infrastructure/repositories/PostRepository.ts
-import { prisma } from "../db/prisma";
-import type { IPostRepository, CreatePostData } from "@/domain/repositories/IPostRepository";
+// infrastructure/repositories/PostRepositoryImpl.ts
+import { prisma } from "@/infrastructure/db/prisma";
+import type { PostRepository, CreatePostData } from "@/domain/repositories/PostRepository";
 import type { Post } from "@/domain/entities/Post";
 
-export class PostRepository implements IPostRepository {
+export class PostRepositoryImpl implements PostRepository {
   async findById(id: number): Promise<Post | null> {
     return prisma.post.findUnique({
       where: { id, deletedAt: null },
@@ -524,25 +519,23 @@ export function errorResponse(code: string, message: string): ApiResponse<null> 
 | Middleware | `{Name}Middleware.ts` | `AuthMiddleware.ts`, `ErrorMiddleware.ts` |
 | DTO Request | `{Action}{Domain}Request.ts` | `CreatePostRequest.ts`, `UpdateUserRequest.ts` |
 | DTO Response | `{Domain}Response.ts` | `PostResponse.ts`, `PostListResponse.ts` |
-| UseCase | `{Action}{Domain}UseCase.ts` | `CreatePostUseCase.ts`, `GetPostListUseCase.ts` |
-| Service | `{Name}Service.ts` | `AnonymousService.ts` |
+| Service | `{Domain}Service.ts` | `PostService.ts`, `AuthService.ts` |
 | Entity | `{Domain}.ts` | `Post.ts`, `User.ts` |
 | Rules | `{domain}Rules.ts` | `postRules.ts`, `userRules.ts` |
-| Repository Interface | `I{Domain}Repository.ts` | `IPostRepository.ts` |
-| Repository 구현체 | `{Domain}Repository.ts` | `PostRepository.ts` |
+| Repository (인터페이스) | `{Domain}Repository.ts` | `PostRepository.ts` |
+| Repository (구현체) | `{Domain}RepositoryImpl.ts` | `PostRepositoryImpl.ts` |
 | Provider | `{Name}Provider.ts` | `JwtProvider.ts` |
 | Client | `{Name}Client.ts` | `KakaoClient.ts` |
 
-### 5.2 클래스/함수명
+### 5.2 클래스/인터페이스명
 
 | 구분 | 패턴 | 예시 |
 |------|------|------|
 | Route 함수 | `create{Domain}Route` | `createPostRoute()` |
 | Middleware 함수 | `{name}Middleware` | `authMiddleware` |
-| UseCase 클래스 | `{Action}{Domain}UseCase` | `CreatePostUseCase` |
-| Service 클래스 | `{Name}Service` | `AnonymousService` |
-| Repository Interface | `I{Domain}Repository` | `IPostRepository` |
-| Repository 클래스 | `{Domain}Repository` | `PostRepository` |
+| Service 클래스 | `{Domain}Service` | `PostService`, `AuthService` |
+| Repository 인터페이스 | `{Domain}Repository` | `PostRepository` |
+| Repository 구현체 | `{Domain}RepositoryImpl` | `PostRepositoryImpl` |
 | Provider 클래스 | `{Name}Provider` | `JwtProvider` |
 | Client 클래스 | `{Name}Client` | `KakaoClient` |
 
@@ -563,6 +556,23 @@ export function errorResponse(code: string, message: string): ApiResponse<null> 
 | 유효성 검사 | `validate{Domain}` | `validatePost()`, `validateComment()` |
 | 조건 판단 | `is{Condition}` | `isEditable()`, `isDeletable()` |
 | 값 계산 | `get{Value}` | `getPreview()`, `getAnonymousId()` |
+
+### 5.5 추상화 규칙
+
+**추상화 O (인터페이스 + 구현체)**
+| 종류 | 인터페이스 | 구현체 | 이유 |
+|------|------------|--------|------|
+| Repository | `PostRepository` | `PostRepositoryImpl` | DB 교체 가능성 |
+| Provider | `JwtProvider` | `JwtProviderImpl` | 라이브러리 교체 가능성 |
+| Client | `KakaoClient` | `KakaoClientImpl` | 외부 API 모킹 |
+
+**추상화 X (직접 구현)**
+| 종류 | 파일명 | 이유 |
+|------|--------|------|
+| Service | `PostService.ts` | 비즈니스 로직, 교체 불필요 |
+| Utils | `hashUtils.ts` | 순수 함수, 테스트 용이 |
+| DTO | `CreatePostRequest.ts` | 단순 타입 정의 |
+| Rules | `postRules.ts` | 순수 함수, 의존성 없음 |
 
 ---
 
@@ -628,7 +638,7 @@ export class DomainError extends Error {
 ```typescript
 // presentation/middlewares/ErrorMiddleware.ts
 import type { Context, Next } from "hono";
-import { DomainError } from "@/domain/errors";
+import { DomainError } from "@/domain/errors/DomainError";
 import { errorResponse } from "@/common/helpers/responseHelper";
 
 export async function errorMiddleware(c: Context, next: Next) {
@@ -698,7 +708,8 @@ export class JwtProvider {
 // presentation/middlewares/AuthMiddleware.ts
 import type { Context, Next } from "hono";
 import { JwtProvider } from "@/infrastructure/auth/JwtProvider";
-import { DomainError, ErrorCodes } from "@/domain/errors";
+import { DomainError } from "@/domain/errors/DomainError";
+import { ErrorCodes } from "@/domain/errors/ErrorCodes";
 
 const jwtProvider = new JwtProvider();
 
@@ -775,9 +786,9 @@ import { PostRepository } from "@/infrastructure/repositories/PostRepository";
 | 담당 | 작업 범위 |
 |------|-----------|
 | A | `domain/` + `infrastructure/repositories/` |
-| B | `application/usecases/auth/` + `application/usecases/user/` |
-| C | `application/usecases/post/` |
-| D | `application/usecases/comment/` + `application/usecases/category/` |
+| B | `application/auth/` + `application/user/` |
+| C | `application/post/` |
+| D | `application/comment/` + `application/category/` |
 | E | `presentation/routes/` + `presentation/dto/` |
 
 ### 9.2 선행 작업
@@ -791,7 +802,7 @@ import { PostRepository } from "@/infrastructure/repositories/PostRepository";
 
 - 각자 담당 폴더에서만 작업
 - `domain/` 수정 시 PR 리뷰 필수
-- `index.ts` export는 담당자가 관리
+- 직접 import 사용 (barrel export 금지)
 
 ---
 
@@ -803,25 +814,21 @@ import { PostRepository } from "@/infrastructure/repositories/PostRepository";
 domain/
 ├── entities/{Domain}.ts
 ├── rules/{domain}Rules.ts
-└── repositories/I{Domain}Repository.ts
+└── repositories/{Domain}Repository.ts
 
-infrastructure/repositories/{Domain}Repository.ts
+infrastructure/repositories/{Domain}RepositoryImpl.ts
 
-application/usecases/{domain}/
-├── Get{Domain}ListUseCase.ts
-├── Get{Domain}DetailUseCase.ts
-├── Create{Domain}UseCase.ts
-├── Update{Domain}UseCase.ts
-├── Delete{Domain}UseCase.ts
-└── index.ts
+application/{domain}/
+├── {Domain}Service.ts
+└── dto/
+    └── Create{Domain}Dto.ts (선택)
 
 presentation/
 ├── routes/{Domain}Route.ts
 └── dto/{domain}/
     ├── Create{Domain}Request.ts
     ├── Update{Domain}Request.ts
-    ├── {Domain}Response.ts
-    └── index.ts
+    └── {Domain}Response.ts
 ```
 
 ---
@@ -831,3 +838,4 @@ presentation/
 | 버전 | 날짜 | 변경 내용 |
 |------|------|----------|
 | 1.0 | 2025-12-30 | 최초 작성 |
+| 1.1 | 2025-12-30 | UseCase → Service 패턴, Impl suffix, barrel export 제거 |
