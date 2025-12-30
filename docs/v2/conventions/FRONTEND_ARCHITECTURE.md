@@ -57,10 +57,9 @@ apps/web/src/
 │   │   │   └── LogoutButton.tsx
 │   │   ├── model/
 │   │   │   └── authStore.ts          # Zustand store
-│   │   ├── api/
-│   │   │   ├── authApi.ts            # Axios 호출
-│   │   │   └── authQueries.ts        # TanStack Query hooks
-│   │   └── index.ts                  # Public exports
+│   │   └── api/
+│   │       ├── authApi.ts            # Axios 호출
+│   │       └── authQueries.ts        # TanStack Query hooks
 │   │
 │   ├── post/
 │   │   ├── ui/
@@ -70,11 +69,10 @@ apps/web/src/
 │   │   │   ├── PostForm.tsx
 │   │   │   └── PostReaction.tsx
 │   │   ├── model/
-│   │   │   └── (필요시 store)
-│   │   ├── api/
-│   │   │   ├── postApi.ts
-│   │   │   └── postQueries.ts
-│   │   └── index.ts
+│   │   │   └── postStore.ts          # 필요시
+│   │   └── api/
+│   │       ├── postApi.ts
+│   │       └── postQueries.ts
 │   │
 │   ├── comment/
 │   │   ├── ui/
@@ -82,10 +80,9 @@ apps/web/src/
 │   │   │   ├── CommentList.tsx
 │   │   │   ├── CommentForm.tsx
 │   │   │   └── CommentReaction.tsx
-│   │   ├── api/
-│   │   │   ├── commentApi.ts
-│   │   │   └── commentQueries.ts
-│   │   └── index.ts
+│   │   └── api/
+│   │       ├── commentApi.ts
+│   │       └── commentQueries.ts
 │   │
 │   ├── category/
 │   │   ├── ui/
@@ -93,40 +90,33 @@ apps/web/src/
 │   │   │   └── CategorySelector.tsx
 │   │   ├── model/
 │   │   │   └── categoryStore.ts
-│   │   ├── api/
-│   │   │   ├── categoryApi.ts
-│   │   │   └── categoryQueries.ts
-│   │   └── index.ts
+│   │   └── api/
+│   │       ├── categoryApi.ts
+│   │       └── categoryQueries.ts
 │   │
 │   └── user/
 │       ├── ui/
 │       │   ├── UserAvatar.tsx
 │       │   ├── UserProfile.tsx
 │       │   └── UserEditForm.tsx
-│       ├── api/
-│       │   ├── userApi.ts
-│       │   └── userQueries.ts
-│       └── index.ts
+│       └── api/
+│           ├── userApi.ts
+│           └── userQueries.ts
 │
 ├── entities/                         # 📦 Entities Layer (타입 + 비즈니스 규칙)
 │   ├── post/
 │   │   ├── types.ts                  # Post, CreatePostRequest 등
-│   │   ├── rules.ts                  # validateTitle(), isEditable() 등
-│   │   └── index.ts
+│   │   └── rules.ts                  # validateTitle(), isEditable() 등
 │   ├── comment/
 │   │   ├── types.ts
-│   │   ├── rules.ts
-│   │   └── index.ts
+│   │   └── rules.ts
 │   ├── category/
-│   │   ├── types.ts
-│   │   └── index.ts
+│   │   └── types.ts
 │   ├── user/
 │   │   ├── types.ts
-│   │   ├── rules.ts
-│   │   └── index.ts
+│   │   └── rules.ts
 │   └── reaction/
-│       ├── types.ts
-│       └── index.ts
+│       └── types.ts
 │
 ├── infrastructures/                  # 🔌 Infrastructures Layer (외부 의존성)
 │   ├── api/
@@ -134,9 +124,8 @@ apps/web/src/
 │   │   └── queryClient.ts            # TanStack Query Client
 │   ├── storage/
 │   │   └── tokenStorage.ts           # localStorage 래퍼
-│   ├── kakao/
-│   │   └── kakaoSdk.ts               # 카카오 SDK 초기화
-│   └── index.ts
+│   └── kakao/
+│       └── kakaoSdk.ts               # 카카오 SDK 초기화
 │
 └── common/                           # 🧩 Common Layer (공용, 의존성 없음)
     ├── ui/
@@ -147,24 +136,19 @@ apps/web/src/
     │   ├── Loading.tsx
     │   ├── Spinner.tsx
     │   ├── Pagination.tsx
-    │   ├── ErrorBoundary.tsx
-    │   └── index.ts
+    │   └── ErrorBoundary.tsx
     ├── layouts/
     │   ├── DefaultLayout.tsx
     │   ├── Header.tsx
-    │   ├── Sidebar.tsx
-    │   └── index.ts
+    │   └── Sidebar.tsx
     ├── hooks/
-    │   ├── useModal.ts
-    │   └── index.ts
+    │   └── useModal.ts
     ├── utils/
     │   ├── formatDate.ts
     │   ├── formatNumber.ts
-    │   ├── cn.ts                     # tailwind-merge 유틸
-    │   └── index.ts
+    │   └── cn.ts                     # tailwind-merge 유틸
     └── constants/
-        ├── queryKeys.ts              # TanStack Query keys
-        └── index.ts
+        └── queryKeys.ts              # TanStack Query keys
 ```
 
 ---
@@ -195,9 +179,9 @@ export function Providers({ children }: { children: React.ReactNode }) {
 
 ```typescript
 // pages/PostListPage.tsx
-import { DefaultLayout } from "@/common/layouts";
-import { PostList } from "@/features/post";
-import { CategoryNav } from "@/features/category";
+import { DefaultLayout } from "@/common/layouts/DefaultLayout";
+import { PostList } from "@/features/post/ui/PostList";
+import { CategoryNav } from "@/features/category/ui/CategoryNav";
 
 export function PostListPage() {
   return (
@@ -218,15 +202,12 @@ export function PostListPage() {
 | `ui/` | React 컴포넌트 |
 | `model/` | Zustand store (클라이언트 상태) |
 | `api/` | API 호출 함수 + TanStack Query hooks |
-| `index.ts` | Public export |
 
 ```typescript
-// features/post/index.ts
-export { PostCard } from "./ui/PostCard";
-export { PostList } from "./ui/PostList";
-export { PostDetail } from "./ui/PostDetail";
-export { PostForm } from "./ui/PostForm";
-export { usePostList, usePostDetail, useCreatePost } from "./api/postQueries";
+// 직접 import (barrel export 사용 안함)
+import { PostCard } from "@/features/post/ui/PostCard";
+import { PostList } from "@/features/post/ui/PostList";
+import { usePostList, useCreatePost } from "@/features/post/api/postQueries";
 ```
 
 ### 3.4 entities/
@@ -380,7 +361,7 @@ apiClient.interceptors.response.use(
 ```typescript
 // features/post/api/postApi.ts
 import { apiClient } from "@/infrastructures/api/client";
-import type { Post, CreatePostRequest, PostListResponse } from "@/entities/post";
+import type { Post, CreatePostRequest, PostListResponse } from "@/entities/post/types";
 
 export const postApi = {
   getList: async (params: { categoryId: number; page?: number }): Promise<PostListResponse> => {
@@ -609,7 +590,7 @@ import { Button } from "@/common/ui";
 
 - 각자 담당 feature 폴더에서만 작업
 - common, entities 수정 시 PR 리뷰 필수
-- index.ts export는 담당자가 관리
+- 직접 import 사용 (barrel export 금지)
 
 ---
 
@@ -623,10 +604,9 @@ features/{feature-name}/
 │   └── {ComponentName}.tsx
 ├── model/
 │   └── {feature}Store.ts (필요시)
-├── api/
-│   ├── {feature}Api.ts
-│   └── {feature}Queries.ts
-└── index.ts
+└── api/
+    ├── {feature}Api.ts
+    └── {feature}Queries.ts
 ```
 
 ### 새 Entity 추가 시
@@ -634,8 +614,7 @@ features/{feature-name}/
 ```
 entities/{entity-name}/
 ├── types.ts
-├── rules.ts (필요시)
-└── index.ts
+└── rules.ts (필요시)
 ```
 
 ---
@@ -645,3 +624,4 @@ entities/{entity-name}/
 | 버전 | 날짜 | 변경 내용 |
 |------|------|----------|
 | 1.0 | 2025-12-30 | 최초 작성 |
+| 1.1 | 2025-12-30 | barrel export 제거, 직접 import 사용 |
