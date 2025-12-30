@@ -1,0 +1,229 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ==================== User ====================
+model User {
+  id              Int       @id @default(autoincrement())
+  kakaoId         BigInt    @unique
+  nickname        String    @unique
+  email           String?
+  name            String?
+  phoneNumber     String?
+  profileImageUrl String?
+  role            UserRole  @default(USER)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  deletedAt       DateTime?
+
+  posts              Post[]
+  comments           Comment[]
+  postLikes          LikeToPost[]
+  postDislikes       DislikeToPost[]
+  commentLikes       LikeToComment[]
+  commentDislikes    DislikeToComment[]
+  postReports        ReportToPost[]
+  commentReports     ReportToComment[]
+  anonymousIds       AnonymousUserInPost[]
+
+  @@index([kakaoId])
+  @@index([nickname])
+  @@index([deletedAt])
+}
+
+enum UserRole {
+  USER
+  BOARD_ADMIN
+  SUPER_ADMIN
+}
+
+// ==================== Category ====================
+model CategoryGroup {
+  id         Int        @id @default(autoincrement())
+  name       String
+  priority   Int        @default(0)
+  isUse      Boolean    @default(true)
+  categories Category[]
+
+  @@index([priority])
+  @@index([isUse])
+}
+
+model Category {
+  id               Int           @id @default(autoincrement())
+  name             String
+  priority         Int           @default(0)
+  isUse            Boolean       @default(true)
+  isAnonymous      Boolean       @default(false)
+  isPrivateComment Boolean       @default(false)
+  groupId          Int
+  group            CategoryGroup @relation(fields: [groupId], references: [id])
+  subCategories    SubCategory[]
+  posts            Post[]
+
+  @@index([groupId])
+  @@index([priority])
+  @@index([isUse])
+}
+
+model SubCategory {
+  id         Int      @id @default(autoincrement())
+  name       String
+  priority   Int      @default(0)
+  isUse      Boolean  @default(true)
+  categoryId Int
+  category   Category @relation(fields: [categoryId], references: [id])
+  posts      Post[]
+
+  @@index([categoryId])
+  @@index([priority])
+}
+
+// ==================== Post ====================
+model Post {
+  id            Int          @id @default(autoincrement())
+  title         String
+  content       String
+  images        String[]     @default([])
+  thumbnailUrl  String?
+  views         Int          @default(0)
+  likeCount     Int          @default(0)
+  dislikeCount  Int          @default(0)
+  isNotice      Boolean      @default(false)
+  isAnonymous   Boolean      @default(false)
+  categoryId    Int
+  subCategoryId Int?
+  userId        Int
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime?
+  deletedAt     DateTime?
+
+  category    Category     @relation(fields: [categoryId], references: [id])
+  subCategory SubCategory? @relation(fields: [subCategoryId], references: [id])
+  user        User         @relation(fields: [userId], references: [id])
+  comments    Comment[]
+  likes       LikeToPost[]
+  dislikes    DislikeToPost[]
+  reports     ReportToPost[]
+  anonymousUsers AnonymousUserInPost[]
+
+  @@index([categoryId, createdAt(sort: Desc)])
+  @@index([subCategoryId])
+  @@index([userId])
+  @@index([isNotice, categoryId])
+  @@index([deletedAt])
+  @@index([createdAt(sort: Desc)])
+}
+
+// ==================== Comment ====================
+model Comment {
+  id           Int       @id @default(autoincrement())
+  content      String
+  postId       Int
+  userId       Int
+  parentId     Int?
+  rootId       Int
+  likeCount    Int       @default(0)
+  dislikeCount Int       @default(0)
+  isPrivate    Boolean   @default(false)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  deletedAt    DateTime?
+
+  post     Post              @relation(fields: [postId], references: [id])
+  user     User              @relation(fields: [userId], references: [id])
+  parent   Comment?          @relation("CommentToParent", fields: [parentId], references: [id])
+  children Comment[]         @relation("CommentToParent")
+  likes    LikeToComment[]
+  dislikes DislikeToComment[]
+  reports  ReportToComment[]
+
+  @@index([postId, rootId, id])
+  @@index([postId, deletedAt])
+  @@index([userId])
+  @@index([parentId])
+}
+
+// ==================== Reactions ====================
+model LikeToPost {
+  userId Int
+  postId Int
+  user   User @relation(fields: [userId], references: [id])
+  post   Post @relation(fields: [postId], references: [id])
+
+  @@id([userId, postId])
+}
+
+model DislikeToPost {
+  userId Int
+  postId Int
+  user   User @relation(fields: [userId], references: [id])
+  post   Post @relation(fields: [postId], references: [id])
+
+  @@id([userId, postId])
+}
+
+model LikeToComment {
+  userId    Int
+  commentId Int
+  user      User    @relation(fields: [userId], references: [id])
+  comment   Comment @relation(fields: [commentId], references: [id])
+
+  @@id([userId, commentId])
+}
+
+model DislikeToComment {
+  userId    Int
+  commentId Int
+  user      User    @relation(fields: [userId], references: [id])
+  comment   Comment @relation(fields: [commentId], references: [id])
+
+  @@id([userId, commentId])
+}
+
+// ==================== Reports ====================
+model ReportToPost {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  postId    Int
+  reason    String
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+  post Post @relation(fields: [postId], references: [id])
+
+  @@unique([userId, postId])
+  @@index([createdAt(sort: Desc)])
+}
+
+model ReportToComment {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  commentId Int
+  reason    String
+  createdAt DateTime @default(now())
+
+  user    User    @relation(fields: [userId], references: [id])
+  comment Comment @relation(fields: [commentId], references: [id])
+
+  @@unique([userId, commentId])
+  @@index([createdAt(sort: Desc)])
+}
+
+// ==================== Anonymous ====================
+model AnonymousUserInPost {
+  userId      Int
+  postId      Int
+  anonymousId String
+
+  user User @relation(fields: [userId], references: [id])
+  post Post @relation(fields: [postId], references: [id])
+
+  @@id([userId, postId])
+  @@index([postId])
+}
