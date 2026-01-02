@@ -13,10 +13,13 @@ import {
 
 const app = new Hono();
 
+// CORS 설정
+const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(",") || ["http://localhost:5173"];
+
 // Global middlewares
 app.use("*", logger());
 app.use("*", cors({
-  origin: ["http://localhost:5173"],
+  origin: allowedOrigins,
   credentials: true,
 }));
 app.use("*", errorMiddleware);
