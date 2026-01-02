@@ -22,9 +22,20 @@ export class KakaoClient {
   private readonly redirectUri: string;
 
   constructor() {
-    this.clientId = process.env.KAKAO_CLIENT_ID || "";
-    this.clientSecret = process.env.KAKAO_CLIENT_SECRET || "";
-    this.redirectUri = process.env.KAKAO_REDIRECT_URI || "";
+    const clientId = process.env.KAKAO_CLIENT_ID;
+    const clientSecret = process.env.KAKAO_CLIENT_SECRET;
+    const redirectUri = process.env.KAKAO_REDIRECT_URI;
+
+    if (!clientId || !clientSecret || !redirectUri) {
+      console.warn(
+        "Warning: Kakao OAuth 환경변수가 설정되지 않았습니다. " +
+        "KAKAO_CLIENT_ID, KAKAO_CLIENT_SECRET, KAKAO_REDIRECT_URI를 설정해주세요."
+      );
+    }
+
+    this.clientId = clientId || "";
+    this.clientSecret = clientSecret || "";
+    this.redirectUri = redirectUri || "";
   }
 
   getAuthorizationUrl(): string {

@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import DOMPurify from "dompurify";
 import { usePostDetail, useDeletePost, useToggleLike, useToggleDislike } from "@/features/post";
 import { useCommentList, useCreateComment, useDeleteComment } from "@/features/comment";
 import { useAuthStore } from "@/features/auth";
@@ -63,6 +64,11 @@ export function PostDetailPage() {
     ? post.anonymousId || "익명"
     : post.author?.nickname || "알 수 없음";
 
+  const sanitizedContent = useMemo(
+    () => DOMPurify.sanitize(post.content, { USE_PROFILES: { html: true } }),
+    [post.content]
+  );
+
   return (
     <div className="space-y-6">
       <article className="rounded-lg border bg-white p-6">
@@ -90,7 +96,7 @@ export function PostDetailPage() {
 
         <div
           className="prose prose-sm mt-6 max-w-none"
-          dangerouslySetInnerHTML={{ __html: post.content }}
+          dangerouslySetInnerHTML={{ __html: sanitizedContent }}
         />
 
         <footer className="mt-8 flex items-center justify-center gap-4 border-t pt-4">

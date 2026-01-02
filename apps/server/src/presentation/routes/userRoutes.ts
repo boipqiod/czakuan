@@ -2,7 +2,7 @@ import { Hono } from "hono";
 import { zValidator } from "@hono/zod-validator";
 import { z } from "zod";
 import { UserService } from "@/application/user/UserService";
-import { authMiddleware } from "../middlewares/authMiddleware";
+import { authMiddleware, optionalAuthMiddleware } from "../middlewares/authMiddleware";
 
 const userRoutes = new Hono();
 const userService = new UserService();
@@ -71,15 +71,15 @@ userRoutes.get(
   }
 );
 
-// 닉네임 중복 확인
+// 닉네임 중복 확인 (회원가입 시에도 사용하므로 인증 선택적)
 userRoutes.get(
   "/check-nickname",
-  authMiddleware,
+  optionalAuthMiddleware,
   zValidator("query", checkNicknameSchema),
   async (c) => {
     const auth = c.get("auth");
     const { nickname } = c.req.valid("query");
-    const available = await userService.checkNickname(nickname, auth.userId);
+    const available = await userService.checkNickname(nickname, auth?.userId);
 
     return c.json({ success: true, data: { available } });
   }
