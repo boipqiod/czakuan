@@ -33,8 +33,8 @@ export class ReactionRepositoryImpl implements ReactionRepository {
     return { liked: !!like, disliked: !!dislike };
   }
 
-  async createPostLike(userId: number, postId: number): Promise<void> {
-    await prisma.$transaction([
+  async createPostLike(userId: number, postId: number): Promise<number> {
+    const [, post] = await prisma.$transaction([
       prisma.likeToPost.create({
         data: { userId, postId },
       }),
@@ -43,10 +43,11 @@ export class ReactionRepositoryImpl implements ReactionRepository {
         data: { likeCount: { increment: 1 } },
       }),
     ]);
+    return post.likeCount;
   }
 
-  async deletePostLike(userId: number, postId: number): Promise<void> {
-    await prisma.$transaction([
+  async deletePostLike(userId: number, postId: number): Promise<number> {
+    const [, post] = await prisma.$transaction([
       prisma.likeToPost.delete({
         where: { userId_postId: { userId, postId } },
       }),
@@ -55,10 +56,11 @@ export class ReactionRepositoryImpl implements ReactionRepository {
         data: { likeCount: { decrement: 1 } },
       }),
     ]);
+    return post.likeCount;
   }
 
-  async createPostDislike(userId: number, postId: number): Promise<void> {
-    await prisma.$transaction([
+  async createPostDislike(userId: number, postId: number): Promise<number> {
+    const [, post] = await prisma.$transaction([
       prisma.dislikeToPost.create({
         data: { userId, postId },
       }),
@@ -67,10 +69,11 @@ export class ReactionRepositoryImpl implements ReactionRepository {
         data: { dislikeCount: { increment: 1 } },
       }),
     ]);
+    return post.dislikeCount;
   }
 
-  async deletePostDislike(userId: number, postId: number): Promise<void> {
-    await prisma.$transaction([
+  async deletePostDislike(userId: number, postId: number): Promise<number> {
+    const [, post] = await prisma.$transaction([
       prisma.dislikeToPost.delete({
         where: { userId_postId: { userId, postId } },
       }),
@@ -79,6 +82,7 @@ export class ReactionRepositoryImpl implements ReactionRepository {
         data: { dislikeCount: { decrement: 1 } },
       }),
     ]);
+    return post.dislikeCount;
   }
 
   async hasPostLike(userId: number, postId: number): Promise<boolean> {
@@ -108,8 +112,8 @@ export class ReactionRepositoryImpl implements ReactionRepository {
     return { liked: !!like, disliked: !!dislike };
   }
 
-  async createCommentLike(userId: number, commentId: number): Promise<void> {
-    await prisma.$transaction([
+  async createCommentLike(userId: number, commentId: number): Promise<number> {
+    const [, comment] = await prisma.$transaction([
       prisma.likeToComment.create({
         data: { userId, commentId },
       }),
@@ -118,10 +122,11 @@ export class ReactionRepositoryImpl implements ReactionRepository {
         data: { likeCount: { increment: 1 } },
       }),
     ]);
+    return comment.likeCount;
   }
 
-  async deleteCommentLike(userId: number, commentId: number): Promise<void> {
-    await prisma.$transaction([
+  async deleteCommentLike(userId: number, commentId: number): Promise<number> {
+    const [, comment] = await prisma.$transaction([
       prisma.likeToComment.delete({
         where: { userId_commentId: { userId, commentId } },
       }),
@@ -130,10 +135,11 @@ export class ReactionRepositoryImpl implements ReactionRepository {
         data: { likeCount: { decrement: 1 } },
       }),
     ]);
+    return comment.likeCount;
   }
 
-  async createCommentDislike(userId: number, commentId: number): Promise<void> {
-    await prisma.$transaction([
+  async createCommentDislike(userId: number, commentId: number): Promise<number> {
+    const [, comment] = await prisma.$transaction([
       prisma.dislikeToComment.create({
         data: { userId, commentId },
       }),
@@ -142,10 +148,11 @@ export class ReactionRepositoryImpl implements ReactionRepository {
         data: { dislikeCount: { increment: 1 } },
       }),
     ]);
+    return comment.dislikeCount;
   }
 
-  async deleteCommentDislike(userId: number, commentId: number): Promise<void> {
-    await prisma.$transaction([
+  async deleteCommentDislike(userId: number, commentId: number): Promise<number> {
+    const [, comment] = await prisma.$transaction([
       prisma.dislikeToComment.delete({
         where: { userId_commentId: { userId, commentId } },
       }),
@@ -154,6 +161,7 @@ export class ReactionRepositoryImpl implements ReactionRepository {
         data: { dislikeCount: { decrement: 1 } },
       }),
     ]);
+    return comment.dislikeCount;
   }
 
   async hasCommentLike(userId: number, commentId: number): Promise<boolean> {

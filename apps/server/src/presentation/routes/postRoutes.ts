@@ -142,7 +142,7 @@ postRoutes.post(
     const { reason } = c.req.valid("json");
     await postService.reportPost(id, auth.userId, reason);
 
-    return c.json({ success: true, data: null }, 201);
+    return c.json({ success: true, data: null }, 202);
   }
 );
 
