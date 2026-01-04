@@ -124,7 +124,7 @@ export class CommentService {
     await this.commentRepository.softDelete(commentId);
   }
 
-  async toggleLike(commentId: number, userId: number): Promise<{ liked: boolean }> {
+  async toggleLike(commentId: number, userId: number): Promise<{ liked: boolean; likeCount: number }> {
     const comment = await this.commentRepository.findById(commentId);
     if (!comment) {
       throw new DomainError(ErrorCodes.COMMENT_NOT_FOUND);
@@ -133,15 +133,15 @@ export class CommentService {
     const hasLike = await this.reactionRepository.hasCommentLike(userId, commentId);
 
     if (hasLike) {
-      await this.reactionRepository.deleteCommentLike(userId, commentId);
-      return { liked: false };
+      const likeCount = await this.reactionRepository.deleteCommentLike(userId, commentId);
+      return { liked: false, likeCount };
     } else {
-      await this.reactionRepository.createCommentLike(userId, commentId);
-      return { liked: true };
+      const likeCount = await this.reactionRepository.createCommentLike(userId, commentId);
+      return { liked: true, likeCount };
     }
   }
 
-  async toggleDislike(commentId: number, userId: number): Promise<{ disliked: boolean }> {
+  async toggleDislike(commentId: number, userId: number): Promise<{ disliked: boolean; dislikeCount: number }> {
     const comment = await this.commentRepository.findById(commentId);
     if (!comment) {
       throw new DomainError(ErrorCodes.COMMENT_NOT_FOUND);
@@ -150,11 +150,11 @@ export class CommentService {
     const hasDislike = await this.reactionRepository.hasCommentDislike(userId, commentId);
 
     if (hasDislike) {
-      await this.reactionRepository.deleteCommentDislike(userId, commentId);
-      return { disliked: false };
+      const dislikeCount = await this.reactionRepository.deleteCommentDislike(userId, commentId);
+      return { disliked: false, dislikeCount };
     } else {
-      await this.reactionRepository.createCommentDislike(userId, commentId);
-      return { disliked: true };
+      const dislikeCount = await this.reactionRepository.createCommentDislike(userId, commentId);
+      return { disliked: true, dislikeCount };
     }
   }
 

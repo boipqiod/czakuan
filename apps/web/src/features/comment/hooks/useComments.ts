@@ -25,6 +25,9 @@ export function useCreateComment() {
       queryClient.invalidateQueries({ queryKey: commentKeys.list(variables.postId) });
       queryClient.invalidateQueries({ queryKey: postKeys.detail(variables.postId) });
     },
+    onError: (error) => {
+      console.error("댓글 작성 실패:", error);
+    },
   });
 }
 
@@ -38,6 +41,9 @@ export function useDeleteComment() {
       queryClient.invalidateQueries({ queryKey: commentKeys.list(postId) });
       queryClient.invalidateQueries({ queryKey: postKeys.detail(postId) });
     },
+    onError: (error) => {
+      console.error("댓글 삭제 실패:", error);
+    },
   });
 }
 
@@ -49,6 +55,9 @@ export function useToggleCommentLike() {
       commentApi.toggleLike(commentId).then((result) => ({ ...result, postId })),
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: commentKeys.list(data.postId) });
+    },
+    onError: (error) => {
+      console.error("댓글 좋아요 실패:", error);
     },
   });
 }
@@ -62,6 +71,9 @@ export function useToggleCommentDislike() {
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: commentKeys.list(data.postId) });
     },
+    onError: (error) => {
+      console.error("댓글 싫어요 실패:", error);
+    },
   });
 }
 
@@ -69,5 +81,8 @@ export function useReportComment() {
   return useMutation({
     mutationFn: ({ commentId, reason }: { commentId: number; reason: string }) =>
       commentApi.report(commentId, reason),
+    onError: (error) => {
+      console.error("댓글 신고 실패:", error);
+    },
   });
 }

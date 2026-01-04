@@ -49,6 +49,9 @@ export function useCreatePost() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: postKeys.lists() });
     },
+    onError: (error) => {
+      console.error("게시글 작성 실패:", error);
+    },
   });
 }
 
@@ -61,6 +64,9 @@ export function useUpdatePost(postId: number) {
       queryClient.invalidateQueries({ queryKey: postKeys.detail(postId) });
       queryClient.invalidateQueries({ queryKey: postKeys.lists() });
     },
+    onError: (error) => {
+      console.error("게시글 수정 실패:", error);
+    },
   });
 }
 
@@ -71,6 +77,9 @@ export function useDeletePost() {
     mutationFn: (postId: number) => postApi.delete(postId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: postKeys.lists() });
+    },
+    onError: (error) => {
+      console.error("게시글 삭제 실패:", error);
     },
   });
 }
@@ -83,6 +92,9 @@ export function useToggleLike() {
     onSuccess: (_, postId) => {
       queryClient.invalidateQueries({ queryKey: postKeys.detail(postId) });
     },
+    onError: (error) => {
+      console.error("좋아요 토글 실패:", error);
+    },
   });
 }
 
@@ -94,6 +106,9 @@ export function useToggleDislike() {
     onSuccess: (_, postId) => {
       queryClient.invalidateQueries({ queryKey: postKeys.detail(postId) });
     },
+    onError: (error) => {
+      console.error("싫어요 토글 실패:", error);
+    },
   });
 }
 
@@ -101,5 +116,8 @@ export function useReportPost() {
   return useMutation({
     mutationFn: ({ postId, reason }: { postId: number; reason: string }) =>
       postApi.report(postId, reason),
+    onError: (error) => {
+      console.error("게시글 신고 실패:", error);
+    },
   });
 }

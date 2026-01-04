@@ -142,11 +142,11 @@ export class PostService {
     const hasLike = await this.reactionRepository.hasPostLike(userId, postId);
 
     if (hasLike) {
-      await this.reactionRepository.deletePostLike(userId, postId);
-      return { liked: false, likeCount: post.likeCount - 1 };
+      const likeCount = await this.reactionRepository.deletePostLike(userId, postId);
+      return { liked: false, likeCount };
     } else {
-      await this.reactionRepository.createPostLike(userId, postId);
-      return { liked: true, likeCount: post.likeCount + 1 };
+      const likeCount = await this.reactionRepository.createPostLike(userId, postId);
+      return { liked: true, likeCount };
     }
   }
 
@@ -159,11 +159,11 @@ export class PostService {
     const hasDislike = await this.reactionRepository.hasPostDislike(userId, postId);
 
     if (hasDislike) {
-      await this.reactionRepository.deletePostDislike(userId, postId);
-      return { disliked: false, dislikeCount: post.dislikeCount - 1 };
+      const dislikeCount = await this.reactionRepository.deletePostDislike(userId, postId);
+      return { disliked: false, dislikeCount };
     } else {
-      await this.reactionRepository.createPostDislike(userId, postId);
-      return { disliked: true, dislikeCount: post.dislikeCount + 1 };
+      const dislikeCount = await this.reactionRepository.createPostDislike(userId, postId);
+      return { disliked: true, dislikeCount };
     }
   }
 

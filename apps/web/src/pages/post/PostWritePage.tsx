@@ -20,14 +20,17 @@ export function PostWritePage() {
       return;
     }
 
-    const post = await createPostMutation.mutateAsync({
-      categoryId,
-      title,
-      content,
-      images: [],
-    });
-
-    navigate(`/posts/${post.id}`);
+    try {
+      const post = await createPostMutation.mutateAsync({
+        categoryId,
+        title,
+        content,
+        images: [],
+      });
+      navigate(`/posts/${post.id}`);
+    } catch (error) {
+      alert(error instanceof Error ? error.message : "게시글 작성에 실패했습니다.");
+    }
   };
 
   if (categoriesLoading) {
@@ -40,11 +43,13 @@ export function PostWritePage() {
 
       <form onSubmit={handleSubmit} className="mt-6 space-y-6">
         <div>
-          <label className="mb-2 block text-sm font-medium text-gray-700">게시판 선택</label>
+          <label htmlFor="category-select" className="mb-2 block text-sm font-medium text-gray-700">게시판 선택</label>
           <select
+            id="category-select"
             value={categoryId || ""}
             onChange={(e) => setCategoryId(Number(e.target.value) || null)}
             className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+            aria-required="true"
           >
             <option value="">게시판을 선택하세요</option>
             {categories?.map((group) => (

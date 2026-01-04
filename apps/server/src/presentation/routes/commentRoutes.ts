@@ -102,7 +102,7 @@ commentRoutes.post(
     const { reason } = c.req.valid("json");
     await commentService.reportComment(id, auth.userId, reason);
 
-    return c.json({ success: true, data: null }, 201);
+    return c.json({ success: true, data: null }, 202);
   }
 );
 

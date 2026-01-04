@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { authApi } from "../api/authApi";
 import { useAuthStore } from "../store/authStore";
@@ -19,7 +19,7 @@ export function useKakaoLogin(): UseKakaoLoginResult {
   const navigate = useNavigate();
   const { setUser, setTokens } = useAuthStore();
 
-  const redirectToKakao = async () => {
+  const redirectToKakao = useCallback(async () => {
     try {
       setIsLoading(true);
       setError(null);
@@ -29,9 +29,9 @@ export function useKakaoLogin(): UseKakaoLoginResult {
       setError(err instanceof Error ? err.message : "카카오 로그인 실패");
       setIsLoading(false);
     }
-  };
+  }, []);
 
-  const handleCallback = async (code: string, nickname?: string) => {
+  const handleCallback = useCallback(async (code: string, nickname?: string) => {
     try {
       setIsLoading(true);
       setError(null);
@@ -54,7 +54,7 @@ export function useKakaoLogin(): UseKakaoLoginResult {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [navigate, setTokens, setUser]);
 
   return {
     isLoading,

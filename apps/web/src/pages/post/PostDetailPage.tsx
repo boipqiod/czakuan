@@ -42,22 +42,29 @@ export function PostDetailPage() {
 
   const handleDelete = async () => {
     if (!confirm("정말 삭제하시겠습니까?")) return;
-    await deletePostMutation.mutateAsync(post.id);
-    navigate(-1);
+    try {
+      await deletePostMutation.mutateAsync(post.id);
+      navigate(-1);
+    } catch (error) {
+      alert(error instanceof Error ? error.message : "게시글 삭제에 실패했습니다.");
+    }
   };
 
   const handleSubmitComment = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!commentContent.trim()) return;
 
-    await createCommentMutation.mutateAsync({
-      postId: post.id,
-      content: commentContent,
-      parentId: replyTo || undefined,
-    });
-
-    setCommentContent("");
-    setReplyTo(null);
+    try {
+      await createCommentMutation.mutateAsync({
+        postId: post.id,
+        content: commentContent,
+        parentId: replyTo || undefined,
+      });
+      setCommentContent("");
+      setReplyTo(null);
+    } catch (error) {
+      alert(error instanceof Error ? error.message : "댓글 작성에 실패했습니다.");
+    }
   };
 
   const authorDisplay = post.isAnonymous
@@ -105,6 +112,8 @@ export function PostDetailPage() {
             size="sm"
             onClick={() => toggleLikeMutation.mutate(post.id)}
             isLoading={toggleLikeMutation.isPending}
+            aria-label={`좋아요 ${post.likeCount}개`}
+            aria-pressed={post.myReaction?.liked}
           >
             👍 {post.likeCount}
           </Button>
@@ -113,6 +122,8 @@ export function PostDetailPage() {
             size="sm"
             onClick={() => toggleDislikeMutation.mutate(post.id)}
             isLoading={toggleDislikeMutation.isPending}
+            aria-label={`싫어요 ${post.dislikeCount}개`}
+            aria-pressed={post.myReaction?.disliked}
           >
             👎 {post.dislikeCount}
           </Button>
@@ -141,6 +152,7 @@ export function PostDetailPage() {
               onChange={(e) => setCommentContent(e.target.value)}
               placeholder="댓글을 입력하세요"
               rows={3}
+              aria-label="댓글 내용"
             />
             <div className="mt-2 flex justify-end">
               <Button type="submit" size="sm" isLoading={createCommentMutation.isPending}>
@@ -174,12 +186,15 @@ export function PostDetailPage() {
                       {user && (
                         <div className="flex gap-2">
                           <button
+                            type="button"
                             className="text-xs text-gray-400 hover:text-gray-600"
                             onClick={() => setReplyTo(comment.id)}
+                            aria-label="댓글에 답글 달기"
                           >
                             답글
                           </button>
                           <button
+                            type="button"
                             className="text-xs text-red-400 hover:text-red-600"
                             onClick={() =>
                               deleteCommentMutation.mutate({
@@ -187,6 +202,7 @@ export function PostDetailPage() {
                                 postId: post.id,
                               })
                             }
+                            aria-label="댓글 삭제"
                           >
                             삭제
                           </button>
